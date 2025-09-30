@@ -14,7 +14,7 @@ resource "aws_iam_role" "cicd_deploy" {
         Condition = {
           StringEquals = {
             "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-            "token.actions.githubusercontent.com:sub" = "repo:${local.project_name}/*:ref:refs/heads/main"
+            "token.actions.githubusercontent.com:sub" = "repo:KjeldSchmidt/LexLoop:ref:refs/heads/main"
           }
         }
       }

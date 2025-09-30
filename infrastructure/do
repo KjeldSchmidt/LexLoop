@@ -59,7 +59,6 @@ function task_deploy_base {
   create_base_bucket
   pushd base
   terraform init -reconfigure
-  terraform plan
   terraform apply
   popd
   echo "Base infrastructure deployed successfully ✅"
