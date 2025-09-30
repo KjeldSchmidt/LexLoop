@@ -7,6 +7,6 @@ locals {
     Project     = local.project_name
     Environment = var.env_name
     ManagedBy   = "terraform"
-    Repository     = "https://github.com/KjeldSchmidt/LexLoop/"
+    Repository  = "https://github.com/KjeldSchmidt/LexLoop/"
   }
 }
