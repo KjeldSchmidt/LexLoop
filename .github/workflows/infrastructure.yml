@@ -20,23 +20,13 @@ jobs:
     name: Quality Gates
     runs-on: ubuntu-latest
     steps:
-      - name: Debug OIDC token
-        run: |
-          echo "Repository: ${{ github.repository }}"
-          echo "Ref: ${{ github.ref }}"
-          echo "Branch: ${{ github.ref_name }}"
-          echo "Event: ${{ github.event_name }}"
-          echo "Actor: ${{ github.actor }}"
-          echo "Workflow: ${{ github.workflow }}"
-          echo "Run ID: ${{ github.run_id }}"
-
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.6.0
+          terraform_version: 1.13.0
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -60,17 +50,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.6.0
-
-      - name: Debug OIDC token
-        run: |
-          echo "Repository: ${{ github.repository }}"
-          echo "Ref: ${{ github.ref }}"
-          echo "Branch: ${{ github.ref_name }}"
-          echo "Event: ${{ github.event_name }}"
-          echo "Actor: ${{ github.actor }}"
-          echo "Workflow: ${{ github.workflow }}"
-          echo "Run ID: ${{ github.run_id }}"
+          terraform_version: 1.13.0
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
