@@ -14,7 +14,7 @@ function task_fmt {
 
 ## fmt-check: confirm that automatic formatting is applied. Useful for CI/CD
 function task_fmt_check {
-	@echo "Checking Terraform formatting..."
+	echo "Checking Terraform formatting..."
 	terraform fmt -recursive -check .
 }
 
