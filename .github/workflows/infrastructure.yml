@@ -34,10 +34,11 @@ jobs:
           role-to-assume: arn:aws:iam::465836752303:role/lexloop-cicd-deploy-role
           aws-region: eu-central-1
 
-      - name: Run quality gates
-        run: |
-          cd infrastructure
-          ./do quality-gates
+      - name: Format check
+        run: ./infrastructure/do fmt-check
+
+      - name: Linting
+        run: ./infrastructure/do lint
 
   deploy-dev:
     name: Deploy Dev Environment

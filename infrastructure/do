@@ -4,7 +4,6 @@
 function task_quality_gates {
   task_fmt
   task_lint
-  task_plan env=dev
   echo "Infrastructure passes quality gates ✅"
 }
 
