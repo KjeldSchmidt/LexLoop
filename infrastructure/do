@@ -7,15 +7,18 @@ function task_quality_gates {
   echo "Infrastructure passes quality gates ✅"
 }
 
+## fmt: apply automatic formatting
 function task_fmt {
 	terraform fmt -recursive .
 }
 
-function task_fmt-check {
+## fmt-check: confirm that automatic formatting is applied. Useful for CI/CD
+function task_fmt_check {
 	@echo "Checking Terraform formatting..."
 	terraform fmt -recursive -check .
 }
 
+## lint: Perform some static linting/validation
 function task_lint {
 	pushd base
 	terraform init -reconfigure
@@ -28,6 +31,7 @@ function task_lint {
 	popd
 }
 
+## apply-auto: Apply the infrastructure with auto-approve. Used for CI/CD.
 function task_apply_auto {
 	if [ -z "${1:-}" ]; then echo "Error: environment not specified. Usage: $0 apply-auto <dev|prod>"; exit 1; fi
 	pushd "env/$1"
@@ -36,6 +40,7 @@ function task_apply_auto {
 	popd
 }
 
+## apply: Apply the infrastructure.
 function task_apply {
 	if [ -z "${1:-}" ]; then echo "Error: environment not specified. Usage: $0 apply <dev|prod>"; exit 1; fi
 	pushd "env/$1"
@@ -44,6 +49,7 @@ function task_apply {
 	popd
 }
 
+## plan: Show the terraform plan.
 function task_plan {
 	if [ -z "${1:-}" ]; then echo "Error: environment not specified. Usage: $0 plan <dev|prod>"; exit 1; fi
 	pushd "env/$1"
@@ -87,8 +93,6 @@ function create_base_bucket {
   }' --region eu-central-1
   echo "Base bucket configured successfully ✅"
 }
-
-
 
 #-------- All task definitions go above this line --------#
 
