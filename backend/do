@@ -2,7 +2,7 @@
 
 ## run: Run the server
 function task_run {
-  uv run python -m uvicorn main:app
+  uv run python -m uvicorn src.main:app
 }
 
 ## fmt: Formats all files
@@ -16,8 +16,10 @@ function task_fmt_check {
 }
 
 ## tests: Run unit tests
-function task_tests {
+function task_test {
+  docker compose -f local-test-dynamodb.yml up -d dynamodb
   uv run pytest .
+  docker compose -f local-test-dynamodb.yml down
 }
 
 ## lint: Runs static linting
@@ -35,7 +37,7 @@ function task_quality_gates {
   task_fmt
   task_lint
   task_types
-  task_tests
+  task_test
 }
 
 function task_setup {

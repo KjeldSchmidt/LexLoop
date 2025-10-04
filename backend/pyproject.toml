@@ -6,11 +6,15 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.118.0",
+    "pynamodb>=6.1.0",
     "uvicorn>=0.37.0",
 ]
 
 [dependency-groups]
 dev = [
+    "boto3>=1.40.45",
+    "boto3-stubs>=1.40.45",
+    "httpx>=0.28.1",
     "mypy>=1.18.2",
     "pytest>=8.4.2",
     "ruff>=0.13.3",
@@ -18,6 +22,7 @@ dev = [
 
 [tool.mypy]
 python_version = "3.13"
+plugins = ["pydantic.mypy"]
 
 disallow_any_explicit = true
 check_untyped_defs = true
