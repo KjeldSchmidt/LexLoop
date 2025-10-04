@@ -5,6 +5,8 @@ from lexloop.repositories.word_repository import WordRepo
 
 from lexloop.service import word_service
 
+from pydantic import UUID4
+
 app = FastAPI()
 
 
@@ -25,3 +27,9 @@ async def add_word(word: WordIn) -> WordRepo:
 async def get_words() -> list[WordRepo]:
     word_list = word_service.get_all()
     return word_list
+
+
+@app.get("/words/{uuid}", response_model=WordOut)
+async def get_word(uuid: UUID4) -> WordRepo:
+    word = word_service.get_by_uuid(uuid)
+    return word
