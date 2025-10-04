@@ -1,25 +1,29 @@
 from uuid import uuid4
 
-from lexloop.model import Word
+from lexloop.model import WordIn
 
 from pynamodb.models import Model
 from pynamodb.attributes import UnicodeAttribute
 from lexloop.repositories import MetaBase
 
 
-class WordModel(Model):
+class WordRepo(Model):
     class Meta(MetaBase):
         table_name = "lexloop-words"
 
-    id = UnicodeAttribute(hash_key=True)
+    uuid = UnicodeAttribute(hash_key=True)
     word = UnicodeAttribute()
     definition = UnicodeAttribute()
 
 
-def add(word: Word) -> None:
-    WordModel(id=str(uuid4()), word=word.word, definition=word.definition).save()
+def add(word: WordIn) -> WordRepo:
+    word_repo = WordRepo(
+        uuid=str(uuid4()), word=word.word, definition=word.definition
+    )
+    word_repo.save()
+    return word_repo
 
 
-def get_all() -> list[WordModel]:
+def get_all() -> list[WordRepo]:
     # Todo: paginate
-    return list(WordModel.scan())
+    return list(WordRepo.scan())

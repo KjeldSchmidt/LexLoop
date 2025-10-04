@@ -1,4 +1,5 @@
 from typing import Generator
+from uuid import UUID
 
 from fastapi.testclient import TestClient
 from lexloop.repositories import MetaBase
@@ -32,8 +33,12 @@ def reset_dynamodb() -> Generator[None, None, None]:
 
 
 def test_add_word_returns_2xx() -> None:
-    response = client.post("/words", json={"word": "test", "definition": "test"})
+    response = client.post(
+        "/words", json={"word": "test", "definition": "test", "synonyms": []}
+    )
     assert response.status_code == 201
+    data = response.json()
+    UUID(data["uuid"])
 
 
 def test_get_words_when_none_are_stored_returns_empty_list() -> None:
@@ -43,7 +48,9 @@ def test_get_words_when_none_are_stored_returns_empty_list() -> None:
 
 
 def test_get_words_when_words_are_added() -> None:
-    response = client.post("/words", json={"word": "test", "definition": "test"})
+    response = client.post(
+        "/words", json={"word": "test", "definition": "test"}
+    )
     assert response.status_code == 201
 
     response = client.get("/words")

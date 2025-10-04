@@ -20,6 +20,9 @@ dev = [
     "ruff>=0.13.3",
 ]
 
+[tool.ruff]
+line-length = 80
+
 [tool.mypy]
 python_version = "3.13"
 plugins = ["pydantic.mypy"]
