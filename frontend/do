@@ -5,6 +5,16 @@ function task_quality_gates {
   echo "No frontend quality gates yet"
 }
 
+## run: run the frontend
+function task_run {
+  npm run dev
+}
+
+## setup: install dev requirements
+function task_setup {
+  npm install
+}
+
 #-------- All task definitions go above this line --------#
 
 # Bash Strict Mode - For details, see
