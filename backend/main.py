@@ -1,6 +1,8 @@
-def main() -> None:
-    print("Hello from backend!")
+from fastapi import FastAPI, Response, status
+
+app = FastAPI()
 
 
-if __name__ == "__main__":
-    main()
+@app.get("/health")
+async def health():
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

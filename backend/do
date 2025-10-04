@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+## run: Run the server
+function task_run {
+  uv run python -m uvicorn main:app
+}
 
 ## fmt: Formats all files
 function task_fmt {
