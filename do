@@ -7,6 +7,22 @@ function task_quality_gates {
   ./infrastructure/do quality-gates
 }
 
+## fmt: Validate formatting
+function task_fmt {
+  ./backend/do fmt
+}
+
+## fmt-check: Validate formatting
+function task_fmt_check {
+  ./backend/do fmt_check
+}
+
+## setup: Perform a best-effort repository setup
+function task_setup {
+  ./backend/do setup
+  git config core.hooksPath .githooks
+}
+
 #-------- All task definitions go above this line --------#
 
 # Bash Strict Mode - For details, see

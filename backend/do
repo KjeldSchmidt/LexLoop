@@ -1,8 +1,43 @@
 #!/usr/bin/env bash
 
+
+## fmt: Formats all files
+function task_fmt {
+  uv run ruff format
+}
+
+## fmt-check: Exits with non-zero code if any files would be formatted
+function task_fmt_check {
+  uv run ruff format --check
+}
+
+## tests: Run unit tests
+function task_tests {
+  uv run pytest .
+}
+
+## lint: Runs static linting
+function task_lint {
+  uv run ruff check
+}
+
+## types: Statically verify types
+function task_types {
+  uv run mypy .
+}
+
 ## quality-gates: Run quality checks for deployment confidence
 function task_quality_gates {
-  echo "No backend quality gates yet"
+  task_fmt
+  task_lint
+  task_types
+  task_tests
+}
+
+function task_setup {
+  if ! command -v uv >/dev/null 2>&1; then
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+  fi
 }
 
 #-------- All task definitions go above this line --------#
