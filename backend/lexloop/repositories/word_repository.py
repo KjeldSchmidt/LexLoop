@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from lexloop.model import WordIn
+from lexloop.model.word_model import WordIn
 
 from pynamodb.models import Model
 from pynamodb.attributes import UnicodeAttribute, ListAttribute

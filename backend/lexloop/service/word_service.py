@@ -1,4 +1,4 @@
-from lexloop.model import WordIn
+from lexloop.model.word_model import WordIn
 from lexloop.repositories import word_repository
 from lexloop.repositories.word_repository import WordRepo
 
