@@ -2,10 +2,10 @@ from typing import Generator
 from uuid import UUID
 
 from fastapi.testclient import TestClient
-from lexloop.repositories import MetaBase
+from lexloop.repository import MetaBase
 
 from .main import app
-from .repositories.ensure_tables import ensure_tables
+from .repository.ensure_tables import ensure_tables
 
 import pytest
 import boto3

@@ -1,4 +1,4 @@
-from lexloop.repositories.word_repository import WordRepo
+from lexloop.repository.word_repository import WordRepo
 
 
 def ensure_tables() -> None:

@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Response, status
 
 from lexloop.model import WordOut, WordIn
-from lexloop.repositories.word_repository import WordRepo
+from lexloop.repository.word_repository import WordRepo
 
 from lexloop.service import word_service
 
