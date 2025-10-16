@@ -68,8 +68,16 @@ def get_all() -> list[Link]:
     return [link.to_internal_model() for link in LinkRepo.scan()]
 
 
-def get_all_of_word_uuid(word: UUID4) -> list[Link]:
-    return list()
+def get_all_for_node_uuid(node_uuid: UUID4) -> list[Link]:
+    LinkRepo.link_gsi.query(str(node_uuid))
+    condition = None
+    condition &= LinkRepo.node1 == str(node_uuid)
+    condition |= LinkRepo.node2 == str(node_uuid)
+    # Todo: paginate
+    return [
+        link.to_internal_model()
+        for link in LinkRepo.link_gsi.scan(filter_condition=condition)
+    ]
 
 
 def get_by_uuid(uuid: UUID4) -> Link:

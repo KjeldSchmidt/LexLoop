@@ -17,5 +17,5 @@ def get_by_uuid(uuid: UUID4) -> Link:
     return link_repository.get_by_uuid(uuid)
 
 
-def get_all_of_word_uuid(uuid: UUID4) -> list[Link]:
-    return link_repository.get_all_of_word_uuid(uuid)
+def get_all_for_node_uuid(node_uuid: UUID4) -> list[Link]:
+    return link_repository.get_all_for_node_uuid(node_uuid)

@@ -1,9 +1,10 @@
 from fastapi import APIRouter, status
 
+from lexloop.model.link_model import LinkOut
 from lexloop.model.node_model import NodeOut, NodeIn
 from lexloop.repository.node_repository import Node
 
-from lexloop.service import node_service
+from lexloop.service import node_service, link_service
 
 from pydantic import UUID4
 
@@ -30,3 +31,9 @@ async def get_nodes() -> list[Node]:
 async def get_node(uuid: UUID4) -> Node:
     node = node_service.get_by_uuid(uuid)
     return node
+
+
+@router.get("/nodes/{node_uuid}/links", response_model=list[LinkOut])
+async def get_node_links(node_uuid: UUID4) -> list[LinkOut]:
+    links = link_service.get_all_for_node_uuid(node_uuid)
+    return [LinkOut.from_internal_model(link) for link in links]

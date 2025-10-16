@@ -38,11 +38,11 @@ def test_get_links_when_none_are_stored_returns_empty_list(
 
 def test_get_links_when_links_are_added(client: TestClient) -> None:
     node1_response = client.post(
-        "/nodes", json={"term": "test1", "definition": "test", "synonyms": []}
+        "/nodes", json={"term": "test1", "definition": "test"}
     )
 
     node2_response = client.post(
-        "/nodes", json={"term": "test2", "definition": "test", "synonyms": []}
+        "/nodes", json={"term": "test2", "definition": "test"}
     )
     response = client.post(
         "/links",
