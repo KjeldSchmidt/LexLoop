@@ -7,7 +7,7 @@ from lexloop.model.link_model import LinkType, LinkIn, Link
 from pynamodb.models import Model
 from pynamodb.attributes import UnicodeAttribute
 from pynamodb_attributes import UnicodeEnumAttribute
-from lexloop.repository import MetaBase, word_repository
+from lexloop.repository import MetaBase, node_repository
 
 from pydantic import UUID4
 
@@ -44,8 +44,8 @@ class LinkRepo(Model):
     def to_internal_model(self) -> Link:
         return Link(
             uuid=self.uuid,
-            node1=word_repository.get_by_uuid(UUID(self.node1)),
-            node2=word_repository.get_by_uuid(UUID(self.node2)),
+            node1=node_repository.get_by_uuid(UUID(self.node1)),
+            node2=node_repository.get_by_uuid(UUID(self.node2)),
             type=self.type,
             annotation=self.annotation,
         )

@@ -4,7 +4,7 @@ from enum import Enum
 
 from pydantic import BaseModel, UUID4
 
-from lexloop.model.word_model import Word
+from lexloop.model.node_model import Node
 
 
 class LinkType(Enum):
@@ -20,8 +20,8 @@ class LinkIn(BaseModel):  # type: ignore
 
 class Link(BaseModel):  # type: ignore
     uuid: UUID4
-    node1: Word
-    node2: Word
+    node1: Node
+    node2: Node
     type: LinkType
     annotation: str
 

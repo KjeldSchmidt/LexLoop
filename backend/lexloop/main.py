@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Response, status
 
-from lexloop.controller.word_controller import router as word_router
+from lexloop.controller.node_controller import router as word_router
 from lexloop.controller.link_controller import router as link_router
 
 app = FastAPI()
