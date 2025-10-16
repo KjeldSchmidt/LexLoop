@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - './github/workflows/infrastructure.yml'
+      - '.github/workflows/infrastructure.yml'
       - 'infrastructure/**'
   pull_request:
     branches: [main]
