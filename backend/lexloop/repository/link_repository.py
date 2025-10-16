@@ -1,13 +1,32 @@
-from uuid import uuid4
+from uuid import uuid4, UUID
 
-from lexloop.model.link_model import LinkType, LinkIn
+from pynamodb.indexes import GlobalSecondaryIndex, AllProjection
+
+from lexloop.model.link_model import LinkType, LinkIn, Link
 
 from pynamodb.models import Model
 from pynamodb.attributes import UnicodeAttribute
 from pynamodb_attributes import UnicodeEnumAttribute
-from lexloop.repository import MetaBase
+from lexloop.repository import MetaBase, word_repository
 
 from pydantic import UUID4
+
+
+class LinkGSI(GlobalSecondaryIndex):  # type: ignore
+    """
+    GSI class attached to a PynamoDB model.
+    """
+
+    class Meta:
+        read_capacity_units = 1
+        write_capacity_units = 1
+        index_name = "link-gsi"  # Required: name of the GSI in DynamoDB
+        projection = (
+            AllProjection()
+        )  # Required: what attributes the GSI includes
+
+    node1 = UnicodeAttribute(hash_key=True)  # Required: hash key for the GSI
+    node2 = UnicodeAttribute(range_key=True)  # Optional: sort key for the GSI
 
 
 class LinkRepo(Model):
@@ -15,32 +34,43 @@ class LinkRepo(Model):
         table_name = "lexloop-links"
 
     uuid = UnicodeAttribute(hash_key=True)
-    word1 = UnicodeAttribute()
-    word2 = UnicodeAttribute()
     type = UnicodeEnumAttribute(LinkType)
     annotation = UnicodeAttribute()
+    node1 = UnicodeAttribute()  # Required: hash key for the GSI
+    node2 = UnicodeAttribute()  # Optional: sort key for the GSI
+
+    link_gsi = LinkGSI()
+
+    def to_internal_model(self) -> Link:
+        return Link(
+            uuid=self.uuid,
+            node1=word_repository.get_by_uuid(UUID(self.node1)),
+            node2=word_repository.get_by_uuid(UUID(self.node2)),
+            type=self.type,
+            annotation=self.annotation,
+        )
 
 
-def add(link: LinkIn) -> LinkRepo:
+def add(link: LinkIn) -> Link:
     link_repo = LinkRepo(
         uuid=str(uuid4()),
         type=LinkType[link.type],
-        word1=link.word1,
-        word2=link.word2,
+        node1=link.node1,
+        node2=link.node2,
         annotation=link.annotation,
     )
     link_repo.save()
-    return link_repo
+    return link_repo.to_internal_model()
 
 
-def get_all() -> list[LinkRepo]:
+def get_all() -> list[Link]:
     # Todo: paginate
-    return list(LinkRepo.scan())
+    return [link.to_internal_model() for link in LinkRepo.scan()]
 
 
-def get_all_of_word_uuid(word: UUID4) -> list[LinkRepo]:
+def get_all_of_word_uuid(word: UUID4) -> list[Link]:
     return list()
 
 
-def get_by_uuid(uuid: UUID4) -> LinkRepo:
-    return LinkRepo.get(str(uuid))
+def get_by_uuid(uuid: UUID4) -> Link:
+    return LinkRepo.get(str(uuid)).to_internal_model()

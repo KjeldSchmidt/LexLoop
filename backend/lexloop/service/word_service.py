@@ -1,17 +1,16 @@
-from lexloop.model.word_model import WordIn
+from lexloop.model.word_model import WordIn, Word
 from lexloop.repository import word_repository
-from lexloop.repository.word_repository import WordRepo
 
 from pydantic import UUID4
 
 
-def add(word: WordIn) -> WordRepo:
+def add(word: WordIn) -> Word:
     return word_repository.add(word)
 
 
-def get_all() -> list[WordRepo]:
+def get_all() -> list[Word]:
     return word_repository.get_all()
 
 
-def get_by_uuid(uuid: UUID4) -> WordRepo:
+def get_by_uuid(uuid: UUID4) -> Word:
     return word_repository.get_by_uuid(uuid)

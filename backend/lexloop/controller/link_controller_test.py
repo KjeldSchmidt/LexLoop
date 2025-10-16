@@ -6,11 +6,19 @@ from lexloop.model.link_model import LinkType
 
 
 def test_add_link_returns_2xx(client: TestClient) -> None:
+    word1_response = client.post(
+        "/words", json={"word": "test1", "definition": "test", "synonyms": []}
+    )
+
+    word2_response = client.post(
+        "/words", json={"word": "test2", "definition": "test", "synonyms": []}
+    )
+
     response = client.post(
         "/links",
         json={
-            "word1": "test",
-            "word2": "test2",
+            "node1": word1_response.json()["uuid"],
+            "node2": word2_response.json()["uuid"],
             "type": "SYNONYM",
             "annotation": "comment",
         },
@@ -29,11 +37,18 @@ def test_get_links_when_none_are_stored_returns_empty_list(
 
 
 def test_get_links_when_links_are_added(client: TestClient) -> None:
+    word1_response = client.post(
+        "/words", json={"word": "test1", "definition": "test", "synonyms": []}
+    )
+
+    word2_response = client.post(
+        "/words", json={"word": "test2", "definition": "test", "synonyms": []}
+    )
     response = client.post(
         "/links",
         json={
-            "word1": "test",
-            "word2": "test2",
+            "node1": word1_response.json()["uuid"],
+            "node2": word2_response.json()["uuid"],
             "type": "SYNONYM",
             "annotation": "comment",
         },
@@ -43,7 +58,7 @@ def test_get_links_when_links_are_added(client: TestClient) -> None:
     response = client.get("/links")
     assert response.status_code == 200
     returned_link = response.json()[0]
-    assert returned_link["word1"] == "test"
-    assert returned_link["word2"] == "test2"
+    assert returned_link["node1"] == word1_response.json()["uuid"]
+    assert returned_link["node2"] == word2_response.json()["uuid"]
     assert LinkType(returned_link["type"]) == LinkType.SYNONYM
     assert returned_link["annotation"] == "comment"
