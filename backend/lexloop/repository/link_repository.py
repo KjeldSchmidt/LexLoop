@@ -5,7 +5,7 @@ from lexloop.model.link_model import LinkType, LinkIn
 from pynamodb.models import Model
 from pynamodb.attributes import UnicodeAttribute
 from pynamodb_attributes import UnicodeEnumAttribute
-from lexloop.repositories import MetaBase
+from lexloop.repository import MetaBase
 
 from pydantic import UUID4
 

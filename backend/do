@@ -2,7 +2,7 @@
 
 ## run: Run the server
 function task_run {
-  uv run python -m uvicorn src.main:app
+  uv run python -m uvicorn lexloop.main:app
 }
 
 ## fmt: Formats all files

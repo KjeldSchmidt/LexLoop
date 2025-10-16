@@ -1,6 +1,6 @@
 from lexloop.model.link_model import LinkIn
-from lexloop.repositories import link_repository
-from lexloop.repositories.link_repository import LinkRepo
+from lexloop.repository import link_repository
+from lexloop.repository.link_repository import LinkRepo
 
 from pydantic import UUID4
 

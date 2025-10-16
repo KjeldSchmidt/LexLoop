@@ -1,39 +1,11 @@
-from typing import Generator
 from uuid import UUID
 
 from fastapi.testclient import TestClient
-from lexloop.repositories import MetaBase
 
-from .main import app
-from .model.link_model import LinkType
-from .repositories.ensure_tables import ensure_tables
-
-import pytest
-import boto3
-
-client = TestClient(app)
+from lexloop.model.link_model import LinkType
 
 
-@pytest.fixture(autouse=True)
-def reset_dynamodb() -> Generator[None, None, None]:
-    dynamodb = boto3.client(
-        "dynamodb",
-        endpoint_url=MetaBase.host,
-        region_name=MetaBase.region,
-        aws_access_key_id="fake",
-        aws_secret_access_key="fake",
-    )
-
-    tables = dynamodb.list_tables()["TableNames"]
-    for name in tables:
-        dynamodb.delete_table(TableName=name)
-
-    ensure_tables()
-
-    yield
-
-
-def test_add_word_returns_2xx() -> None:
+def test_add_word_returns_2xx(client: TestClient) -> None:
     response = client.post(
         "/words", json={"word": "test", "definition": "test", "synonyms": []}
     )
@@ -42,13 +14,15 @@ def test_add_word_returns_2xx() -> None:
     UUID(data["uuid"])
 
 
-def test_get_words_when_none_are_stored_returns_empty_list() -> None:
+def test_get_words_when_none_are_stored_returns_empty_list(
+    client: TestClient,
+) -> None:
     response = client.get("/words")
     assert response.status_code == 200
     assert response.json() == []
 
 
-def test_get_words_when_words_are_added() -> None:
+def test_get_words_when_words_are_added(client: TestClient) -> None:
     response = client.post(
         "/words", json={"word": "test", "definition": "test", "synonyms": []}
     )
@@ -61,7 +35,7 @@ def test_get_words_when_words_are_added() -> None:
     assert returned_word["definition"] == "test"
 
 
-def test_synonyms_are_saved_on_creation() -> None:
+def test_synomyms_are_saved_on_creation(client: TestClient) -> None:
     response = client.post(
         "/words", json={"word": "test", "definition": "test", "synonyms": []}
     )
@@ -82,7 +56,8 @@ def test_synonyms_are_saved_on_creation() -> None:
     assert second_word_retrieved["synonyms"] == [first_word_uuid]
 
 
-def test_add_link_returns_2xx() -> None:
+# TODO move to link_test
+def test_add_link_returns_2xx(client: TestClient) -> None:
     response = client.post(
         "/links",
         json={
@@ -97,13 +72,15 @@ def test_add_link_returns_2xx() -> None:
     UUID(data["uuid"])
 
 
-def test_get_links_when_none_are_stored_returns_empty_list() -> None:
+def test_get_links_when_none_are_stored_returns_empty_list(
+    client: TestClient,
+) -> None:
     response = client.get("/links")
     assert response.status_code == 200
     assert response.json() == []
 
 
-def test_get_links_when_links_are_added() -> None:
+def test_get_links_when_links_are_added(client: TestClient) -> None:
     response = client.post(
         "/links",
         json={

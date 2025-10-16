@@ -1,6 +1,6 @@
 from lexloop.model.word_model import WordIn
-from lexloop.repositories import word_repository
-from lexloop.repositories.word_repository import WordRepo
+from lexloop.repository import word_repository
+from lexloop.repository.word_repository import WordRepo
 
 from pydantic import UUID4
 

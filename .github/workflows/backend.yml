@@ -1,0 +1,44 @@
+name: Backend Deployment
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/backend.yml'
+      - 'backend/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/**'
+  workflow_dispatch: null
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  quality-gates:
+    name: Quality Gates
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: "Set up Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "backend/pyproject.toml"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: 0.9.3
+
+      - name: Format check
+        run: ./backend/do fmt-check
+
+      - name: Linting
+        run: ./backend/do lint
+
+      - name: Test
+        run: ./backend/do test

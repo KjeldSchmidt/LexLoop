@@ -4,7 +4,7 @@ from lexloop.model.word_model import WordIn
 
 from pynamodb.models import Model
 from pynamodb.attributes import UnicodeAttribute, ListAttribute
-from lexloop.repositories import MetaBase
+from lexloop.repository import MetaBase
 
 from pydantic import UUID4
 
