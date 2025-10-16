@@ -23,16 +23,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+      - name: "Set up Python"
+        uses: actions/setup-python@v5
         with:
-          terraform_version: 1.13.0
+          python-version-file: "pyproject.toml"
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
         with:
-          role-to-assume: arn:aws:iam::465836752303:role/lexloop-cicd-deploy-role
-          aws-region: eu-central-1
+          version: 0.9.3
 
       - name: Format check
         run: ./backend/do fmt-check
