@@ -1,0 +1,44 @@
+name: Backend Deployment
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/**'
+  workflow_dispatch: null
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  quality-gates:
+    name: Quality Gates
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.13.0
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::465836752303:role/lexloop-cicd-deploy-role
+          aws-region: eu-central-1
+
+      - name: Format check
+        run: ./backend/do fmt-check
+
+      - name: Linting
+        run: ./backend/do lint
+
+      - name: Test
+        run: ./backend/do test
