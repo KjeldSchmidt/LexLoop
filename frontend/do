@@ -2,12 +2,46 @@
 
 ## quality-gates: Run quality checks for deployment confidence
 function task_quality_gates {
-  echo "No frontend quality gates yet"
+  task_fmt
+  task_lint
+  task_test_check
+}
+
+## fmt: apply automatic formatting
+function task_fmt {
+  npm run format
+}
+
+## fmt-check: apply automatic formatting
+function task_fmt_check {
+  npm run format -- --check
+}
+
+## lint: apply automatic formatting
+function task_lint {
+  npm run lint
+}
+
+## lint-check: apply automatic formatting
+function task_lint_check {
+  npm run lint -- --max-warnings 0
 }
 
 ## run: run the frontend
 function task_run {
   npm run dev
+}
+
+## test: start watched test session
+function task_test {
+  npm run test:unit
+}
+
+## test-check: run all tests in check-mode, without watcher
+function task_test_check {
+  npm run test:unit -- --run
+  npm run build
+  npm run test:e2e
 }
 
 ## setup: install dev requirements
