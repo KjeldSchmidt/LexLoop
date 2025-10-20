@@ -2,6 +2,7 @@ from fastapi import FastAPI, Response, status
 
 from lexloop.controller.node_controller import router as word_router
 from lexloop.controller.link_controller import router as link_router
+from lexloop.auth.auth_controller import router as auth_router
 
 app = FastAPI()
 
@@ -13,3 +14,4 @@ async def health() -> Response:
 
 app.include_router(word_router)
 app.include_router(link_router)
+app.include_router(auth_router)
