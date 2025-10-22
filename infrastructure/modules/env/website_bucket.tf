@@ -17,10 +17,15 @@ resource "aws_s3_bucket_policy" "allow_cloudfront_access" {
     Statement = [{
       Effect = "Allow"
       Principal = {
-        AWS = aws_cloudfront_origin_access_identity.oai.iam_arn
+        Service = "cloudfront.amazonaws.com"
       }
       Action   = "s3:GetObject"
       Resource = "${aws_s3_bucket.static_site.arn}/*"
+      Condition = {
+        StringEquals = {
+          "AWS:SourceArn" = aws_cloudfront_distribution.cdn.arn
+        }
+      }
     }]
   })
 }
