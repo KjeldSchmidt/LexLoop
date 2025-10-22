@@ -40,6 +40,19 @@ function task_quality_gates {
   task_test
 }
 
+## build: creates a .zip-bundle ready for deployment as lambda
+function task_build {
+  build_dir_name="lex-api-bundle"
+  rm -rf $build_dir_name
+  mkdir -p $build_dir_name
+  uv sync --no-dev
+  python_version=$(cat .python-version)
+  site_packages_path=".venv/lib/python${python_version}/site-packages"
+  cp -r "$site_packages_path"/* $build_dir_name
+  cp -r lexloop "$build_dir_name/lexloop"
+  zip -r "${build_dir_name}.zip" $build_dir_name
+}
+
 function task_setup {
   if ! command -v uv >/dev/null 2>&1; then
     curl -LsSf https://astral.sh/uv/install.sh | sh

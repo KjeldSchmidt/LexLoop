@@ -49,6 +49,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Build lambda bundle
+        run: cd backend && ./do build
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
