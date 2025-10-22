@@ -4,18 +4,18 @@ resource "aws_cloudfront_distribution" "cdn" {
 
   origin {
     domain_name              = aws_s3_bucket.static_site.bucket_regional_domain_name
-    origin_id                = "${local.project_slug}-frontend-${var.env}}"
+    origin_id                = "${local.project_slug}-frontend-${var.env}"
     origin_access_control_id = aws_cloudfront_origin_access_control.oac.id
   }
 
   origin {
     domain_name = aws_apigatewayv2_api.api.api_endpoint
-    origin_id   = "${local.project_slug}-api-${var.env}}"
+    origin_id   = "${local.project_slug}-api-${var.env}"
     origin_path = "/$default"
   }
 
   default_cache_behavior {
-    target_origin_id       = "${local.project_slug}-frontend-${var.env}}"
+    target_origin_id       = "${local.project_slug}-frontend-${var.env}"
     viewer_protocol_policy = "redirect-to-https"
     allowed_methods        = ["GET", "HEAD"]
     cached_methods         = ["GET", "HEAD"]

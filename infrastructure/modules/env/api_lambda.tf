@@ -32,7 +32,7 @@ resource "aws_lambda_function" "api" {
   role          = aws_iam_role.lambda_role.arn
   handler       = "lexloop.main.aws_handler"
   runtime       = "python3.12"
-  filename      = "../../../backend/${local.project_slug}-api-bundle.zip"
+  filename      = "../../../backend/lex-api-bundle.zip"
 
   environment {
     variables = {
