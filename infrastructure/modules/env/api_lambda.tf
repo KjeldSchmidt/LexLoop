@@ -37,7 +37,6 @@ resource "aws_lambda_function" "api" {
   environment {
     variables = {
       ENV         = var.env,
-      DEPLOYED_AT = timestamp(),
     }
   }
 }
