@@ -3,9 +3,12 @@ resource "aws_cloudfront_distribution" "cdn" {
   default_root_object = "index.html"
 
   origin {
-    domain_name              = aws_s3_bucket.static_site.bucket_domain_name
-    origin_id                = "${local.project_slug}-frontend-${var.env}"
-    origin_access_control_id = aws_cloudfront_origin_access_control.oac.id
+    domain_name = aws_s3_bucket.static_site.bucket_regional_domain_name
+    origin_id   = "${local.project_slug}-frontend-${var.env}"
+
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.oai.cloudfront_access_identity_path
+    }
   }
 
   origin {
@@ -40,10 +43,6 @@ resource "aws_cloudfront_distribution" "cdn" {
   }
 }
 
-resource "aws_cloudfront_origin_access_control" "oac" {
-  name                              = "s3-oac"
-  description                       = "Access control for CloudFront to S3"
-  origin_access_control_origin_type = "s3"
-  signing_behavior                  = "always"
-  signing_protocol                  = "sigv4"
+resource "aws_cloudfront_origin_access_identity" "oai" {
+  comment = "OAI for S3 bucket"
 }
