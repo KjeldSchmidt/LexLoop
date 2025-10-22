@@ -2,11 +2,11 @@ resource "aws_cloudfront_distribution" "cdn" {
   enabled             = true
   default_root_object = "index.html"
 
-  origin {
-    domain_name              = aws_s3_bucket.static_site.bucket_domain_name
-    origin_id                = "${local.project_slug}-frontend-${var.env}"
-    origin_access_control_id = aws_cloudfront_origin_access_control.oac.id
-  }
+  # origin {
+  #   domain_name              = aws_s3_bucket.static_site.bucket_domain_name
+  #   origin_id                = "${local.project_slug}-frontend-${var.env}"
+  #   origin_access_control_id = aws_cloudfront_origin_access_control.oac.id
+  # }
 
   origin {
     domain_name = aws_apigatewayv2_api.api.api_endpoint
@@ -14,15 +14,16 @@ resource "aws_cloudfront_distribution" "cdn" {
     origin_path = "/$default"
   }
 
-  default_cache_behavior {
-    target_origin_id       = "${local.project_slug}-frontend-${var.env}"
-    viewer_protocol_policy = "redirect-to-https"
-    allowed_methods        = ["GET", "HEAD"]
-    cached_methods         = ["GET", "HEAD"]
-  }
+  # default_cache_behavior {
+  #   target_origin_id       = "${local.project_slug}-frontend-${var.env}"
+  #   viewer_protocol_policy = "redirect-to-https"
+  #   allowed_methods        = ["GET", "HEAD"]
+  #   cached_methods         = ["GET", "HEAD"]
+  # }
 
-  ordered_cache_behavior {
-    path_pattern           = "/api/*"
+  # ordered_cache_behavior {
+  default_cache_behavior {
+    # path_pattern           = "/api/*"
     target_origin_id       = "${local.project_slug}-api-${var.env}"
     viewer_protocol_policy = "redirect-to-https"
     allowed_methods        = ["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE"]
