@@ -4,10 +4,9 @@ from pynamodb.indexes import GlobalSecondaryIndex, AllProjection
 
 from lexloop.model.link_model import LinkType, LinkIn, Link
 
-from pynamodb.models import Model
 from pynamodb.attributes import UnicodeAttribute
 from pynamodb_attributes import UnicodeEnumAttribute
-from lexloop.repository import MetaBase, node_repository
+from lexloop.repository import MetaBase, node_repository, ModelBase
 
 from pydantic import UUID4
 
@@ -29,7 +28,7 @@ class LinkGSI(GlobalSecondaryIndex):  # type: ignore
     node2 = UnicodeAttribute(range_key=True)  # Optional: sort key for the GSI
 
 
-class LinkRepo(Model):
+class LinkRepo(ModelBase):
     class Meta(MetaBase):
         table_name = "lexloop-links"
 

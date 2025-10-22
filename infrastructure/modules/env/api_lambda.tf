@@ -33,6 +33,13 @@ resource "aws_lambda_function" "api" {
   handler       = "lexloop.main.aws_handler"
   runtime       = "python3.12"
   filename      = "${local.project_slug}-api-bundle.zip"
+
+  environment {
+    variables = {
+      ENV         = var.env,
+      DEPLOYED_AT = timestamp(),
+    }
+  }
 }
 
 resource "aws_apigatewayv2_api" "api" {

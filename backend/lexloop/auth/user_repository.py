@@ -2,17 +2,16 @@ from uuid import uuid4
 
 from pydantic import UUID4, EmailStr
 from pynamodb.attributes import UnicodeAttribute, BooleanAttribute
-from pynamodb.models import Model
 
 from lexloop.auth.user_model import (
     UserUpdate,
     User,
     UserCreateIn,
 )
-from lexloop.repository import MetaBase
+from lexloop.repository import MetaBase, ModelBase
 
 
-class UserRepo(Model):
+class UserRepo(ModelBase):
     class Meta(MetaBase):
         table_name = "lexloop-users"
 

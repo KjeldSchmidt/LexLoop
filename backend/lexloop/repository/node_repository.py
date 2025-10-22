@@ -2,14 +2,13 @@ from uuid import uuid4
 
 from lexloop.model.node_model import NodeIn, Node
 
-from pynamodb.models import Model
 from pynamodb.attributes import UnicodeAttribute
-from lexloop.repository import MetaBase
+from lexloop.repository import MetaBase, ModelBase
 
 from pydantic import UUID4
 
 
-class NodeRepo(Model):
+class NodeRepo(ModelBase):
     class Meta(MetaBase):
         table_name = "lexloop-words"
 
