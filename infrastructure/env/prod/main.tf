@@ -14,8 +14,6 @@ terraform {
 }
 
 module "env" {
-  source       = "../../aws-modules/env"
-  env_name     = "prod"
-  project_name = "lexloop"
-  region       = "eu-central-1"
+  source = "../../modules/env"
+  env    = "prod"
 }

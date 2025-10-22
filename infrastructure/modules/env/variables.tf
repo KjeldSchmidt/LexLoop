@@ -1,9 +1,9 @@
-variable "env_name" {
+variable "env" {
   description = "The name of the environment, i.e. dev, stage, prod - used to derive unique resource names"
   type        = string
 
   validation {
-    condition     = contains(["dev", "prod"], var.env_name)
+    condition     = contains(["dev", "prod"], var.env)
     error_message = "Allowed values for env_name are 'dev' or 'prod'."
   }
 }

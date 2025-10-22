@@ -12,5 +12,5 @@ terraform {
 module "env" {
   source = "../../modules/env"
 
-  env_name = "dev"
+  env = "dev"
 }
