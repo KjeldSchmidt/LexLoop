@@ -1,10 +1,10 @@
-name: Deploy
+name: Deploy Backend
 
 on:
   push:
     branches: [main]
     paths:
-      - '.github/workflows/deploy.yml'
+      - '.github/workflows/backend.yml'
       - 'infrastructure/**'
       - 'backend/**'
   pull_request:
