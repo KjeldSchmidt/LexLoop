@@ -49,6 +49,27 @@ function task_setup {
   npm install
 }
 
+## build: build the project
+function task_build {
+  npm run build
+}
+
+## publish: publishes to the given env. Pass env name as first parameter.
+function task_publish {
+  local env=${1:-}
+  [ -z "$env" ] && echo "Error: env is not set. Please pass as first argument: ./do publish <dev|qa|prod>" && exit 1
+  
+  task_build
+  
+  echo "Getting bucket name for $env environment..."
+  local bucket=$(cd ../infrastructure && ./do get-bucket "$env")
+  
+  echo "Publishing to s3://$bucket..."
+  aws s3 sync dist/ "s3://$bucket/" --delete
+  
+  echo "✅ Published successfully to $env"
+}
+
 #-------- All task definitions go above this line --------#
 
 # Bash Strict Mode - For details, see

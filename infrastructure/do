@@ -62,9 +62,9 @@ function task_plan {
 function task_get_bucket {
   local env=${1:-}
   [ -z "$env" ] && echo "Error: env is not set. Usage: ./do get-bucket <dev|qa|prod>" && exit 1
-  pushd "env/$env"
+  pushd "env/$env" >/dev/null
   terraform output -raw website_bucket_name
-  popd
+  popd >/dev/null
 }
 
 ## deploy-base: Deploy the base infrastructure
