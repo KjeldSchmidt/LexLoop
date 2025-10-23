@@ -59,7 +59,10 @@ function task_publish {
   local env=${1:-}
   [ -z "$env" ] && echo "Error: env is not set. Please pass as first argument: ./do publish <dev|qa|prod>" && exit 1
   
-  task_build
+  if [ ! -d "dist" ] || [ -z "$(ls -A dist 2>/dev/null)" ]; then
+    echo "dist/ folder not found or empty. If you are sure you want to publish from local, run ./do build first."
+    exit 1
+  fi
   
   echo "Getting bucket name for $env environment..."
   local bucket=$(cd ../infrastructure && ./do get-bucket "$env")
