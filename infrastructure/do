@@ -51,11 +51,20 @@ function task_apply {
 
 ## plan: Show the terraform plan.
 function task_plan {
-	if [ -z "${1:-}" ]; then echo "Error: environment not specified. Usage: $0 plan <dev|prod>"; exit 1; fi
+	if [ -z "${1:-}" ]; then echo "Error: environment not specified. Usage: $0 plan <dev|qa|prod>"; exit 1; fi
 	pushd "env/$1"
 	terraform init -reconfigure
 	terraform plan
 	popd
+}
+
+## get-bucket: Get the website bucket name for an environment
+function task_get_bucket {
+  local env=${1:-}
+  [ -z "$env" ] && echo "Error: env is not set. Usage: ./do get-bucket <dev|qa|prod>" && exit 1
+  pushd "env/$env"
+  terraform output -raw website_bucket_name
+  popd
 }
 
 ## deploy-base: Deploy the base infrastructure
