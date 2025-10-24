@@ -22,6 +22,15 @@ function task_test {
   docker compose -f local-test-dynamodb.yml down
 }
 
+## tests: Run unit tests
+function wip_task_test {
+  npx supabase start
+  uv run pytest .
+  # This and the start are pretty slow - perhaps it is preferrably to just keep them running?
+  # especially considering that this stores data anyway, so we still need to reset explicitly
+  npx supabase stop
+}
+
 ## lint: Runs static linting
 function task_lint {
   uv run ruff check
