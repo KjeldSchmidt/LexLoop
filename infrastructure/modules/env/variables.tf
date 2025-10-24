@@ -7,3 +7,8 @@ variable "env" {
     error_message = "Allowed values for env_name are 'dev' or 'prod'."
   }
 }
+
+variable "supabase_access_token" {
+  description = "Supabase Access Token"
+  sensitive   = true
+}

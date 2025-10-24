@@ -104,4 +104,4 @@ jobs:
       - name: Deploy dev environment
         run: cd infrastructure && ./do apply-auto dev
         env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_DEV_ACCESS_TOKEN }}
+          TF_VAR_supabase_access_token: ${{ secrets.SUPABASE_DEV_ACCESS_TOKEN }}

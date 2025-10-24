@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    # These values should be replaced with outputs from the base infrastructure
+    # These values are the outputs of the base infrastructure
     bucket       = "lexloop-tfstate-a2d59717"
     key          = "lexloop.dev.tfstate"
     region       = "eu-central-1"
@@ -12,5 +12,6 @@ terraform {
 module "env" {
   source = "../../modules/env"
 
-  env = "dev"
+  env                   = "dev"
+  supabase_access_token = var.supabase_access_token
 }
