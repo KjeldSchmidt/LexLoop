@@ -15,6 +15,8 @@ function task_fmt {
 ## fmt-check: Validate formatting
 function task_fmt_check {
   ./backend/do fmt_check
+  ./infrastructure/do fmt_check
+  ./frontend/do fmt_check
 }
 
 ## setup: Perform a best-effort repository setup
