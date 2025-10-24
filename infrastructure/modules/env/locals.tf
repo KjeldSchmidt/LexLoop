@@ -9,4 +9,6 @@ locals {
     ManagedBy   = "terraform"
     Repository  = "https://github.com/KjeldSchmidt/LexLoop/"
   }
+
+  supabase_org_id = "vmgjkugdrchtmuammsnz"
 }
