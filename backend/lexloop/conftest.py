@@ -1,13 +1,11 @@
 from typing import Generator
 
 from fastapi.testclient import TestClient
-from lexloop.repository import MetaBase
 
 from .main import app
-from .repository.ensure_tables import ensure_tables
+from .repository import supabase
 
 import pytest
-import boto3
 
 
 @pytest.fixture(scope="session")
@@ -16,19 +14,19 @@ def client() -> TestClient:
 
 
 @pytest.fixture(autouse=True)
-def reset_dynamodb() -> Generator[None, None, None]:
-    dynamodb = boto3.client(
-        "dynamodb",
-        endpoint_url=MetaBase.host,
-        region_name=MetaBase.region,
-        aws_access_key_id="fake",
-        aws_secret_access_key="fake",
-    )
-
-    tables = dynamodb.list_tables()["TableNames"]
-    for name in tables:
-        dynamodb.delete_table(TableName=name)
-
-    ensure_tables()
-
+def reset_database() -> Generator[None, None, None]:
+    # Clear all data before each test
+    supabase.table("links").delete().neq(
+        "uuid", "00000000-0000-0000-0000-000000000000"
+    ).execute()
+    supabase.table("nodes").delete().neq(
+        "uuid", "00000000-0000-0000-0000-000000000000"
+    ).execute()
     yield
+    # Clear all data after each test
+    supabase.table("links").delete().neq(
+        "uuid", "00000000-0000-0000-0000-000000000000"
+    ).execute()
+    supabase.table("nodes").delete().neq(
+        "uuid", "00000000-0000-0000-0000-000000000000"
+    ).execute()

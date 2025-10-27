@@ -17,18 +17,11 @@ function task_fmt_check {
 
 ## tests: Run unit tests
 function task_test {
-  docker compose -f local-test-dynamodb.yml up -d dynamodb
-  uv run pytest .
-  docker compose -f local-test-dynamodb.yml down
-}
-
-## tests: Run unit tests
-function wip_task_test {
   npx supabase start
+  # Export dynamic supabase connection values
+  eval "$(npx supabase status --output json 2>/dev/null | jq -r '"export SUPABASE_URL=\(.API_URL)\nexport SUPABASE_KEY=\(.SERVICE_ROLE_KEY)"')"
+
   uv run pytest .
-  # This and the start are pretty slow - perhaps it is preferrably to just keep them running?
-  # especially considering that this stores data anyway, so we still need to reset explicitly
-  npx supabase stop
 }
 
 ## lint: Runs static linting
@@ -60,6 +53,7 @@ function task_build {
   cp -r "$site_packages_path"/* $build_dir_name
   cp -r lexloop "$build_dir_name/lexloop"
   zip -r "${build_dir_name}.zip" $build_dir_name
+  rm -rf $build_dir_name
 }
 
 function task_setup {
