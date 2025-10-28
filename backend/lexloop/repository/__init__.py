@@ -1,4 +1,2 @@
-from supabase import create_client
-from lexloop.config import environment
-
-supabase = create_client(environment.SUPABASE_URL, environment.SUPABASE_KEY)
+# No longer using a global client - repositories now accept client as parameter
+# For tests, use get_supabase_admin() from auth.dependencies

@@ -1,10 +1,11 @@
 from uuid import uuid4
 from lexloop.model.node_model import NodeIn, Node
-from lexloop.repository import supabase
 from pydantic import UUID4
+from supabase import Client
 
 
-def add(node: NodeIn) -> Node:
+def add(node: NodeIn, supabase: Client) -> Node:
+    """Add a node. user_id is automatically set by RLS based on JWT."""
     node_data = {
         "uuid": str(uuid4()),
         "term": node.term,
@@ -19,7 +20,8 @@ def add(node: NodeIn) -> Node:
     )
 
 
-def get_all() -> list[Node]:
+def get_all(supabase: Client) -> list[Node]:
+    """Get all nodes. RLS automatically filters by user_id."""
     result = supabase.table("nodes").select("*").execute()
     return [
         Node(
@@ -31,7 +33,8 @@ def get_all() -> list[Node]:
     ]
 
 
-def get_by_uuid(uuid: UUID4) -> Node:
+def get_by_uuid(uuid: UUID4, supabase: Client) -> Node:
+    """Get node by UUID. RLS automatically filters by user_id."""
     result = supabase.table("nodes").select("*").eq("uuid", str(uuid)).execute()
     if not result.data:
         raise ValueError(f"Node with uuid {uuid} not found")

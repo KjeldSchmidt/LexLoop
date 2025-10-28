@@ -64,7 +64,7 @@ jobs:
         run: ./backend/do fmt-check
 
       - name: Linting
-        run: ./backend/do lint
+        run: ./backend/do lint-check
 
       - name: Test
         run: ./backend/do test

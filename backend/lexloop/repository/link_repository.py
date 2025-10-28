@@ -3,10 +3,11 @@ from pydantic import UUID4
 
 from lexloop.model.link_model import LinkIn, Link, LinkType
 from lexloop.model.node_model import Node
-from lexloop.repository import supabase
+from supabase import Client
 
 
-def add(link: LinkIn) -> Link:
+def add(link: LinkIn, supabase: Client) -> Link:
+    """Add a link. user_id is automatically set by RLS based on JWT."""
     link_data = {
         "uuid": str(uuid4()),
         "type": link.type,
@@ -43,7 +44,8 @@ def add(link: LinkIn) -> Link:
     )
 
 
-def get_all() -> list[Link]:
+def get_all(supabase: Client) -> list[Link]:
+    """Get all links. RLS automatically filters by user_id."""
     result = (
         supabase.table("links")
         .select("*, node1:nodes!node1_uuid(*), node2:nodes!node2_uuid(*)")
@@ -64,7 +66,8 @@ def get_all() -> list[Link]:
     return links
 
 
-def get_all_for_node_uuid(node_uuid: UUID4) -> list[Link]:
+def get_all_for_node_uuid(node_uuid: UUID4, supabase: Client) -> list[Link]:
+    """Get all links for a node. RLS automatically filters by user_id."""
     result = (
         supabase.table("links")
         .select("*, node1:nodes!node1_uuid(*), node2:nodes!node2_uuid(*)")
@@ -86,7 +89,8 @@ def get_all_for_node_uuid(node_uuid: UUID4) -> list[Link]:
     return links
 
 
-def get_by_uuid(uuid: UUID4) -> Link:
+def get_by_uuid(uuid: UUID4, supabase: Client) -> Link:
+    """Get link by UUID. RLS automatically filters by user_id."""
     result = (
         supabase.table("links")
         .select("*, node1:nodes!node1_uuid(*), node2:nodes!node2_uuid(*)")

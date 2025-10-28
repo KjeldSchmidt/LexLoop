@@ -19,13 +19,18 @@ function task_fmt_check {
 function task_test {
   npx supabase start
   # Export dynamic supabase connection values
-  eval "$(npx supabase status --output json 2>/dev/null | jq -r '"export SUPABASE_URL=\(.API_URL)\nexport SUPABASE_KEY=\(.SERVICE_ROLE_KEY)"')"
+  eval "$(npx supabase status --output json 2>/dev/null | jq -r '"export SUPABASE_URL=\(.API_URL)\nexport SUPABASE_SERVICE_ROLE_KEY=\(.SERVICE_ROLE_KEY)\nexport SUPABASE_ANON_KEY=\(.ANON_KEY)"')"
 
   uv run pytest .
 }
 
-## lint: Runs static linting
+## lint: Runs static linting, including fixes for local development
 function task_lint {
+  uv run ruff check --fix
+}
+
+## lint-check: Runs static linting without automatic fixes for CI
+function task_lint_check {
   uv run ruff check
 }
 
