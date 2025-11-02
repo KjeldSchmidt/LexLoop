@@ -17,11 +17,9 @@ function task_fmt_check {
 
 ## tests: Run unit tests
 function task_test {
-  npx supabase start
-  # Export dynamic supabase connection values
-  eval "$(npx supabase status --output json 2>/dev/null | jq -r '"export SUPABASE_URL=\(.API_URL)\nexport SUPABASE_SERVICE_ROLE_KEY=\(.SERVICE_ROLE_KEY)\nexport SUPABASE_ANON_KEY=\(.ANON_KEY)"')"
-
+  docker compose -f local-test-dynamodb.yml up -d dynamodb
   uv run pytest .
+  docker compose -f local-test-dynamodb.yml down
 }
 
 ## lint: Runs static linting, including fixes for local development
