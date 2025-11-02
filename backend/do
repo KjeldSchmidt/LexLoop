@@ -17,9 +17,9 @@ function task_fmt_check {
 
 ## tests: Run unit tests
 function task_test {
-  docker compose -f local-test-dynamodb.yml up -d dynamodb
+  docker compose -f local-test-postgres.yml up -d postgres
   uv run pytest .
-  docker compose -f local-test-dynamodb.yml down
+  docker compose -f local-test-postgres.yml down
 }
 
 ## lint: Runs static linting, including fixes for local development

@@ -6,7 +6,7 @@ from fastapi import Depends
 from fastapi_users import BaseUserManager, UUIDIDMixin
 from fastapi_users.db.base import BaseUserDatabase
 
-from .user_database_adapter import get_user_db
+from .user_repository import get_user_db
 from .user_model import User
 
 RESET_PASSWORD_TOKEN_SECRET = os.getenv("RESET_PASSWORD_TOKEN_SECRET", "")
