@@ -7,11 +7,21 @@ from lexloop.model.link_model import LinkType
 
 def test_add_link_returns_2xx(client: TestClient) -> None:
     node1_response = client.post(
-        "/nodes", json={"term": "test1", "definition": "test", "synonyms": []}
+        "/nodes",
+        json={
+            "term": "test1",
+            "definition": "test",
+            "tags": [],
+        },
     )
 
     node2_response = client.post(
-        "/nodes", json={"term": "test2", "definition": "test", "synonyms": []}
+        "/nodes",
+        json={
+            "term": "test2",
+            "definition": "test",
+            "tags": [],
+        },
     )
 
     response = client.post(
@@ -38,11 +48,13 @@ def test_get_links_when_none_are_stored_returns_empty_list(
 
 def test_get_links_when_links_are_added(client: TestClient) -> None:
     node1_response = client.post(
-        "/nodes", json={"term": "test1", "definition": "test"}
+        "/nodes",
+        json={"term": "test1", "definition": "test", "tags": []},
     )
 
     node2_response = client.post(
-        "/nodes", json={"term": "test2", "definition": "test"}
+        "/nodes",
+        json={"term": "test2", "definition": "test", "tags": []},
     )
     response = client.post(
         "/links",
