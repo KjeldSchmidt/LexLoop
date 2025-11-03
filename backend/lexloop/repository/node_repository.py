@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from uuid import uuid4
 
 from sqlalchemy import String, ForeignKey, select
@@ -6,11 +8,10 @@ from sqlalchemy.orm import Mapped, mapped_column, Session, relationship
 from lexloop.model.node_model import NodeIn, Node
 
 from lexloop.repository import Base
+from lexloop.repository.tag_repository import TagRepo
 from sqlalchemy.dialects.postgresql import UUID as POSTGRES_UUID
 
 from pydantic import UUID4
-
-from lexloop.repository.tag_repository import TagRepo
 
 
 class NodeToTagsRepo(Base):
@@ -55,13 +56,19 @@ class NodeRepo(Base):
 
 
 def add(node: NodeIn, session: Session) -> Node:
+    # Fetch actual TagRepo objects from UUIDs
+    tag_repos = [session.get(TagRepo, tag_uuid) for tag_uuid in node.tags]
+    tag_repos = [tag for tag in tag_repos if tag is not None]
+
     node_repo = NodeRepo(
         uuid=str(uuid4()),
         term=node.term,
         definition=node.definition,
-        tags=set(node.tags),
+        tags=tag_repos,
     )
     session.add(node_repo)
+    session.commit()
+    session.refresh(node_repo)
     return node_repo.to_internal_model()
 
 

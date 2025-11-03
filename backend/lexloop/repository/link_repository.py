@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 from uuid import uuid4
 
 from sqlalchemy import String, ForeignKey, select
@@ -5,7 +8,9 @@ from sqlalchemy.orm import mapped_column, Mapped, relationship, Session
 
 from lexloop.model.link_model import LinkType, LinkIn, Link
 from lexloop.repository import Base
-from lexloop.repository.node_repository import NodeRepo
+
+if TYPE_CHECKING:
+    from lexloop.repository import NodeRepo
 
 from pydantic import UUID4
 from sqlalchemy.dialects.postgresql import UUID as POSTGRES_UUID
@@ -31,11 +36,15 @@ class LinkRepo(Base):
     node1_uuid: Mapped[UUID4] = mapped_column(
         POSTGRES_UUID(as_uuid=True), ForeignKey("lexloop_nodes.uuid")
     )
-    node1: Mapped[NodeRepo] = relationship("LinkRepo", lazy="selectin")
+    node1: Mapped[NodeRepo] = relationship(
+        "NodeRepo", foreign_keys=[node1_uuid], lazy="selectin"
+    )
     node2_uuid: Mapped[UUID4] = mapped_column(
         POSTGRES_UUID(as_uuid=True), ForeignKey("lexloop_nodes.uuid")
     )
-    node2: Mapped[NodeRepo] = relationship("LinkRepo", lazy="selectin")
+    node2: Mapped[NodeRepo] = relationship(
+        "NodeRepo", foreign_keys=[node2_uuid], lazy="selectin"
+    )
 
     def to_internal_model(self) -> Link:
         """
@@ -52,14 +61,25 @@ class LinkRepo(Base):
 
 
 def add(link: LinkIn, session: Session) -> Link:
+    # Fetch actual NodeRepo objects from UUIDs
+    from lexloop.repository.node_repository import NodeRepo
+
+    node1_repo = session.get(NodeRepo, link.node1)
+    node2_repo = session.get(NodeRepo, link.node2)
+
+    if node1_repo is None or node2_repo is None:
+        raise ValueError("Node not found")
+
     link_repo = LinkRepo(
         uuid=str(uuid4()),
-        type=LinkType[link.type],
-        node1=link.node1,
-        node2=link.node2,
+        type=link.type,  # Store as string, not enum
+        node1_uuid=link.node1,
+        node2_uuid=link.node2,
         annotation=link.annotation,
     )
     session.add(link_repo)
+    session.commit()
+    session.refresh(link_repo)
     return link_repo.to_internal_model()
 
 
@@ -72,7 +92,7 @@ def get_all(session: Session) -> list[Link]:
 def get_all_for_node_uuid(node_uuid: UUID4, session: Session) -> list[Link]:
     # search in both columns
     statement = select(LinkRepo).where(
-        LinkRepo.node1_uuid == node_uuid or LinkRepo.node2_uuid == node_uuid
+        (LinkRepo.node1_uuid == node_uuid) | (LinkRepo.node2_uuid == node_uuid)
     )
     links = session.scalars(statement).all()
     # Todo: paginate

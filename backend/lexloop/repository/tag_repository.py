@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 from uuid import uuid4
 
 from lexloop.model.tag_model import TagIn, Tag
@@ -7,13 +10,15 @@ from lexloop.repository import Base
 from pydantic import UUID4
 
 from sqlalchemy import String
-from sqlalchemy.orm import Mapped, mapped_column, Session
+from sqlalchemy.orm import Mapped, mapped_column, Session, relationship
 from sqlalchemy.dialects.postgresql import UUID as POSTGRES_UUID
+
+if TYPE_CHECKING:
+    from lexloop.repository import NodeRepo
 
 
 class TagRepo(Base):
     __tablename__ = "lexloop_tags"
-    # __table_args__ = (Index("ix_field_draft_grower_id", "grower_id"),)
 
     uuid: Mapped[UUID4] = mapped_column(
         "uuid",
@@ -24,6 +29,11 @@ class TagRepo(Base):
     )
     title: Mapped[str] = mapped_column("title", String(100))
     description: Mapped[str] = mapped_column("description", String(300))
+    lexloop_nodes: Mapped[list[NodeRepo]] = relationship(
+        "NodeRepo",
+        secondary="lexloop_node_to_tags",
+        back_populates="tags",
+    )
 
     # Todo: instrumented attribute?
     def to_internal_model(self) -> Tag:
@@ -41,6 +51,8 @@ def add(tag: TagIn, session: Session) -> Tag:
         description=tag.description,
     )
     session.add(tag_repo)
+    session.commit()
+    session.refresh(tag_repo)
     return tag_repo.to_internal_model()
 
 
