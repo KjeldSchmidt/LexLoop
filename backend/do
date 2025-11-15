@@ -55,7 +55,7 @@ function task_build {
   site_packages_path=".venv/lib/python${python_version}/site-packages"
   cp -r "$site_packages_path"/* $build_dir_name
   cp -r lexloop "$build_dir_name/lexloop"
-  zip -r "${build_dir_name}.zip" $build_dir_name
+  (cd $build_dir_name && zip -r "../${build_dir_name}.zip" .)
   rm -rf $build_dir_name
 }
 
