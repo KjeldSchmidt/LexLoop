@@ -63,6 +63,12 @@ jobs:
         with:
           version: 0.9.5
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::465836752303:role/lexloop-cicd-deploy-role
+          aws-region: eu-central-1
+
       - name: Build lambda bundle
         run: cd backend && ./do build
 
@@ -76,12 +82,6 @@ jobs:
 
       - name: Lint infra
         run: ./infrastructure/do lint
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::465836752303:role/lexloop-cicd-deploy-role
-          aws-region: eu-central-1
 
       - name: Deploy dev environment
         run: cd infrastructure && ./do apply-auto dev
