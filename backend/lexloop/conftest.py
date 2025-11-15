@@ -4,6 +4,7 @@ from sqlalchemy.orm import sessionmaker, Session
 from lexloop.repository.base import Base
 from fastapi.testclient import TestClient
 
+from .config import env_settings
 from .main import app
 from lexloop.controller import get_db
 from lexloop.auth import user_repository
@@ -14,7 +15,7 @@ import asyncio
 
 @pytest.fixture(scope="session")
 def engine() -> Engine:
-    return create_engine("postgresql://user:password@localhost:5435/lexloopdb")
+    return create_engine(env_settings.DB_URL)
 
 
 @pytest.fixture(scope="session")

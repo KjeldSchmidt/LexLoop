@@ -11,6 +11,7 @@ from sqlalchemy.ext.asyncio import (
 )
 from sqlalchemy.pool import NullPool
 
+from lexloop.config import env_settings
 from lexloop.repository.base import Base
 
 
@@ -19,7 +20,6 @@ class UserRepo(SQLAlchemyBaseUserTableUUID, Base):
 
 
 # Create async engine and sessionmaker for auth only
-DATABASE_URL = "postgresql+asyncpg://user:password@localhost:5435/lexloopdb"
 
 # Lazy initialization to avoid event loop issues in tests
 _async_engine = None
@@ -30,7 +30,7 @@ def get_engine() -> AsyncEngine:
     global _async_engine
     if _async_engine is None:
         _async_engine = create_async_engine(
-            DATABASE_URL, echo=False, poolclass=NullPool
+            env_settings.DB_URL, echo=False, poolclass=NullPool
         )
     return _async_engine
 

@@ -2,7 +2,18 @@
 
 ## run: Run the server
 function task_run {
+  task_db_up
   uv run python -m uvicorn lexloop.main:app
+}
+
+## db-up: Start the database container
+function task_db_up {
+  docker compose -f local-postgres.yml up -d --wait postgres
+}
+
+## db-down: Start the database container
+function task_db_down {
+    docker compose -f local-postgres.yml down
 }
 
 ## fmt: Formats all files
@@ -17,6 +28,8 @@ function task_fmt_check {
 
 ## tests: Run unit tests
 function task_test {
+  export $(cat .env | xargs)
+  export DB_URL=$LOCAL_TEST_DB_URL
   docker compose -f local-test-postgres.yml up -d --wait postgres
   uv run pytest lexloop
   docker compose -f local-test-postgres.yml down
@@ -62,6 +75,24 @@ function task_build {
   cp -r lexloop "$build_dir_name/lexloop"
   (cd $build_dir_name && zip -r "../${build_dir_name}.zip" .)
   rm -rf $build_dir_name
+}
+
+## db-migration-new: Create a new database migration with auto-generated changes (usage: ./do db-migration-new <title>)
+function task_db_migration_new {
+  local title="$1"
+  if [ -z "$title" ]; then
+    echo "Error: title is not set. Usage: ./do db-migration-new <description_of_changes>"
+    exit 1
+  fi
+  
+  path=$(uv run alembic revision --autogenerate -m "$title" | grep -oE "[^ ]+versions/[^ ]+\.py")
+  dir=$(dirname "$path")
+  file=$(basename "$path")
+  highest=$(ls "$dir" | grep -v "$file" | grep -oE "^0[0-9]{3}" | sort -n | tail -n 1)
+  next=$(printf "%04d" $(( ${highest#0} + 1 )))
+  newfile="${next}_${file}"
+  mv "$path" "$dir/$newfile"
+  echo "Created migration: $dir/$newfile"
 }
 
 function task_setup {

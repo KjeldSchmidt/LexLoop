@@ -3,8 +3,9 @@ from typing import Generator
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 
-DATABASE_URL = "postgresql://user:password@localhost:5435/lexloopdb"
-engine = create_engine(DATABASE_URL)
+from lexloop.config import env_settings
+
+engine = create_engine(env_settings.DB_URL)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
 

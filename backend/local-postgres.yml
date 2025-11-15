@@ -5,11 +5,14 @@ services:
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: lexloopdb-test
+      POSTGRES_DB: lexloopdb
     ports:
-      - "5436:5432"
+      - "5435:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U user -d lexloopdb"]
       interval: 1s
       timeout: 5s
       retries: 10
+
+volumes:
+  postgres-data:
