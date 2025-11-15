@@ -24,7 +24,7 @@ function task_test {
 
 ## smoke-test: Run smoke tests against deployed API
 function task_smoke_test {
-  uv run --with httpx --with pytest pytest smoke-tests -v
+  uv run --with httpx --with pytest pytest smoke_tests -v
 }
 
 ## lint: Runs static linting, including fixes for local development
