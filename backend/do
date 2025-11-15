@@ -17,7 +17,7 @@ function task_fmt_check {
 
 ## tests: Run unit tests
 function task_test {
-  docker compose -f local-test-postgres.yml up -d postgres
+  docker compose -f local-test-postgres.yml up -d --wait postgres
   uv run pytest .
   docker compose -f local-test-postgres.yml down
 }
