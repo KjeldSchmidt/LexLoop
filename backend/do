@@ -95,6 +95,12 @@ function task_db_migration_new {
   echo "Created migration: $dir/$newfile"
 }
 
+## db-migrate-up
+function task_db_migrate_up {
+  task_db_up
+  uv run alembic upgrade head
+}
+
 ## db-migrate-remote: Apply migrations to remote database (usage: ./do db-migrate-remote <dev|prod>)
 function task_db_migrate_remote {
   local env="${1:-}"

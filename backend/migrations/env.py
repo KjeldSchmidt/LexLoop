@@ -1,7 +1,6 @@
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import create_engine, pool
 
 from alembic import context
 
@@ -12,9 +11,7 @@ from lexloop.repository.base import Base
 # access to the values within the .ini file in use.
 config = context.config
 
-# this will overwrite the ini-file sqlalchemy.url path
-# with the path given in the config of the main code
-print(env_settings.DB_URL)
+# Get database URL from environment settings
 database_connection_string = env_settings.DB_URL
 
 # Interpret the config file for Python logging.
@@ -64,12 +61,10 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-    # Override the sqlalchemy.url in the config with the actual DB_URL
-    config.set_main_option("sqlalchemy.url", database_connection_string)
-
-    connectable = engine_from_config(
-        config.get_section(config.config_ini_section, {}),
-        prefix="sqlalchemy.",
+    # Create engine directly from URL to avoid ConfigParser interpolation issues
+    # (passwords with % characters break config.set_main_option)
+    connectable = create_engine(
+        database_connection_string,
         poolclass=pool.NullPool,
     )
 
