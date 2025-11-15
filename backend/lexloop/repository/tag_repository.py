@@ -5,7 +5,7 @@ from uuid import uuid4
 
 from lexloop.model.tag_model import TagIn, Tag
 
-from lexloop.repository import Base
+from lexloop.repository.base import Base
 
 from pydantic import UUID4
 

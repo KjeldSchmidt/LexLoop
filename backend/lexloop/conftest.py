@@ -1,7 +1,7 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
-from lexloop.repository import Base
+from typing import Generator
+from sqlalchemy import create_engine, Engine
+from sqlalchemy.orm import sessionmaker, Session
+from lexloop.repository.base import Base
 from fastapi.testclient import TestClient
 
 from .main import app
@@ -13,19 +13,21 @@ import asyncio
 
 
 @pytest.fixture(scope="session")
-def engine():
+def engine() -> Engine:
     return create_engine("postgresql://user:password@localhost:5435/lexloopdb")
 
 
 @pytest.fixture(scope="session")
-def tables(engine):
+def tables(engine: Engine) -> Generator[None, None, None]:
     Base.metadata.create_all(engine)
     yield
     Base.metadata.drop_all(engine)
 
 
 @pytest.fixture
-def db_session(engine, tables):
+def db_session(
+    engine: Engine, tables: object
+) -> Generator[Session, None, None]:
     """Provide a transactional scope for each test"""
     connection = engine.connect()
     transaction = connection.begin()
@@ -39,30 +41,26 @@ def db_session(engine, tables):
 
 
 @pytest.fixture
-def client(engine, tables, db_session):
+def client(
+    engine: Engine, tables: object, db_session: Session
+) -> Generator[TestClient, None, None]:
     """Provide a test client with overridden database dependency"""
 
     user_repository._async_engine = None
     user_repository._async_sessionmaker = None
 
-    def override_get_db():
+    def override_get_db() -> Generator[Session, None, None]:
         yield db_session
 
     app.dependency_overrides[get_db] = override_get_db
-    
-    # Note: We don't override get_async_session because TestClient handles
-    # async dependencies in its own event loop, and the async session will
-    # naturally connect to the same test database
-    
+
     yield TestClient(app)
-    
+
     app.dependency_overrides.clear()
-    
-    # Clean up async engine after test if it was created
+
+    # Clean up async engine after test if it was created. We never set this
+    # explicitly, it gets it automatically from the TestClient context.
     if user_repository._async_engine is not None:
-        try:
-            asyncio.run(user_repository._async_engine.dispose())
-        except:
-            pass
+        asyncio.run(user_repository._async_engine.dispose())  # type: ignore[unreachable]
         user_repository._async_engine = None
         user_repository._async_sessionmaker = None

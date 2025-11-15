@@ -7,7 +7,7 @@ from sqlalchemy.orm import Mapped, mapped_column, Session, relationship
 
 from lexloop.model.node_model import NodeIn, Node
 
-from lexloop.repository import Base
+from lexloop.repository.base import Base
 from lexloop.repository.tag_repository import TagRepo
 from sqlalchemy.dialects.postgresql import UUID as POSTGRES_UUID
 

@@ -4,13 +4,14 @@ from fastapi import Depends
 from fastapi_users.db import SQLAlchemyBaseUserTableUUID, SQLAlchemyUserDatabase
 from pydantic import UUID4
 from sqlalchemy.ext.asyncio import (
+    AsyncEngine,
     AsyncSession,
     async_sessionmaker,
     create_async_engine,
 )
 from sqlalchemy.pool import NullPool
 
-from lexloop.repository import Base
+from lexloop.repository.base import Base
 
 
 class UserRepo(SQLAlchemyBaseUserTableUUID, Base):
@@ -25,17 +26,21 @@ _async_engine = None
 _async_sessionmaker = None
 
 
-def get_engine():
+def get_engine() -> AsyncEngine:
     global _async_engine
     if _async_engine is None:
-        _async_engine = create_async_engine(DATABASE_URL, echo=False, poolclass=NullPool)
+        _async_engine = create_async_engine(
+            DATABASE_URL, echo=False, poolclass=NullPool
+        )
     return _async_engine
 
 
-def get_sessionmaker():
+def get_sessionmaker() -> async_sessionmaker[AsyncSession]:
     global _async_sessionmaker
     if _async_sessionmaker is None:
-        _async_sessionmaker = async_sessionmaker(get_engine(), expire_on_commit=False)
+        _async_sessionmaker = async_sessionmaker(
+            get_engine(), expire_on_commit=False
+        )
     return _async_sessionmaker
 
 

@@ -7,7 +7,7 @@ from sqlalchemy import String, ForeignKey, select
 from sqlalchemy.orm import mapped_column, Mapped, relationship, Session
 
 from lexloop.model.link_model import LinkType, LinkIn, Link
-from lexloop.repository import Base
+from lexloop.repository.base import Base
 
 if TYPE_CHECKING:
     from lexloop.repository import NodeRepo
