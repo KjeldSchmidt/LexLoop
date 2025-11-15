@@ -18,8 +18,13 @@ function task_fmt_check {
 ## tests: Run unit tests
 function task_test {
   docker compose -f local-test-postgres.yml up -d --wait postgres
-  uv run pytest .
+  uv run pytest lexloop
   docker compose -f local-test-postgres.yml down
+}
+
+## smoke-test: Run smoke tests against deployed API
+function task_smoke_test {
+  uv run --with httpx --with pytest pytest smoke-tests -v
 }
 
 ## lint: Runs static linting, including fixes for local development

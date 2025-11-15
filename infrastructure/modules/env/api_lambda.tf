@@ -31,7 +31,7 @@ resource "aws_lambda_function" "api" {
   function_name    = "${local.project_slug}-api-${var.env}"
   role             = aws_iam_role.lambda_role.arn
   handler          = "lexloop.main.aws_handler"
-  runtime          = "python3.12"
+  runtime          = "python3.13"
   filename         = "../../../backend/lex-api-bundle.zip"
   source_code_hash = filebase64sha256("../../../backend/lex-api-bundle.zip")
 
