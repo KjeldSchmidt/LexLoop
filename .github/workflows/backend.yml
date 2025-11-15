@@ -98,6 +98,11 @@ jobs:
           API_BASE_URL=$(terraform output -raw api_base_url)
           echo "api_base_url=$API_BASE_URL" >> $GITHUB_OUTPUT
 
+      - name: Run database migrations
+        run: cd backend && ./do db-migrate-remote dev
+        env:
+          TF_VAR_supabase_access_token: ${{ secrets.SUPABASE_DEV_ACCESS_TOKEN }}
+
   smoke-tests:
     name: Smoke Tests
     runs-on: ubuntu-latest

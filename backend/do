@@ -95,6 +95,25 @@ function task_db_migration_new {
   echo "Created migration: $dir/$newfile"
 }
 
+## db-migrate-remote: Apply migrations to remote database (usage: ./do db-migrate-remote <dev|prod>)
+function task_db_migrate_remote {
+  local env="${1:-}"
+  if [ -z "$env" ]; then
+    echo "Error: environment not specified. Usage: ./do db-migrate-remote <dev|prod>"
+    exit 1
+  fi
+  
+  echo "Fetching DB connection string for $env environment..."
+  pushd "../infrastructure/env/$env" >/dev/null
+  terraform init -reconfigure >/dev/null
+  export DB_URL=$(terraform output -raw db_url)
+  popd >/dev/null
+  
+  echo "Running migrations against $env database..."
+  uv run alembic upgrade head
+  echo "Migrations applied successfully ✅"
+}
+
 function task_setup {
   if ! command -v uv >/dev/null 2>&1; then
     curl -LsSf https://astral.sh/uv/install.sh | sh
