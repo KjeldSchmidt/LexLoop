@@ -6,7 +6,7 @@ from lexloop.controller.link_controller import router as link_router
 from lexloop.controller.tag_controller import router as tag_router
 from lexloop.auth.auth_controller import router as auth_router
 
-app = FastAPI()
+app = FastAPI(root_path="/api")
 
 
 @app.get("/health")

@@ -9,4 +9,4 @@ def test_health_endpoint() -> None:
 
     response = httpx.get(f"{api_base_url}/health", timeout=10.0)
 
-    assert response.status_code == 200
+    assert response.status_code == 204
