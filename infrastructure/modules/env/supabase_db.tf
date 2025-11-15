@@ -6,6 +6,11 @@ resource "supabase_project" "_" {
 }
 
 resource "random_password" "supabase_password" {
-  length  = 64
-  special = true
+  length           = 64
+  special          = true
+  override_special = "!#$^&*()-_=+[]{}:,.<>?" # Exclude % and @ to avoid URL encoding issues
+
+  keepers = {
+    rotation_version = "1" # Increment this to rotate the password
+  }
 }
