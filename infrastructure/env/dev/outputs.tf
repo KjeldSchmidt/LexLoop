@@ -18,9 +18,8 @@ output "api_base_url" {
   value       = module.env.api_base_url
 }
 
-output "db_url" {
-  description = "Database connection string for migrations"
-  value       = module.env.db_url
-  sensitive   = true
-}
-
+# output "db_url" {
+#   description = "Database connection string for migrations"
+#   value       = module.env.db_url
+#   sensitive   = true
+# }
