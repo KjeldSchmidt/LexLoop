@@ -106,6 +106,7 @@ jobs:
   smoke-tests:
     name: Smoke Tests
     runs-on: ubuntu-latest
+    if: always()
     needs: [deploy-dev]
     steps:
       - name: Checkout code
