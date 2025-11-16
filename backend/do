@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+API_BASE_DEV="https://d1su4015b7ijdn.cloudfront.net/api/"
 
 ## run: Run the server
 function task_run {
