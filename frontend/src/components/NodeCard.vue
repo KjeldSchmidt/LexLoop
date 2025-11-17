@@ -4,12 +4,12 @@ import { defineProps } from 'vue'
 defineProps({
   title: {
     type: String,
-    required: true
+    required: true,
   },
   definition: {
     type: String,
-    required: true
-  }
+    required: true,
+  },
 })
 </script>
 
@@ -21,7 +21,7 @@ defineProps({
 </template>
 
 <style scoped>
-  p {
-    color: red;
-  }
+p {
+  color: red;
+}
 </style>
