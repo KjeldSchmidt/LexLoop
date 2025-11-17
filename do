@@ -10,6 +10,8 @@ function task_quality_gates {
 ## fmt: Validate formatting
 function task_fmt {
   ./backend/do fmt
+  ./frontend/do fmt
+  ./infrastructure/do fmt
 }
 
 ## fmt-check: Validate formatting
