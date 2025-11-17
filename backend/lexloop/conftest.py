@@ -7,7 +7,7 @@ from fastapi.testclient import TestClient
 from .config import env_settings
 from .main import app
 from lexloop.controller import get_db
-from lexloop.auth import user_repository
+from lexloop.auth import user_manager
 
 import pytest
 import asyncio
@@ -47,8 +47,8 @@ def client(
 ) -> Generator[TestClient, None, None]:
     """Provide a test client with overridden database dependency"""
 
-    user_repository._async_engine = None
-    user_repository._async_sessionmaker = None
+    user_manager._async_engine = None
+    user_manager._async_sessionmaker = None
 
     def override_get_db() -> Generator[Session, None, None]:
         yield db_session
@@ -61,7 +61,7 @@ def client(
 
     # Clean up async engine after test if it was created. We never set this
     # explicitly, it gets it automatically from the TestClient context.
-    if user_repository._async_engine is not None:
-        asyncio.run(user_repository._async_engine.dispose())  # type: ignore[unreachable]
-        user_repository._async_engine = None
-        user_repository._async_sessionmaker = None
+    if user_manager._async_engine is not None:
+        asyncio.run(user_manager._async_engine.dispose())  # type: ignore[unreachable]
+        user_manager._async_engine = None
+        user_manager._async_sessionmaker = None
