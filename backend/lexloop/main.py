@@ -8,9 +8,17 @@ from lexloop.controller import get_db
 from lexloop.controller.link_controller import router as link_router
 from lexloop.controller.node_controller import router as word_router
 from lexloop.controller.tag_controller import router as tag_router
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(root_path="/api")
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/health")
 async def health() -> Response:
