@@ -3,7 +3,7 @@ import { defineProps } from 'vue'
 
 defineProps({
   title: {
-    type: Number,
+    type: String,
     required: true
   },
   definition: {

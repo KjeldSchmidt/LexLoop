@@ -5,7 +5,7 @@ import NodeCard from "@/components/NodeCard.vue";
 <template>
   <h1>Willkommen!</h1>
 
-  <NodeCard title="5" definition="description">
+  <NodeCard title="title" definition="description">
 
   </NodeCard>
 </template>
