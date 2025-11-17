@@ -18,8 +18,8 @@ async def health() -> Response:
 
 
 @app.get("/health/database")
-async def health(session: Session = Depends(get_db)) -> Response:
-    session.execute("SELECT 1")
+async def db_health(session: Session = Depends(get_db)) -> Response:
+    session.execute("SELECT 1")  # type: ignore
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 

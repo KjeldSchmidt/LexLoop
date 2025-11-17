@@ -12,7 +12,7 @@ def test_health_endpoint() -> None:
     assert response.status_code == 204
 
 
-def test_health_endpoint() -> None:
+def test_database_health() -> None:
     """Test that the API health endpoint is accessible."""
     api_base_url = os.environ["API_BASE_URL"]
 
