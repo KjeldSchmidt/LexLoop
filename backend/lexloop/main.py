@@ -1,16 +1,25 @@
-from fastapi import FastAPI, Response, status
+from fastapi import FastAPI, Response
+from fastapi import status, Depends
 from mangum import Mangum
+from sqlalchemy.orm import Session
 
-from lexloop.controller.node_controller import router as word_router
-from lexloop.controller.link_controller import router as link_router
-from lexloop.controller.tag_controller import router as tag_router
 from lexloop.auth.auth_controller import router as auth_router
+from lexloop.controller import get_db
+from lexloop.controller.link_controller import router as link_router
+from lexloop.controller.node_controller import router as word_router
+from lexloop.controller.tag_controller import router as tag_router
 
 app = FastAPI(root_path="/api")
 
 
 @app.get("/health")
 async def health() -> Response:
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@app.get("/health/database")
+async def health(session: Session = Depends(get_db)) -> Response:
+    session.execute("SELECT 1")
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
