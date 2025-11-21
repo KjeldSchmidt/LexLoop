@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
-from sqlalchemy import String, ForeignKey, select
+from sqlalchemy import String, ForeignKey, select, text
 from sqlalchemy.orm import mapped_column, Mapped, relationship, Session
 
 from lexloop.model.link_model import LinkType, LinkIn, Link
@@ -28,6 +28,7 @@ class LinkRepo(Base):
         "uuid",
         POSTGRES_UUID(as_uuid=True),
         default=uuid4,
+        server_default=text("uuid_generate_v4()"),
         nullable=False,
         primary_key=True,
     )

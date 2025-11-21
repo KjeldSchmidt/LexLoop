@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from uuid import uuid4
 
-from sqlalchemy import String, ForeignKey, select
+from sqlalchemy import String, ForeignKey, select, text
 from sqlalchemy.orm import Mapped, mapped_column, Session, relationship
 
 from lexloop.model.node_model import NodeIn, Node
@@ -35,6 +35,7 @@ class NodeRepo(Base):
         "uuid",
         POSTGRES_UUID(as_uuid=True),
         default=uuid4,
+        server_default=text("uuid_generate_v4()"),
         nullable=False,
         primary_key=True,
     )

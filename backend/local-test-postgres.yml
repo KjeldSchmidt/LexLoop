@@ -1,5 +1,5 @@
 services:
-  postgres:
+  postgres-test:
     image: postgres:18
     container_name: postgres-test
     environment:

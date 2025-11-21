@@ -9,7 +9,7 @@ from lexloop.repository.base import Base
 
 from pydantic import UUID4
 
-from sqlalchemy import String
+from sqlalchemy import String, text
 from sqlalchemy.orm import Mapped, mapped_column, Session, relationship
 from sqlalchemy.dialects.postgresql import UUID as POSTGRES_UUID
 
@@ -24,6 +24,7 @@ class TagRepo(Base):
         "uuid",
         POSTGRES_UUID(as_uuid=True),
         default=uuid4,
+        server_default=text("uuid_generate_v4()"),
         nullable=False,
         primary_key=True,
     )
