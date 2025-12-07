@@ -6,7 +6,7 @@ defineProps({
     type: String,
     required: true,
   },
-  definition: {
+  description: {
     type: String,
     required: true,
   },
@@ -15,11 +15,8 @@ defineProps({
 
 <template>
   <div>
-    <p>{{ title }}</p>
-    <p>{{ definition }}</p>
-  </div>
-  <div>
-    <h3>Tags</h3>
+    <h1>{{ title }}</h1>
+    <p>{{ description }}</p>
   </div>
 </template>
 
