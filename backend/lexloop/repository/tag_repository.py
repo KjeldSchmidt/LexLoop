@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
 from uuid import uuid4
 
 from lexloop.model.tag_model import TagIn, Tag
