@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
-from sqlalchemy import String, ForeignKey, select, text
+from sqlalchemy import String, ForeignKey, select
 from sqlalchemy.orm import mapped_column, Mapped, relationship, Session
 
 from lexloop.model.link_model import LinkType, LinkIn, Link

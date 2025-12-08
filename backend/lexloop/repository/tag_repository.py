@@ -9,7 +9,7 @@ from lexloop.repository.base import Base
 
 from pydantic import UUID4
 
-from sqlalchemy import String, text
+from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, Session, relationship
 from sqlalchemy.dialects.postgresql import UUID as POSTGRES_UUID
 
