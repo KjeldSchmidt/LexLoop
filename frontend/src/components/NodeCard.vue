@@ -1,16 +1,26 @@
 <script setup lang="ts">
 import { defineProps } from 'vue'
+import { useRouter } from 'vue-router'
+import type { components } from '@/api/schema.ts'
+export type schemas = components['schemas']
 
-defineProps({
-  title: {
-    type: String,
-    required: true,
-  },
-  definition: {
-    type: String,
-    required: true,
-  },
-})
+type Tag = schemas['TagOut']
+
+const router = useRouter()
+
+// Define the props for the component
+defineProps<{
+  title: string
+  definition: string
+  tags: Tag[]
+}>()
+
+function handleClick(item: Tag) {
+  router.push({
+    name: 'TagPage',
+    params: { id: item.uuid },
+  })
+}
 </script>
 
 <template>
@@ -20,6 +30,11 @@ defineProps({
   </div>
   <div>
     <h3>Tags</h3>
+    <ul>
+      <li v-for="item in tags" :key="item.uuid" @click="handleClick(item)">
+        {{ item.title }}
+      </li>
+    </ul>
   </div>
 </template>
 
