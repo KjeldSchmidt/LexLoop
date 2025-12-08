@@ -43,7 +43,6 @@ class NodeRepo(Base):
     tags: Mapped[list[TagRepo]] = relationship(
         "TagRepo",
         secondary="lexloop_node_to_tags",
-        back_populates="lexloop_nodes",
     )
 
     def to_internal_model(self) -> Node:

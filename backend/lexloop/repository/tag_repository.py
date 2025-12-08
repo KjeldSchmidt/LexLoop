@@ -10,11 +10,8 @@ from lexloop.repository.base import Base
 from pydantic import UUID4
 
 from sqlalchemy import String, select
-from sqlalchemy.orm import Mapped, mapped_column, Session, relationship
+from sqlalchemy.orm import Mapped, mapped_column, Session
 from sqlalchemy.dialects.postgresql import UUID as POSTGRES_UUID
-
-if TYPE_CHECKING:
-    from lexloop.repository import NodeRepo
 
 
 class TagRepo(Base):
@@ -29,11 +26,6 @@ class TagRepo(Base):
     )
     title: Mapped[str] = mapped_column("title", String(100))
     description: Mapped[str] = mapped_column("description", String(300))
-    lexloop_nodes: Mapped[list[NodeRepo]] = relationship(
-        "NodeRepo",
-        secondary="lexloop_node_to_tags",
-        back_populates="tags",
-    )
 
     # Todo: instrumented attribute?
     def to_internal_model(self) -> Tag:
