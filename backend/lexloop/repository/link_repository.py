@@ -28,7 +28,6 @@ class LinkRepo(Base):
         "uuid",
         POSTGRES_UUID(as_uuid=True),
         default=uuid4,
-        server_default=text("uuid_generate_v4()"),
         nullable=False,
         primary_key=True,
     )

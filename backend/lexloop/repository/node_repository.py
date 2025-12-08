@@ -35,7 +35,6 @@ class NodeRepo(Base):
         "uuid",
         POSTGRES_UUID(as_uuid=True),
         default=uuid4,
-        server_default=text("uuid_generate_v4()"),
         nullable=False,
         primary_key=True,
     )
@@ -91,6 +90,6 @@ def get_all_for_tag_uuid(tag_uuid: UUID4, session: Session) -> list[Node]:
         .join(NodeToTagsRepo)
         .where(NodeToTagsRepo.tag_uuid == tag_uuid)
     )
-    tags = session.scalars(statement).all()
-    return [tag.to_internal_model() for tag in tags]
+    nodes = session.scalars(statement).all()
+    return [node.to_internal_model() for node in nodes]
     # Todo: paginate
