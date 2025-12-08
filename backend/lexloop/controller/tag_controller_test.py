@@ -49,3 +49,38 @@ def test_get_tags_when_tags_are_added(client: TestClient) -> None:
     returned_tag = response.json()[0]
     assert returned_tag["title"] == "test_tag"
     assert returned_tag["description"] == "test"
+
+
+def test_get_tags_for_node(client: TestClient) -> None:
+    tag1_response = client.post(
+        "/tags",
+        json={"title": "test_tag", "description": "test"},
+    )
+    tag2_response = client.post(
+        "/tags",
+        json={"title": "test_tag2", "description": "test2"},
+    )
+    node_response = client.post(
+        "/nodes",
+        json={
+            "term": "test_node",
+            "definition": "test_definition",
+            "tags": [
+                tag1_response.json()["uuid"],
+                tag2_response.json()["uuid"],
+            ],
+        },
+    )
+    assert tag1_response.status_code == 201
+    assert tag2_response.status_code == 201
+    assert node_response.status_code == 201
+
+    response = client.get(f"/tags/node/{node_response.json()['uuid']}")
+    assert response.status_code == 200
+    assert len(response.json()) == 2
+    returned_tag1 = response.json()[0]
+    assert returned_tag1["title"] == "test_tag"
+    assert returned_tag1["description"] == "test"
+    returned_tag2 = response.json()[1]
+    assert returned_tag2["title"] == "test_tag2"
+    assert returned_tag2["description"] == "test2"

@@ -15,45 +15,45 @@ export const getTagsList = async () => {
 }
 
 export const getLinksForNode = async (node_uuid: string) => {
-  const { data } = await client.GET('/nodes/{id}/links', {
+  const { data } = await client.GET('/nodes/{node_uuid}/links', {
     params: {
-      path: { id: node_uuid },
+      path: { node_uuid: node_uuid },
     },
   })
   return data
 }
 
 export const getNodeForUUID = async (node_uuid: string) => {
-  const { data } = await client.GET('/nodes/{id}', {
+  const { data } = await client.GET('/nodes/{uuid}', {
     params: {
-      path: { id: node_uuid },
+      path: { uuid: node_uuid },
     },
   })
   return data
 }
 
 export const getTagForUUID = async (tag_uuid: string) => {
-  const { data } = await client.GET('/tags/{id}', {
+  const { data } = await client.GET('/tags/{uuid}', {
     params: {
-      path: { id: tag_uuid },
+      path: { uuid: tag_uuid },
     },
   })
   return data
 }
 
 export const getNodesForTag = async (tag_uuid: string) => {
-  const { data } = await client.GET('/nodes/tag/{id}', {
+  const { data } = await client.GET('/nodes/tag/{tag_uuid}', {
     params: {
-      path: { id: tag_uuid },
+      path: { tag_uuid: tag_uuid },
     },
   })
   return data
 }
 
 export const getTagsForNodeUUID = async (node_uuid: string) => {
-  const { data } = await client.GET('/tags/node/{id}', {
+  const { data } = await client.GET('/tags/node/{node_uuid}', {
     params: {
-      path: { id: node_uuid },
+      path: { node_uuid: node_uuid },
     },
   })
   return data

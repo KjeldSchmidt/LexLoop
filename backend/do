@@ -103,6 +103,12 @@ function task_db_migrate_up {
   uv run alembic upgrade head
 }
 
+## db-migrate-up
+function task_db_migrate_down {
+  task_db_up
+  uv run alembic downgrade -1
+}
+
 ## db-migrate-remote: Apply migrations to remote database (usage: ./do db-migrate-remote <dev|prod>)
 function task_db_migrate_remote {
   local env="${1:-}"
@@ -126,6 +132,7 @@ function task_setup {
   if ! command -v uv >/dev/null 2>&1; then
     curl -LsSf https://astral.sh/uv/install.sh | sh
   fi
+  uv pip install -e .
 }
 
 #-------- All task definitions go above this line --------#

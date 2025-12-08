@@ -9,7 +9,7 @@ from lexloop.repository.base import Base
 
 from pydantic import UUID4
 
-from sqlalchemy import String
+from sqlalchemy import String, select
 from sqlalchemy.orm import Mapped, mapped_column, Session, relationship
 from sqlalchemy.dialects.postgresql import UUID as POSTGRES_UUID
 
@@ -67,3 +67,15 @@ def get_by_uuid(uuid: UUID4, session: Session) -> Tag:
     if tag is None:
         raise KeyError
     return tag.to_internal_model()
+
+
+def get_all_for_node_uuid(node_uuid: UUID4, session: Session) -> list[Tag]:
+    from lexloop.repository.node_repository import NodeToTagsRepo
+
+    statement = (
+        select(TagRepo)
+        .join(NodeToTagsRepo)
+        .where(NodeToTagsRepo.node_uuid == node_uuid)
+    )
+    tags = session.scalars(statement).all()
+    return [tag.to_internal_model() for tag in tags]

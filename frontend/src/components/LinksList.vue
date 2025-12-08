@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 // Define the type for the item
-interface ListItem {
+export type ListItem = {
   uuid: string
   title: string
 }

@@ -1,16 +1,19 @@
 <script setup lang="ts">
 import { getTagsList } from '@/api'
 import { ref, onMounted } from 'vue'
+import type { components } from '@/api/schema.ts'
+export type schemas = components['schemas']
 
-const tags = ref([] as any)
-let first_tag = ref()
+type Tag = schemas['TagOut']
+let tags: Tag[]
+const first_tag = ref<Tag>()
 
 onMounted(async () => {
   const res = await getTagsList()
 
-  if (res != undefined && Array.isArray(res)) {
-    tags.value = res
-    first_tag.value = tags.value[0]
+  if (res != undefined && Array.isArray(res) && res.length != 0) {
+    tags = res
+    first_tag.value = tags[0]
   }
 })
 </script>

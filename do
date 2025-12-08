@@ -27,6 +27,15 @@ function task_setup {
   git config core.hooksPath .githooks
 }
 
+function task_update_api_schema {
+  pushd backend/dev_tools
+  uv run python openapi_schema.py
+  popd
+  npx openapi-typescript backend/dev_tools/openapi.json > frontend/src/api/schema.ts
+  ./frontend/do fmt
+  rm backend/dev_tools/openapi.json
+}
+
 #-------- All task definitions go above this line --------#
 
 # Bash Strict Mode - For details, see

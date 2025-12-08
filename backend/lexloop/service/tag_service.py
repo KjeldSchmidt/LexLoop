@@ -16,3 +16,7 @@ def get_all(session: Session) -> list[Tag]:
 
 def get_by_uuid(uuid: UUID4, session: Session) -> Tag:
     return tag_repository.get_by_uuid(uuid, session)
+
+
+def get_all_for_node_uuid(node_uuid: UUID4, session: Session) -> list[Tag]:
+    return tag_repository.get_all_for_node_uuid(node_uuid, session)

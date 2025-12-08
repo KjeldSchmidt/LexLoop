@@ -26,3 +26,11 @@ async def get_tags(session: Session = Depends(get_db)) -> list[TagOut]:
 async def get_tag(uuid: UUID4, session: Session = Depends(get_db)) -> TagOut:
     tag = tag_service.get_by_uuid(uuid, session)
     return TagOut.from_internal_model(tag)
+
+
+@router.get("/tags/node/{node_uuid}")
+async def get_node_tags(
+    node_uuid: UUID4, session: Session = Depends(get_db)
+) -> list[TagOut]:
+    tags = tag_service.get_all_for_node_uuid(node_uuid, session)
+    return [TagOut.from_internal_model(tag) for tag in tags]

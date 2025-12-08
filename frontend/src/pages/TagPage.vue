@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { getLinksForNode, getNodeForUUID, getNodesForTag, getTagForUUID } from '@/api'
+import { getNodesForTag, getTagForUUID } from '@/api'
 import { onMounted, ref } from 'vue'
 import TagCard from '@/components/TagCard.vue'
+import type { components } from '@/api/schema.ts'
+export type schemas = components['schemas']
+
+type Node = schemas['NodeOut']
+type Tag = schemas['TagOut']
 
 const route = useRoute()
-const tag_nodes = ref([] as any)
-let tag = ref()
+const tag_nodes = ref<Node[]>()
+const tag = ref<Tag>()
 
 const id = route.params.id as string
 
@@ -17,15 +22,14 @@ onMounted(async () => {
 
   if (res != undefined) {
     tag.value = res
-  }
-
-  const res2 = await getNodesForTag(tag.value.uuid)
-  if (res2 != undefined && Array.isArray(res2)) {
-    tag_nodes.value = res2
+    const res2 = await getNodesForTag(tag.value.uuid)
+    if (res2 != undefined && Array.isArray(res2)) {
+      tag_nodes.value = res2
+    }
   }
 })
 
-function handleClick(item: any) {
+function handleClick(item: Node) {
   console.log(item.term)
 
   router.push({
