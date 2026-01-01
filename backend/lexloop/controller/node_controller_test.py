@@ -163,3 +163,31 @@ def test_get_all_for_tags(client: TestClient) -> None:
     uuid_set = {node["uuid"] for node in data}
     assert node2_response.json()["uuid"] in uuid_set
     assert len(data) == 1
+
+
+def test_add_tags_to_node(client: TestClient) -> None:
+    tag_response = client.post(
+        "/tags",
+        json={"title": "test_tag", "description": "test"},
+    )
+    node_response = client.post(
+        "/nodes",
+        json={
+            "term": "test",
+            "definition": "test",
+            "tags": [],
+        },
+    )
+    assert len(node_response.json()["tags"]) == 0
+
+    response = client.post(
+        f"/nodes/{node_response.json()['uuid']}/{tag_response.json()['uuid']}"
+    )
+    assert response.status_code == 200
+
+    returned_node = response.json()
+    assert len(returned_node["tags"]) == 1
+
+    response = client.get(f"/tags/node/{node_response.json()['uuid']}")
+    assert response.status_code == 200
+    assert len(response.json()) == 1

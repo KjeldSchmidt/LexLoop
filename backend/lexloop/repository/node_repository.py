@@ -92,3 +92,16 @@ def get_all_for_tag_uuid(tag_uuid: UUID4, session: Session) -> list[Node]:
     nodes = session.scalars(statement).all()
     return [node.to_internal_model() for node in nodes]
     # Todo: paginate
+
+
+def add_tag_to_node(
+    node_uuid: UUID4, tag_uuid: UUID4, session: Session
+) -> Node:
+    node: NodeRepo | None = session.get(NodeRepo, node_uuid)
+    tag: TagRepo | None = session.get(TagRepo, tag_uuid)
+    if node is None or tag is None:
+        raise KeyError
+    node.tags.append(tag)
+    session.commit()
+    session.refresh(node)
+    return node.to_internal_model()

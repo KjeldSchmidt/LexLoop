@@ -18,6 +18,14 @@ async def add_node(node: NodeIn, session: Session = Depends(get_db)) -> NodeOut:
     return NodeOut.from_internal_model(added_node)
 
 
+@router.post("/nodes/{node_uuid}/{tag_uuid}", status_code=status.HTTP_200_OK)
+async def add_tag_to_node(
+    node_uuid: UUID4, tag_uuid: UUID4, session: Session = Depends(get_db)
+) -> NodeOut:
+    updated_node = node_service.add_tag_to_node(node_uuid, tag_uuid, session)
+    return NodeOut.from_internal_model(updated_node)
+
+
 @router.get("/nodes")
 async def get_nodes(session: Session = Depends(get_db)) -> list[NodeOut]:
     node_list = node_service.get_all(session)

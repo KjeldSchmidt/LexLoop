@@ -56,6 +56,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/nodes/{node_uuid}/{tag_uuid}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Add Tag To Node */
+    post: operations['add_tag_to_node_nodes__node_uuid___tag_uuid__post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/nodes/{uuid}': {
     parameters: {
       query?: never
@@ -512,6 +529,38 @@ export interface operations {
     responses: {
       /** @description Successful Response */
       201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['NodeOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  add_tag_to_node_nodes__node_uuid___tag_uuid__post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        node_uuid: string
+        tag_uuid: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
         headers: {
           [name: string]: unknown
         }

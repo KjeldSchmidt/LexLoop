@@ -10,6 +10,12 @@ def add(node: NodeIn, session: Session) -> Node:
     return node_repository.add(node, session)
 
 
+def add_tag_to_node(
+    node_uuid: UUID4, tag_uuid: UUID4, session: Session
+) -> Node:
+    return node_repository.add_tag_to_node(node_uuid, tag_uuid, session)
+
+
 def get_all(session: Session) -> list[Node]:
     return node_repository.get_all(session)
 
