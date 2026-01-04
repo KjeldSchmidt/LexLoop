@@ -547,6 +547,41 @@ export interface operations {
       }
     }
   }
+  update_tags_nodes_update__node_uuid__tags__post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        node_uuid: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['Body_update_tags_nodes_update__node_uuid__tags__post']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['NodeOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   add_tag_to_node_nodes__node_uuid___tag_uuid__post: {
     parameters: {
       query?: never

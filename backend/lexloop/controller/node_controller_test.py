@@ -191,3 +191,43 @@ def test_add_tags_to_node(client: TestClient) -> None:
     response = client.get(f"/tags/node/{node_response.json()['uuid']}")
     assert response.status_code == 200
     assert len(response.json()) == 1
+
+
+def test_update_tags(client: TestClient) -> None:
+    tag_response = client.post(
+        "/tags",
+        json={"title": "test_tag", "description": "test"},
+    )
+    tag_response2 = client.post(
+        "/tags",
+        json={"title": "test_tag2", "description": "test"},
+    )
+    node_response = client.post(
+        "/nodes",
+        json={
+            "term": "test",
+            "definition": "test",
+            "tags": [tag_response.json()["uuid"]],
+        },
+    )
+    assert len(node_response.json()["tags"]) == 1
+
+    response = client.post(
+        f"/nodes/update/{node_response.json()['uuid']}/tags/",
+        json={
+            "tag_uuids": [
+                tag_response.json()["uuid"],
+                tag_response2.json()["uuid"],
+            ]
+        },
+    )
+    assert response.status_code == 200
+    assert len(response.json()["tags"]) == 2
+
+    response = client.post(
+        f"/nodes/update/{node_response.json()['uuid']}/tags/",
+        json={"tag_uuids": [tag_response2.json()["uuid"]]},
+    )
+    assert response.status_code == 200
+    assert len(response.json()["tags"]) == 1
+    assert response.json()["tags"][0] == tag_response2.json()["uuid"]

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, Depends
+from fastapi import APIRouter, status, Depends, Body
 from sqlalchemy.orm import Session
 
 from lexloop.controller import get_db
@@ -16,6 +16,16 @@ router = APIRouter()
 async def add_node(node: NodeIn, session: Session = Depends(get_db)) -> NodeOut:
     added_node = node_service.add(node, session)
     return NodeOut.from_internal_model(added_node)
+
+
+@router.post("/nodes/update/{node_uuid}/tags/", status_code=status.HTTP_200_OK)
+async def update_tags(
+    node_uuid: UUID4,
+    tag_uuids: list[UUID4] = Body(embed=True),
+    session: Session = Depends(get_db),
+) -> NodeOut:
+    updated_node = node_service.update_tags(node_uuid, tag_uuids, session)
+    return NodeOut.from_internal_model(updated_node)
 
 
 @router.post("/nodes/{node_uuid}/{tag_uuid}", status_code=status.HTTP_200_OK)

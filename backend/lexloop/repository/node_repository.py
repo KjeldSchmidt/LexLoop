@@ -101,7 +101,30 @@ def add_tag_to_node(
     tag: TagRepo | None = session.get(TagRepo, tag_uuid)
     if node is None or tag is None:
         raise KeyError
-    node.tags.append(tag)
+    if tag not in node.tags:
+        node.tags.append(tag)
+        session.commit()
+        session.refresh(node)
+    return node.to_internal_model()
+
+
+def update_tags(
+    node_uuid: UUID4, tags_uuids: list[UUID4], session: Session
+) -> Node:
+    node: NodeRepo | None = session.get(NodeRepo, node_uuid)
+    if node is None:
+        raise KeyError
+
+    stmt = select(TagRepo).where(TagRepo.uuid.in_(tags_uuids))
+    new_tags: list[TagRepo] = list(session.scalars(stmt))
+
+    if len(tags_uuids) != len(new_tags):
+        raise KeyError
+
+    node.tags.clear()
+    for tag in new_tags:
+        node.tags.append(tag)
+
     session.commit()
     session.refresh(node)
     return node.to_internal_model()
