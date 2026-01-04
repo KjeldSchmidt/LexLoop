@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import NodeCard from '@/components/NodeCard.vue'
-import { getLinksForNode, getNodeForUUID, getTagForUUID } from '@/api'
+import { getLinksForNode, getNodeForUUID, getTagForUUID, updateNodeTags } from '@/api'
 import { ref, onMounted } from 'vue'
 import LinksList from '@/components/LinksList.vue'
 import type { ListItem } from '@/components/LinksList.vue'
@@ -8,6 +8,9 @@ import { useRoute } from 'vue-router'
 import { watch } from 'vue'
 import type { components } from '@/api/schema.ts'
 export type schemas = components['schemas']
+import TagUpdateModal from '@/components/TagUpdateModal.vue'
+
+const show_modal = ref(false)
 
 type Node = schemas['NodeOut']
 type Tag = schemas['TagOut']
@@ -39,9 +42,28 @@ async function update(id: string) {
         }
       }
     }
+    tags.value = []
     for (const item of node.value.tags) {
       const res = await getTagForUUID(item)
       if (res != undefined) tags.value.push(res as Tag)
+    }
+  }
+}
+
+async function handleConfirm(result: { selected_tags: Tag[] }) {
+  const new_tags = ref<string[]>([])
+  for (const tag of result.selected_tags) {
+    new_tags.value.push(tag.uuid)
+  }
+
+  if (node.value != undefined) {
+    node.value = await updateNodeTags(node.value.uuid, new_tags.value)
+    if (node.value != undefined) {
+      tags.value = []
+      for (const item of node.value.tags) {
+        const res = await getTagForUUID(item)
+        if (res != undefined) tags.value.push(res as Tag)
+      }
     }
   }
 }
@@ -79,6 +101,11 @@ watch(
       <LinksList :items="links" />
     </div>
   </div>
+
+  <button @click="show_modal = true">Manage Tags</button>
+
+  <TagUpdateModal v-model:show_modal="show_modal" v-model:tags="tags" @confirm="handleConfirm">
+  </TagUpdateModal>
 </template>
 
 <style scoped>

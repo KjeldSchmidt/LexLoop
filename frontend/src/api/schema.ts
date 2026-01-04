@@ -56,6 +56,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/nodes/update/{node_uuid}/tags/': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Update Tags */
+    post: operations['update_tags_nodes_update__node_uuid__tags__post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/nodes/{node_uuid}/{tag_uuid}': {
     parameters: {
       query?: never
@@ -289,6 +306,11 @@ export interface components {
        * Format: password
        */
       client_secret?: string | null
+    }
+    /** Body_update_tags_nodes_update__node_uuid__tags__post */
+    Body_update_tags_nodes_update__node_uuid__tags__post: {
+      /** Tag Uuids */
+      tag_uuids: string[]
     }
     /** ErrorModel */
     ErrorModel: {
