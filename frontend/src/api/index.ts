@@ -71,7 +71,7 @@ export const addTagToNode = async (node_uuid: string, tag_uuid: string) => {
 }
 
 export const updateNodeTags = async (node_uuid: string, tag_uuids: string[]) => {
-  const { data } = await client.POST('/nodes/update/{node_uuid}/tags/' as any, {
+  const { data } = await client.POST('/nodes/update/{node_uuid}/tags/', {
     params: {
       path: {
         node_uuid: node_uuid,

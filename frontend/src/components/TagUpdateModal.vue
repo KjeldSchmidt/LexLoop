@@ -43,6 +43,7 @@ onMounted(async () => {
 
 watch(
   () => props.show_modal,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   (newValue, _oldValue) => {
     if (newValue) {
       selected_tags.value = [...props.tags]
@@ -79,7 +80,7 @@ function confirm() {
       </section>
 
       <footer class="modal-footer">
-          <button @click="confirm">Confirm</button>
+        <button @click="confirm">Confirm</button>
       </footer>
     </div>
   </div>
