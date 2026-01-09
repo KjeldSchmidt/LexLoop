@@ -13,7 +13,9 @@ router = APIRouter()
 
 
 @router.post("/nodes", status_code=status.HTTP_201_CREATED)
-async def add_node(node: NodeIn, session: Session = Depends(get_db)) -> NodeOut:
+async def add_node(
+    node: NodeIn = Body(embed=True), session: Session = Depends(get_db)
+) -> NodeOut:
     added_node = node_service.add(node, session)
     return NodeOut.from_internal_model(added_node)
 

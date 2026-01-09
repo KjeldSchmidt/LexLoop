@@ -9,18 +9,22 @@ def test_add_link_returns_2xx(client: TestClient) -> None:
     node1_response = client.post(
         "/nodes",
         json={
-            "term": "test1",
-            "definition": "test",
-            "tags": [],
+            "node": {
+                "term": "test1",
+                "definition": "test",
+                "tags": [],
+            }
         },
     )
 
     node2_response = client.post(
         "/nodes",
         json={
-            "term": "test2",
-            "definition": "test",
-            "tags": [],
+            "node": {
+                "term": "test2",
+                "definition": "test",
+                "tags": [],
+            }
         },
     )
 
@@ -49,12 +53,16 @@ def test_get_links_when_none_are_stored_returns_empty_list(
 def test_get_links_when_links_are_added(client: TestClient) -> None:
     node1_response = client.post(
         "/nodes",
-        json={"term": "test1", "definition": "test", "tags": []},
+        json={
+            "node": {"term": "test1", "definition": "test", "tags": []},
+        },
     )
 
     node2_response = client.post(
         "/nodes",
-        json={"term": "test2", "definition": "test", "tags": []},
+        json={
+            "node": {"term": "test2", "definition": "test", "tags": []},
+        },
     )
     response = client.post(
         "/links",

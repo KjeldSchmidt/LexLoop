@@ -3,6 +3,7 @@ import type { components, paths } from '@/api/schema.ts'
 const client = createClient<paths>({ baseUrl: 'http://127.0.0.1:8000/api/' })
 export default client
 export type schemas = components['schemas']
+type NodeIn = schemas['NodeIn']
 
 export const getNodesList = async () => {
   const { data } = await client.GET('/nodes', {})
@@ -79,6 +80,15 @@ export const updateNodeTags = async (node_uuid: string, tag_uuids: string[]) => 
     },
     body: {
       tag_uuids: tag_uuids,
+    },
+  })
+  return data
+}
+
+export const addNode = async (node: NodeIn) => {
+  const { data } = await client.POST('/nodes', {
+    body: {
+      node: node,
     },
   })
   return data

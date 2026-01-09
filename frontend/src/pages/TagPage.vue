@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { getNodesForTag, getTagForUUID } from '@/api'
+import { addNode, getNodesForTag, getTagForUUID } from '@/api'
 import { onMounted, ref } from 'vue'
 import TagCard from '@/components/TagCard.vue'
 import type { components } from '@/api/schema.ts'
+import NodeCreationModal from '@/components/NodeCreationModal.vue'
 export type schemas = components['schemas']
 
 type Node = schemas['NodeOut']
+type NodeIn = schemas['NodeIn']
 type Tag = schemas['TagOut']
+
+const show_modal = ref(false)
 
 const route = useRoute()
 const tag_nodes = ref<Node[]>()
@@ -37,6 +41,15 @@ function handleClick(item: Node) {
     params: { id: item.uuid },
   })
 }
+
+async function handleNodeCreation(result: { new_node: NodeIn }) {
+  const new_node = await addNode(result.new_node)
+  if (new_node != undefined)
+    await router.push({
+      name: 'NodePage',
+      params: { id: new_node.uuid },
+    })
+}
 </script>
 
 <template>
@@ -53,6 +66,11 @@ function handleClick(item: Node) {
       </ul>
     </div>
   </div>
+
+  <button @click="show_modal = true">New Node</button>
+
+  <NodeCreationModal v-model:show_modal="show_modal" @confirm="handleNodeCreation">
+  </NodeCreationModal>
 </template>
 
 <style scoped>

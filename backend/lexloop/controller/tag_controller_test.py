@@ -63,12 +63,14 @@ def test_get_tags_for_node(client: TestClient) -> None:
     node_response = client.post(
         "/nodes",
         json={
-            "term": "test_node",
-            "definition": "test_definition",
-            "tags": [
-                tag1_response.json()["uuid"],
-                tag2_response.json()["uuid"],
-            ],
+            "node": {
+                "term": "test_node",
+                "definition": "test_definition",
+                "tags": [
+                    tag1_response.json()["uuid"],
+                    tag2_response.json()["uuid"],
+                ],
+            },
         },
     )
     assert tag1_response.status_code == 201

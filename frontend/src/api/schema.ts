@@ -283,6 +283,10 @@ export interface paths {
 export type webhooks = Record<string, never>
 export interface components {
   schemas: {
+    /** Body_add_node_nodes_post */
+    Body_add_node_nodes_post: {
+      node: components['schemas']['NodeIn']
+    }
     /** Body_auth_jwt_login_auth_login_post */
     Body_auth_jwt_login_auth_login_post: {
       /** Grant Type */
@@ -545,7 +549,7 @@ export interface operations {
     }
     requestBody: {
       content: {
-        'application/json': components['schemas']['NodeIn']
+        'application/json': components['schemas']['Body_add_node_nodes_post']
       }
     }
     responses: {
