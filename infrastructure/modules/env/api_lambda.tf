@@ -38,7 +38,7 @@ resource "aws_lambda_function" "api" {
   environment {
     variables = {
       ENV    = var.env,
-      DB_URL = local.db_url
+      DB_URL = local.db_url_transaction
     }
   }
 }

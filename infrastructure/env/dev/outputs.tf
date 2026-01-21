@@ -18,9 +18,15 @@ output "api_base_url" {
   value       = module.env.api_base_url
 }
 
-output "db_url" {
-  description = "Database connection string for migrations"
-  value       = module.env.db_url
+output "db_url_session" {
+  description = "Database URL (session mode, port 5432). Use for migrations and DDL."
+  value       = module.env.db_url_session
+  sensitive   = true
+}
+
+output "db_url_transaction" {
+  description = "Database URL (transaction mode, port 6543). Use for Lambda/serverless."
+  value       = module.env.db_url_transaction
   sensitive   = true
 }
 

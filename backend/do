@@ -120,7 +120,7 @@ function task_db_migrate_remote {
   echo "Fetching DB connection string for $env environment..."
   pushd "../infrastructure/env/$env" >/dev/null
   terraform init -reconfigure >/dev/null
-  export DB_URL=$(terraform output -raw db_url)
+  export DB_URL=$(terraform output -raw db_url_session)
   popd >/dev/null
   
   echo "Running migrations against $env database..."

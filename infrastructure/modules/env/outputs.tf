@@ -18,9 +18,15 @@ output "api_base_url" {
   value       = "https://${aws_cloudfront_distribution.cdn.domain_name}/api"
 }
 
-output "db_url" {
-  description = "Database connection string for migrations"
-  value       = local.db_url
+output "db_url_session" {
+  description = "Database URL (session mode, port 5432). Use for migrations and DDL - supports all Postgres features."
+  value       = local.db_url_session
+  sensitive   = true
+}
+
+output "db_url_transaction" {
+  description = "Database URL (transaction mode, port 6543). Use for Lambda/serverless - better connection pooling."
+  value       = local.db_url_transaction
   sensitive   = true
 }
 
