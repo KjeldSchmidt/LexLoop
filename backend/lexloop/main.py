@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Response
 from fastapi import status, Depends
 from mangum import Mangum
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from lexloop.auth.auth_controller import router as auth_router
@@ -28,7 +29,7 @@ async def health() -> Response:
 
 @app.get("/health/database")
 async def db_health(session: Session = Depends(get_db)) -> Response:
-    session.execute("SELECT 1")  # type: ignore
+    session.execute(text("SELECT 1"))
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
