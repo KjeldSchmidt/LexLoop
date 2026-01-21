@@ -1,0 +1,53 @@
+name: Daily Smoke Tests
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  smoke-tests:
+    name: Smoke Tests (Dev)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "backend/pyproject.toml"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: 0.9.5
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::465836752303:role/lexloop-cicd-deploy-role
+          aws-region: eu-central-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.13.0
+          terraform_wrapper: false
+
+      - name: Get API URL
+        id: terraform_output
+        run: |
+          cd infrastructure/env/dev
+          terraform init -reconfigure > /dev/null
+          API_BASE_URL=$(terraform output -raw api_base_url)
+          echo "api_base_url=$API_BASE_URL" >> $GITHUB_OUTPUT
+
+      - name: Run smoke tests
+        run: cd backend && ./do smoke-test
+        env:
+          API_BASE_URL: ${{ steps.terraform_output.outputs.api_base_url }}
