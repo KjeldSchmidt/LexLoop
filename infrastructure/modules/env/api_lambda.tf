@@ -38,7 +38,7 @@ resource "aws_lambda_function" "api" {
   environment {
     variables = {
       ENV    = var.env,
-      DB_URL = "postgresql+psycopg://postgres.${supabase_project._.id}:${random_password.supabase_password.result}@aws-0-${local.region}.pooler.supabase.com:6543/postgres"
+      DB_URL = local.db_url
     }
   }
 }

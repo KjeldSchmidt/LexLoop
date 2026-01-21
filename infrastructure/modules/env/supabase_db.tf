@@ -9,3 +9,7 @@ resource "random_password" "supabase_password" {
   length  = 64
   special = false
 }
+
+locals {
+  db_url = "postgresql+psycopg://postgres.${supabase_project._.id}:${random_password.supabase_password.result}@aws-1-${local.region}.pooler.supabase.com:5432/postgres"
+}

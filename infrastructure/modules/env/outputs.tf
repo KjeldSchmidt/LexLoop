@@ -20,7 +20,7 @@ output "api_base_url" {
 
 output "db_url" {
   description = "Database connection string for migrations"
-  value       = "postgresql+psycopg://postgres.${supabase_project._.id}:${random_password.supabase_password.result}@aws-1-${local.region}.pooler.supabase.com:5432/postgres"
+  value       = local.db_url
   sensitive   = true
 }
 
