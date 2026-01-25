@@ -5,6 +5,7 @@ import { useRouter } from 'vue-router'
 import type { components } from '@/api/schema.ts'
 import HeaderBar from '@/components/HeaderBar.vue'
 import { useNavigationHistoryStore } from '@/stores/navigationHistory'
+import NodeCreationModal from '@/components/NodeCreationModal.vue'
 
 type Tag = components['schemas']['TagOut']
 type Node = components['schemas']['NodeOut']
@@ -13,6 +14,7 @@ const router = useRouter()
 const tags = ref<Tag[]>([])
 const nodes = ref<Node[]>([])
 const navigationStore = useNavigationHistoryStore()
+const show_modal = ref(false)
 
 onMounted(async () => {
   navigationStore.resetToClass('Class')
@@ -46,6 +48,7 @@ function goToNode(node: Node) {
           {{ tag.title }}
         </button>
       </div>
+      <button class="fab" @click="show_modal = true">+</button>
     </div>
 
     <div class="page right-page">
@@ -57,9 +60,27 @@ function goToNode(node: Node) {
       </div>
     </div>
   </div>
+
+  <NodeCreationModal v-model:show_modal="show_modal"> </NodeCreationModal>
 </template>
 
 <style scoped>
+.fab {
+  position: fixed;
+  bottom: 2rem;
+  left: 2rem;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  border: 2px solid #333;
+  background: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .book-container {
   display: flex;
   min-height: calc(100vh - 53px);

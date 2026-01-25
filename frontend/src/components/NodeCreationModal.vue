@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import type { components } from '@/api/schema.ts'
 import { onMounted, ref, watch } from 'vue'
-import { getTagsList } from '@/api'
+import { addNode, getTagsList } from '@/api'
 export type schemas = components['schemas']
-type NodeIn = schemas['NodeIn']
+type NodeOut = schemas['NodeOut']
 type Tag = schemas['TagOut']
 
 const props = defineProps<{
@@ -15,7 +15,7 @@ const all_tags = ref<Tag[]>([])
 
 const emit = defineEmits<{
   (e: 'update:show_modal', value: boolean): void
-  (e: 'confirm', result: { new_node: NodeIn }): void
+  (e: 'confirm', result: { new_node: NodeOut }): void
 }>()
 
 function close() {
@@ -57,13 +57,13 @@ async function confirm() {
     tag_uuids.push(tag.uuid)
   }
 
-  const new_node = {
+  const new_node = await addNode({
     term: (document.getElementById('term') as HTMLInputElement).value,
     definition: (document.getElementById('definition') as HTMLInputElement).value,
     tags: tag_uuids,
-  }
+  })
 
-  emit('confirm', { new_node: new_node })
+  if (new_node != undefined) emit('confirm', { new_node: new_node })
   emit('update:show_modal', false)
 }
 </script>

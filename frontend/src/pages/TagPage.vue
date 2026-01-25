@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { addNode, getNodesForTag, getTagForUUID } from '@/api'
+import { getNodesForTag, getTagForUUID } from '@/api'
 import { onMounted, ref } from 'vue'
 import type { components } from '@/api/schema.ts'
 import NodeCreationModal from '@/components/NodeCreationModal.vue'
@@ -9,14 +9,13 @@ import { useNavigationHistoryStore } from '@/stores/navigationHistory'
 
 export type schemas = components['schemas']
 
-type Node = schemas['NodeOut']
-type NodeIn = schemas['NodeIn']
+type NodeOut = schemas['NodeOut']
 type Tag = schemas['TagOut']
 
 const show_modal = ref(false)
 
 const route = useRoute()
-const tag_nodes = ref<Node[]>()
+const tag_nodes = ref<NodeOut[]>()
 const tag = ref<Tag>()
 
 const id = route.params.id as string
@@ -41,7 +40,7 @@ onMounted(async () => {
   }
 })
 
-function handleClick(item: Node) {
+function handleClick(item: NodeOut) {
   console.log(item.term)
 
   router.push({
@@ -50,12 +49,11 @@ function handleClick(item: Node) {
   })
 }
 
-async function handleNodeCreation(result: { new_node: NodeIn }) {
-  const new_node = await addNode(result.new_node)
-  if (new_node != undefined)
+async function handleNodeCreation(result: { new_node: NodeOut }) {
+  if (result.new_node != undefined)
     await router.push({
       name: 'NodePage',
-      params: { id: new_node.uuid },
+      params: { id: result.new_node.uuid },
     })
 }
 </script>

@@ -366,7 +366,7 @@ export interface components {
      * LinkType
      * @enum {string}
      */
-    LinkType: 'SYNONYM'
+    LinkType: 'SYNONYM' | 'ANTONYM' | 'FALSE_FRIEND' | 'HOMOPHONE' | 'COGNATE'
     /** NodeIn */
     NodeIn: {
       /** Term */
