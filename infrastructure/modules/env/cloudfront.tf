@@ -63,6 +63,19 @@ resource "aws_cloudfront_distribution" "cdn" {
       restriction_type = "none"
     }
   }
+
+  # SPA routing: return index.html for paths that don't exist in S3
+  custom_error_response {
+    error_code         = 403
+    response_code      = 200
+    response_page_path = "/index.html"
+  }
+
+  custom_error_response {
+    error_code         = 404
+    response_code      = 200
+    response_page_path = "/index.html"
+  }
 }
 
 resource "aws_cloudfront_origin_access_control" "oac" {
