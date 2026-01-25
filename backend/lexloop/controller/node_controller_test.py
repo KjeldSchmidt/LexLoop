@@ -26,7 +26,7 @@ def test_get_nodes_when_none_are_stored_returns_empty_list(
 def test_get_nodes_when_nodes_are_added(client: TestClient) -> None:
     tag_response = client.post(
         "/tags",
-        json={"title": "test_tag", "description": "test"},
+        json={"tag": {"title": "test_tag", "description": "test"}},
     )
     response = client.post(
         "/nodes",
@@ -50,11 +50,11 @@ def test_get_nodes_when_nodes_are_added(client: TestClient) -> None:
 def test_get_all_for_single_node(client: TestClient) -> None:
     tag_response = client.post(
         "/tags",
-        json={"title": "test_tag", "description": "test"},
+        json={"tag": {"title": "test_tag", "description": "test"}},
     )
     tag2_response = client.post(
         "/tags",
-        json={"title": "test_tag2", "description": "test"},
+        json={"tag": {"title": "test_tag2", "description": "test"}},
     )
     node1_response = client.post(
         "/nodes",
@@ -130,11 +130,11 @@ def test_get_all_for_single_node(client: TestClient) -> None:
 def test_get_all_for_tags(client: TestClient) -> None:
     tag1_response = client.post(
         "/tags",
-        json={"title": "test_tag", "description": "test"},
+        json={"tag": {"title": "test_tag", "description": "test"}},
     )
     tag2_response = client.post(
         "/tags",
-        json={"title": "test_tag2", "description": "test"},
+        json={"tag": {"title": "test_tag2", "description": "test"}},
     )
     client.post(
         "/nodes",
@@ -187,7 +187,7 @@ def test_get_all_for_tags(client: TestClient) -> None:
 def test_add_tags_to_node(client: TestClient) -> None:
     tag_response = client.post(
         "/tags",
-        json={"title": "test_tag", "description": "test"},
+        json={"tag": {"title": "test_tag", "description": "test"}},
     )
     node_response = client.post(
         "/nodes",
@@ -217,11 +217,11 @@ def test_add_tags_to_node(client: TestClient) -> None:
 def test_update_tags(client: TestClient) -> None:
     tag_response = client.post(
         "/tags",
-        json={"title": "test_tag", "description": "test"},
+        json={"tag": {"title": "test_tag", "description": "test"}},
     )
     tag_response2 = client.post(
         "/tags",
-        json={"title": "test_tag2", "description": "test"},
+        json={"tag": {"title": "test_tag2", "description": "test"}},
     )
     node_response = client.post(
         "/nodes",

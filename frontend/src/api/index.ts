@@ -4,6 +4,7 @@ const client = createClient<paths>({ baseUrl: import.meta.env.VITE_API_URL })
 export default client
 export type schemas = components['schemas']
 type NodeIn = schemas['NodeIn']
+type TagIn = schemas['TagIn']
 
 export const getNodesList = async () => {
   const { data } = await client.GET('/nodes', {})
@@ -89,6 +90,15 @@ export const addNode = async (node: NodeIn) => {
   const { data } = await client.POST('/nodes', {
     body: {
       node: node,
+    },
+  })
+  return data
+}
+
+export const addTag = async (tag: TagIn) => {
+  const { data } = await client.POST('/tags', {
+    body: {
+      tag: tag,
     },
   })
   return data

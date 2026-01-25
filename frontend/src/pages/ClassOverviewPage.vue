@@ -6,6 +6,7 @@ import type { components } from '@/api/schema.ts'
 import HeaderBar from '@/components/HeaderBar.vue'
 import { useNavigationHistoryStore } from '@/stores/navigationHistory'
 import NodeCreationModal from '@/components/NodeCreationModal.vue'
+import TagCreationModal from '@/components/TagCreationModal.vue'
 
 type Tag = components['schemas']['TagOut']
 type Node = components['schemas']['NodeOut']
@@ -14,7 +15,8 @@ const router = useRouter()
 const tags = ref<Tag[]>([])
 const nodes = ref<Node[]>([])
 const navigationStore = useNavigationHistoryStore()
-const show_modal = ref(false)
+const show_node_modal = ref(false)
+const show_tag_modal = ref(false)
 
 onMounted(async () => {
   navigationStore.resetToClass('Class')
@@ -36,6 +38,14 @@ function goToTag(tag: Tag) {
 function goToNode(node: Node) {
   router.push({ name: 'NodePage', params: { id: node.uuid } })
 }
+
+async function handleNodeCreation(result: { new_node: Node }) {
+  if (result.new_node != undefined) nodes.value.push(result.new_node)
+}
+
+async function handleTagCreation(result: { new_tag: Tag }) {
+  if (result.new_tag != undefined) tags.value.push(result.new_tag)
+}
 </script>
 
 <template>
@@ -48,7 +58,7 @@ function goToNode(node: Node) {
           {{ tag.title }}
         </button>
       </div>
-      <button class="fab" @click="show_modal = true">+</button>
+      <button class="fab" @click="show_tag_modal = true">+</button>
     </div>
 
     <div class="page right-page">
@@ -58,17 +68,20 @@ function goToNode(node: Node) {
           {{ node.term }}
         </button>
       </div>
+      <button class="fab" @click="show_node_modal = true">+</button>
     </div>
   </div>
 
-  <NodeCreationModal v-model:show_modal="show_modal"> </NodeCreationModal>
+  <NodeCreationModal v-model:show_modal="show_node_modal" @confirm="handleNodeCreation">
+  </NodeCreationModal>
+  <TagCreationModal v-model:show_modal="show_tag_modal" @confirm="handleTagCreation">
+  </TagCreationModal>
 </template>
 
 <style scoped>
 .fab {
   position: fixed;
   bottom: 2rem;
-  left: 2rem;
   width: 3rem;
   height: 3rem;
   border-radius: 50%;

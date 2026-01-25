@@ -8,9 +8,10 @@ type Tag = schemas['TagOut']
 
 const props = defineProps<{
   show_modal: boolean
+  tags?: Tag[]
 }>()
 
-const selected_tags = ref<Tag[]>([])
+const selected_tags = ref<Tag[]>([...(props.tags || [])])
 const all_tags = ref<Tag[]>([])
 
 const emit = defineEmits<{
@@ -44,9 +45,14 @@ onMounted(async () => {
 watch(
   () => props.show_modal,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  (newValue, _oldValue) => {
+  async (newValue, _oldValue) => {
     if (newValue) {
-      selected_tags.value = []
+      selected_tags.value = [...(props.tags || [])]
+    }
+    const res = await getTagsList()
+
+    if (res != undefined && Array.isArray(res)) {
+      all_tags.value = res
     }
   },
 )
@@ -79,7 +85,7 @@ async function confirm() {
       <section class="modal-body">
         <p>Term</p>
         <input type="text" id="term" />
-        <p>Description</p>
+        <p>Definition</p>
         <textarea id="definition" name="definition" rows="5" cols="33" />
 
         <ul>

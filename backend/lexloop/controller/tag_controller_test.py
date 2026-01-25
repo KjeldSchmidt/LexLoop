@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 def test_add_tag_returns_2xx(client: TestClient) -> None:
     response = client.post(
         "/tags",
-        json={"title": "test_tag", "description": "test"},
+        json={"tag": {"title": "test_tag", "description": "test"}},
     )
 
     assert response.status_code == 201
@@ -25,7 +25,7 @@ def test_get_tags_when_none_are_stored_returns_empty_list(
 def test_get_tag_by_uuid(client: TestClient) -> None:
     tag_response = client.post(
         "/tags",
-        json={"title": "test_tag", "description": "test"},
+        json={"tag": {"title": "test_tag", "description": "test"}},
     )
     assert tag_response.status_code == 201
 
@@ -39,7 +39,7 @@ def test_get_tag_by_uuid(client: TestClient) -> None:
 def test_get_tags_when_tags_are_added(client: TestClient) -> None:
     tag1_response = client.post(
         "/tags",
-        json={"title": "test_tag", "description": "test"},
+        json={"tag": {"title": "test_tag", "description": "test"}},
     )
     assert tag1_response.status_code == 201
 
@@ -54,11 +54,11 @@ def test_get_tags_when_tags_are_added(client: TestClient) -> None:
 def test_get_tags_for_node(client: TestClient) -> None:
     tag1_response = client.post(
         "/tags",
-        json={"title": "test_tag", "description": "test"},
+        json={"tag": {"title": "test_tag", "description": "test"}},
     )
     tag2_response = client.post(
         "/tags",
-        json={"title": "test_tag2", "description": "test2"},
+        json={"tag": {"title": "test_tag2", "description": "test2"}},
     )
     node_response = client.post(
         "/nodes",

@@ -17,6 +17,7 @@ const show_modal = ref(false)
 const route = useRoute()
 const tag_nodes = ref<NodeOut[]>()
 const tag = ref<Tag>()
+const tags = ref<Tag[]>([])
 
 const id = route.params.id as string
 
@@ -33,6 +34,7 @@ onMounted(async () => {
       path: `/tag/${id}`,
       type: 'tag',
     })
+    tags.value.push(tag.value)
     const res2 = await getNodesForTag(tag.value.uuid)
     if (res2 != undefined && Array.isArray(res2)) {
       tag_nodes.value = res2
@@ -78,7 +80,11 @@ async function handleNodeCreation(result: { new_node: NodeOut }) {
     <button class="fab" @click="show_modal = true">+</button>
   </div>
 
-  <NodeCreationModal v-model:show_modal="show_modal" @confirm="handleNodeCreation">
+  <NodeCreationModal
+    v-model:show_modal="show_modal"
+    v-model:tags="tags"
+    @confirm="handleNodeCreation"
+  >
   </NodeCreationModal>
 </template>
 

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, Depends
+from fastapi import APIRouter, status, Depends, Body
 from sqlalchemy.orm import Session
 
 from lexloop.controller import get_db
@@ -12,7 +12,9 @@ router = APIRouter()
 
 
 @router.post("/tags", status_code=status.HTTP_201_CREATED)
-async def add_tag(tag: TagIn, session: Session = Depends(get_db)) -> TagOut:
+async def add_tag(
+    tag: TagIn = Body(embed=True), session: Session = Depends(get_db)
+) -> TagOut:
     return TagOut.from_internal_model(tag_service.add(tag, session))
 
 

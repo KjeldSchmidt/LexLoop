@@ -287,6 +287,10 @@ export interface components {
     Body_add_node_nodes_post: {
       node: components['schemas']['NodeIn']
     }
+    /** Body_add_tag_tags_post */
+    Body_add_tag_tags_post: {
+      tag: components['schemas']['TagIn']
+    }
     /** Body_auth_jwt_login_auth_login_post */
     Body_auth_jwt_login_auth_login_post: {
       /** Grant Type */
@@ -846,7 +850,7 @@ export interface operations {
     }
     requestBody: {
       content: {
-        'application/json': components['schemas']['TagIn']
+        'application/json': components['schemas']['Body_add_tag_tags_post']
       }
     }
     responses: {
