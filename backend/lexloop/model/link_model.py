@@ -9,6 +9,10 @@ from lexloop.model.node_model import Node
 
 class LinkType(Enum):
     SYNONYM = "SYNONYM"
+    ANTONYM = "ANTONYM"
+    FALSE_FRIEND = "FALSE_FRIEND"
+    HOMOPHONE = "HOMOPHONE"
+    COGNATE = "COGNATE"
 
 
 class LinkIn(BaseModel):  # type: ignore

@@ -1,0 +1,106 @@
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { getTagsList, getNodesList } from '@/api'
+import { useRouter } from 'vue-router'
+import type { components } from '@/api/schema.ts'
+import HeaderBar from '@/components/HeaderBar.vue'
+import { useNavigationHistoryStore } from '@/stores/navigationHistory'
+
+type Tag = components['schemas']['TagOut']
+type Node = components['schemas']['NodeOut']
+
+const router = useRouter()
+const tags = ref<Tag[]>([])
+const nodes = ref<Node[]>([])
+const navigationStore = useNavigationHistoryStore()
+
+onMounted(async () => {
+  navigationStore.resetToClass('Class')
+
+  const [tagsRes, nodesRes] = await Promise.all([getTagsList(), getNodesList()])
+
+  if (tagsRes && Array.isArray(tagsRes)) {
+    tags.value = tagsRes
+  }
+  if (nodesRes && Array.isArray(nodesRes)) {
+    nodes.value = nodesRes
+  }
+})
+
+function goToTag(tag: Tag) {
+  router.push({ name: 'TagPage', params: { id: tag.uuid } })
+}
+
+function goToNode(node: Node) {
+  router.push({ name: 'NodePage', params: { id: node.uuid } })
+}
+</script>
+
+<template>
+  <HeaderBar />
+  <div class="book-container">
+    <div class="page left-page">
+      <h2 class="page-title">All Tags</h2>
+      <div class="card-grid">
+        <button v-for="tag in tags" :key="tag.uuid" class="card" @click="goToTag(tag)">
+          {{ tag.title }}
+        </button>
+      </div>
+    </div>
+
+    <div class="page right-page">
+      <h2 class="page-title">All Words</h2>
+      <div class="card-grid">
+        <button v-for="node in nodes" :key="node.uuid" class="card" @click="goToNode(node)">
+          {{ node.term }}
+        </button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.book-container {
+  display: flex;
+  min-height: calc(100vh - 53px);
+  background: #fff;
+}
+
+.page {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.left-page {
+  border-right: 1px solid #ccc;
+}
+
+.page-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.card {
+  padding: 0.75rem 1rem;
+  border: 1px solid #333;
+  border-radius: 20px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-align: center;
+  transition: background-color 0.15s;
+}
+
+.card:hover {
+  background-color: #f0f0f0;
+}
+</style>
