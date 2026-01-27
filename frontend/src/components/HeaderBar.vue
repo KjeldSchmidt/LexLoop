@@ -39,7 +39,7 @@ function handleSelect(result: { selected_node: Node }) {
       </template>
     </nav>
 
-    <div class="header-actions">
+    <div class="search-container">
       <SearchBar @select="handleSelect" />
     </div>
 
@@ -52,12 +52,19 @@ function handleSelect(result: { selected_node: Node }) {
 
 <style scoped>
 .header-bar {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
   padding: 0.75rem 1.5rem;
   border-bottom: 1px solid #ccc;
   background: #fff;
+  gap: 1rem;
+}
+
+.search-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 .breadcrumbs {
@@ -88,6 +95,7 @@ function handleSelect(result: { selected_node: Node }) {
 .header-actions {
   display: flex;
   gap: 0.5rem;
+  justify-content: flex-end;
 }
 
 .header-btn {
