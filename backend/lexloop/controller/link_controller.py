@@ -12,7 +12,9 @@ router = APIRouter()
 
 
 @router.post("/links", status_code=status.HTTP_201_CREATED)
-async def add_link(link: LinkIn, session: Session = Depends(get_db)) -> LinkOut:
+async def add_link(
+    link: LinkIn = Body(embed=True), session: Session = Depends(get_db)
+) -> LinkOut:
     added_link = link_service.add(link, session)
     return LinkOut.from_internal_model(added_link)
 
@@ -21,6 +23,14 @@ async def add_link(link: LinkIn, session: Session = Depends(get_db)) -> LinkOut:
 async def get_links(session: Session = Depends(get_db)) -> list[LinkOut]:
     link_list = link_service.get_all(session)
     return [LinkOut.from_internal_model(link) for link in link_list]
+
+
+@router.get("/links/types")
+async def get_link_types() -> list[LinkTypeInfo]:
+    return [
+        LinkTypeInfo(value=link_type.value, display_name=link_type.display_name)
+        for link_type in LinkType
+    ]
 
 
 @router.get("/links/{uuid}")
