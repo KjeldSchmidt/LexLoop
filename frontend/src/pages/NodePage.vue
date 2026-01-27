@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getLinksForNode, getNodeForUUID, getTagForUUID, updateNodeTags } from '@/api'
+import { getLinksForNode, getLinkTypes, getNodeForUUID, getTagForUUID, updateNodeTags } from '@/api'
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { watch } from 'vue'
@@ -7,27 +7,30 @@ import type { components } from '@/api/schema.ts'
 import TagUpdateModal from '@/components/TagUpdateModal.vue'
 import HeaderBar from '@/components/HeaderBar.vue'
 import { useNavigationHistoryStore } from '@/stores/navigationHistory'
+import LinkCreationModal from '@/components/LinkCreationModal.vue'
 
 export type schemas = components['schemas']
 
-const show_modal = ref(false)
+const show_tag_modal = ref(false)
+const show_link_modal = ref(false)
 
 type Node = schemas['NodeOut']
 type Tag = schemas['TagOut']
 type Link = schemas['LinkOut']
+type LinkTypeInfo = schemas['LinkTypeInfo']
+type LinkType = schemas['LinkType']
 
 interface RelatedItem {
   uuid: string
   term: string
-  type: string
+  type: LinkTypeInfo
 }
-
-const LINK_TYPES = ['SYNONYM', 'ANTONYM', 'FALSE_FRIEND', 'HOMOPHONE', 'COGNATE'] as const
 
 const links = ref<RelatedItem[]>([])
 const tags = ref<Tag[]>([])
 const node = ref<Node>()
-const activeFilters = ref<Set<string>>(new Set(LINK_TYPES))
+const linkTypes = ref<Set<LinkTypeInfo>>(new Set())
+const activeFilters = ref<Set<LinkTypeInfo>>(new Set())
 
 const route = useRoute()
 const router = useRouter()
@@ -36,10 +39,17 @@ const navigationStore = useNavigationHistoryStore()
 const id = route.params.id as string
 
 const filteredLinks = computed(() => {
-  return links.value.filter((link) => activeFilters.value.has(link.type))
+  return links.value.filter((link) => {
+    for (const filterType of activeFilters.value) {
+      if (filterType.value === link.type.value) {
+        return true
+      }
+    }
+    return false
+  })
 })
 
-function toggleFilter(type: string) {
+function toggleFilter(type: LinkTypeInfo) {
   if (activeFilters.value.has(type)) {
     activeFilters.value.delete(type)
   } else {
@@ -48,15 +58,11 @@ function toggleFilter(type: string) {
   activeFilters.value = new Set(activeFilters.value)
 }
 
-function formatLinkType(type: string): string {
-  const typeLabels: Record<string, string> = {
-    SYNONYM: 'Synonym',
-    ANTONYM: 'Antonym',
-    FALSE_FRIEND: 'False Friend',
-    HOMOPHONE: 'Homophone',
-    COGNATE: 'Cognate',
+function getLinkTypeInfo(type: LinkType) {
+  for (const t of linkTypes.value) {
+    if (type == t.value) return t
   }
-  return typeLabels[type] || type
+  return undefined
 }
 
 async function update(id: string) {
@@ -71,15 +77,17 @@ async function update(id: string) {
     })
     const res2 = await getLinksForNode(node.value.uuid)
     if (res2 != undefined && Array.isArray(res2)) {
+      links.value = []
       for (const item of res2 as Link[]) {
+        const link_type = getLinkTypeInfo(item.type)
         if (node.value.uuid == item.node1) {
           const other_node = await getNodeForUUID(item.node2)
-          if (other_node != undefined)
-            links.value.push({ uuid: other_node.uuid, term: other_node.term, type: item.type })
+          if (other_node != undefined && link_type != undefined)
+            links.value.push({ uuid: other_node.uuid, term: other_node.term, type: link_type })
         } else {
           const other_node = await getNodeForUUID(item.node1)
-          if (other_node != undefined)
-            links.value.push({ uuid: other_node.uuid, term: other_node.term, type: item.type })
+          if (other_node != undefined && link_type != undefined)
+            links.value.push({ uuid: other_node.uuid, term: other_node.term, type: link_type })
         }
       }
     }
@@ -91,7 +99,7 @@ async function update(id: string) {
   }
 }
 
-async function handleConfirm(result: { selected_tags: Tag[] }) {
+async function handleTagsConfirm(result: { selected_tags: Tag[] }) {
   const new_tags = ref<string[]>([])
   for (const tag of result.selected_tags) {
     new_tags.value.push(tag.uuid)
@@ -109,6 +117,19 @@ async function handleConfirm(result: { selected_tags: Tag[] }) {
   }
 }
 
+async function handleLinksConfirm(result: { new_link: Link }) {
+  //if (result.new_link != undefined) await update(id)
+  //return
+  if (result.new_link != undefined) {
+    let other_id = result.new_link.node1
+    if (id == other_id) other_id = result.new_link.node2
+    const res = await getNodeForUUID(other_id)
+    const link_type_info = getLinkTypeInfo(result.new_link.type)
+    if (res != undefined && link_type_info != undefined)
+      links.value.push({ uuid: res.uuid, term: res.term, type: link_type_info })
+  }
+}
+
 function goToTag(tag: Tag) {
   router.push({ name: 'TagPage', params: { id: tag.uuid } })
 }
@@ -118,6 +139,11 @@ function goToNode(item: RelatedItem) {
 }
 
 onMounted(async () => {
+  const linkTypesList = await getLinkTypes()
+  if (linkTypesList != undefined && Array.isArray(linkTypesList)) {
+    linkTypes.value = new Set(linkTypesList)
+    activeFilters.value = new Set(linkTypes.value)
+  }
   await update(id)
 })
 
@@ -145,7 +171,7 @@ watch(
           <button v-for="tag in tags" :key="tag.uuid" class="tag-pill" @click="goToTag(tag)">
             {{ tag.title }}
           </button>
-          <button class="tag-pill add-btn" @click="show_modal = true">+</button>
+          <button class="tag-pill add-btn" @click="show_tag_modal = true">+</button>
         </div>
       </div>
     </div>
@@ -160,22 +186,34 @@ watch(
           class="link-item"
           @click="goToNode(item)"
         >
-          {{ item.term }} is a {{ formatLinkType(item.type) }}
+          {{ item.term }} ({{ item.type.display_name }})
         </div>
-        <button class="add-link-btn">+</button>
+        <button class="add-link-btn" @click="show_link_modal = true">+</button>
       </div>
 
       <div class="filters-section">
-        <label v-for="type in LINK_TYPES" :key="type" class="filter-checkbox">
+        <label v-for="type in linkTypes" :key="type.value" class="filter-checkbox">
           <input type="checkbox" :checked="activeFilters.has(type)" @change="toggleFilter(type)" />
-          {{ formatLinkType(type) }}
+          {{ type.display_name }}
         </label>
       </div>
     </div>
   </div>
 
-  <TagUpdateModal v-model:show_modal="show_modal" v-model:tags="tags" @confirm="handleConfirm">
+  <TagUpdateModal
+    v-model:show_modal="show_tag_modal"
+    v-model:tags="tags"
+    @confirm="handleTagsConfirm"
+  >
   </TagUpdateModal>
+
+  <LinkCreationModal
+    v-if="node"
+    v-model:show_modal="show_link_modal"
+    @confirm="handleLinksConfirm"
+    v-model:node="node"
+  >
+  </LinkCreationModal>
 </template>
 
 <style scoped>

@@ -5,6 +5,7 @@ export default client
 export type schemas = components['schemas']
 type NodeIn = schemas['NodeIn']
 type TagIn = schemas['TagIn']
+type LinkIn = schemas['LinkIn']
 
 export const getNodesList = async () => {
   const { data } = await client.GET('/nodes', {})
@@ -101,5 +102,19 @@ export const addTag = async (tag: TagIn) => {
       tag: tag,
     },
   })
+  return data
+}
+
+export const addLink = async (link: LinkIn) => {
+  const { data } = await client.POST('/links', {
+    body: {
+      link: link,
+    },
+  })
+  return data
+}
+
+export const getLinkTypes = async () => {
+  const { data } = await client.GET('/links/types', {})
   return data
 }

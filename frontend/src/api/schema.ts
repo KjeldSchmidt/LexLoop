@@ -159,6 +159,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/links/types': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get Link Types */
+    get: operations['get_link_types_links_types_get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/links/{uuid}': {
     parameters: {
       query?: never
@@ -283,6 +300,10 @@ export interface paths {
 export type webhooks = Record<string, never>
 export interface components {
   schemas: {
+    /** Body_add_link_links_post */
+    Body_add_link_links_post: {
+      link: components['schemas']['LinkIn']
+    }
     /** Body_add_node_nodes_post */
     Body_add_node_nodes_post: {
       node: components['schemas']['NodeIn']
@@ -371,6 +392,13 @@ export interface components {
      * @enum {string}
      */
     LinkType: 'SYNONYM' | 'ANTONYM' | 'FALSE_FRIEND' | 'HOMOPHONE' | 'COGNATE'
+    /** LinkTypeInfo */
+    LinkTypeInfo: {
+      /** Value */
+      value: string
+      /** Display Name */
+      display_name: string
+    }
     /** NodeIn */
     NodeIn: {
       /** Term */
@@ -766,7 +794,7 @@ export interface operations {
     }
     requestBody: {
       content: {
-        'application/json': components['schemas']['LinkIn']
+        'application/json': components['schemas']['Body_add_link_links_post']
       }
     }
     responses: {
@@ -786,6 +814,26 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  get_link_types_links_types_get: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['LinkTypeInfo'][]
         }
       }
     }

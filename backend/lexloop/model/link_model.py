@@ -14,6 +14,18 @@ class LinkType(Enum):
     HOMOPHONE = "HOMOPHONE"
     COGNATE = "COGNATE"
 
+    @property
+    def display_name(self) -> str:
+        """Get the human-readable display name for the link type."""
+        display_names = {
+            LinkType.SYNONYM: "Synonym",
+            LinkType.ANTONYM: "Antonym",
+            LinkType.FALSE_FRIEND: "False Friend",
+            LinkType.HOMOPHONE: "Homophone",
+            LinkType.COGNATE: "Cognate",
+        }
+        return display_names.get(self, self.value)
+
 
 class LinkIn(BaseModel):  # type: ignore
     node1: str
@@ -46,3 +58,8 @@ class LinkOut(BaseModel):  # type: ignore
             node2=internal_model.node2.uuid,
             annotation=internal_model.annotation,
         )
+
+
+class LinkTypeInfo(BaseModel):  # type: ignore
+    value: str
+    display_name: str

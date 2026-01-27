@@ -1,8 +1,8 @@
-from fastapi import APIRouter, status, Depends
+from fastapi import APIRouter, status, Depends, Body
 from sqlalchemy.orm import Session
 
 from lexloop.controller import get_db
-from lexloop.model.link_model import LinkOut, LinkIn
+from lexloop.model.link_model import LinkOut, LinkIn, LinkType, LinkTypeInfo
 
 from lexloop.service import link_service
 

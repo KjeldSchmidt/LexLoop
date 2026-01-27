@@ -91,30 +91,36 @@ def test_get_all_for_single_node(client: TestClient) -> None:
     link1_response = client.post(
         "/links",
         json={
-            "node1": node1_response.json()["uuid"],
-            "node2": node2_response.json()["uuid"],
-            "type": "SYNONYM",
-            "annotation": "comment",
+            "link": {
+                "node1": node1_response.json()["uuid"],
+                "node2": node2_response.json()["uuid"],
+                "type": "SYNONYM",
+                "annotation": "comment",
+            }
         },
     )
 
     link2_response = client.post(
         "/links",
         json={
-            "node1": node3_response.json()["uuid"],
-            "node2": node1_response.json()["uuid"],
-            "type": "SYNONYM",
-            "annotation": "comment",
+            "link": {
+                "node1": node3_response.json()["uuid"],
+                "node2": node1_response.json()["uuid"],
+                "type": "SYNONYM",
+                "annotation": "comment",
+            }
         },
     )
 
     client.post(
         "/links",
         json={
-            "node1": node2_response.json()["uuid"],
-            "node2": node3_response.json()["uuid"],
-            "type": "SYNONYM",
-            "annotation": "comment",
+            "link": {
+                "node1": node2_response.json()["uuid"],
+                "node2": node3_response.json()["uuid"],
+                "type": "SYNONYM",
+                "annotation": "comment",
+            }
         },
     )
 

@@ -2,6 +2,10 @@
 import { useNavigationHistoryStore } from '@/stores/navigationHistory'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
+import SearchBar from '@/components/SearchBar.vue'
+import type { components } from '@/api/schema.ts'
+
+type Node = components['schemas']['NodeOut']
 
 const store = useNavigationHistoryStore()
 const { history } = storeToRefs(store)
@@ -13,6 +17,10 @@ function goTo(path: string) {
 
 function goToClasses() {
   router.push('/class')
+}
+
+function handleSelect(result: { selected_node: Node }) {
+  router.push({ name: 'NodePage', params: { id: result.selected_node.uuid } })
 }
 </script>
 
@@ -30,6 +38,10 @@ function goToClasses() {
         <span v-if="index < history.length - 1" class="separator">&gt;</span>
       </template>
     </nav>
+
+    <div class="header-actions">
+      <SearchBar @select="handleSelect" />
+    </div>
 
     <div class="header-actions">
       <button class="header-btn" @click="goToClasses">Back to Classes</button>

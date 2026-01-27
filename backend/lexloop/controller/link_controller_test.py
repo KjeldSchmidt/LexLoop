@@ -31,10 +31,12 @@ def test_add_link_returns_2xx(client: TestClient) -> None:
     response = client.post(
         "/links",
         json={
-            "node1": node1_response.json()["uuid"],
-            "node2": node2_response.json()["uuid"],
-            "type": "SYNONYM",
-            "annotation": "comment",
+            "link": {
+                "node1": node1_response.json()["uuid"],
+                "node2": node2_response.json()["uuid"],
+                "type": "SYNONYM",
+                "annotation": "comment",
+            }
         },
     )
     assert response.status_code == 201
@@ -67,10 +69,12 @@ def test_get_links_when_links_are_added(client: TestClient) -> None:
     response = client.post(
         "/links",
         json={
-            "node1": node1_response.json()["uuid"],
-            "node2": node2_response.json()["uuid"],
-            "type": "SYNONYM",
-            "annotation": "comment",
+            "link": {
+                "node1": node1_response.json()["uuid"],
+                "node2": node2_response.json()["uuid"],
+                "type": "SYNONYM",
+                "annotation": "comment",
+            }
         },
     )
     assert response.status_code == 201
@@ -82,3 +86,10 @@ def test_get_links_when_links_are_added(client: TestClient) -> None:
     assert returned_link["node2"] == node2_response.json()["uuid"]
     assert LinkType(returned_link["type"]) == LinkType.SYNONYM
     assert returned_link["annotation"] == "comment"
+
+
+def test_get_link_types(client: TestClient) -> None:
+    response = client.get("/links/types")
+    assert response.status_code == 200
+    assert len(response.json()) == 5
+    assert response.json()[0]["value"] == "SYNONYM"
