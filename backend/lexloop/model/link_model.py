@@ -10,7 +10,7 @@ from lexloop.model.node_model import Node
 class LinkType(Enum):
     SYNONYM = "SYNONYM"
     ANTONYM = "ANTONYM"
-    FALSE_FRIEND = "FALSE_FRIEND"
+    WORD_FIELD = "WORD_FIELD"
     HOMOPHONE = "HOMOPHONE"
     COGNATE = "COGNATE"
 
@@ -20,7 +20,7 @@ class LinkType(Enum):
         display_names = {
             LinkType.SYNONYM: "Synonym",
             LinkType.ANTONYM: "Antonym",
-            LinkType.FALSE_FRIEND: "False Friend",
+            LinkType.WORD_FIELD: "Word Field",
             LinkType.HOMOPHONE: "Homophone",
             LinkType.COGNATE: "Cognate",
         }
