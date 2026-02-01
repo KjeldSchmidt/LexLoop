@@ -12,7 +12,7 @@ class LinkType(Enum):
     ANTONYM = "ANTONYM"
     WORD_FIELD = "WORD_FIELD"
     HOMOPHONE = "HOMOPHONE"
-    COGNATE = "COGNATE"
+    WORD_FAMILY = "WORD_FAMILY"
 
     @property
     def display_name(self) -> str:
@@ -22,7 +22,7 @@ class LinkType(Enum):
             LinkType.ANTONYM: "Antonym",
             LinkType.WORD_FIELD: "Word Field",
             LinkType.HOMOPHONE: "Homophone",
-            LinkType.COGNATE: "Cognate",
+            LinkType.WORD_FAMILY: "Word Family",
         }
         return display_names.get(self, self.value)
 
