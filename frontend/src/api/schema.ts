@@ -391,7 +391,7 @@ export interface components {
      * LinkType
      * @enum {string}
      */
-    LinkType: 'SYNONYM' | 'ANTONYM' | 'WORD_FIELD' | 'HOMOPHONE' | 'COGNATE'
+    LinkType: 'SYNONYM' | 'ANTONYM' | 'WORD_FIELD' | 'HOMOPHONE' | 'WORD_FAMILY'
     /** LinkTypeInfo */
     LinkTypeInfo: {
       /** Value */
