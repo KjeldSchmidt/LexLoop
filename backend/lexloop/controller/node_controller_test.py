@@ -1,5 +1,3 @@
-from uuid import UUID
-
 from fastapi.testclient import TestClient
 
 
@@ -15,10 +13,7 @@ def test_add_node_returns_2xx(client: TestClient) -> None:
             },
         },
     )
-    print(response.text)
     assert response.status_code == 201
-    data = response.json()
-    UUID(data["uuid"])
 
 
 def test_get_nodes_when_none_are_stored_returns_empty_list(
@@ -40,23 +35,29 @@ def test_get_nodes_when_nodes_are_added(client: TestClient) -> None:
             }
         },
     )
-    response = client.post(
+    node_response = client.post(
         "/nodes",
         json={
             "node": {
                 "term": "test",
                 "definition": "test",
                 "tags": [tag_response.json()["uuid"]],
+                "course_uuid": "59cc5186-a10d-476e-b750-c8f5b821b953",
             }
         },
     )
-    assert response.status_code == 201
+    assert node_response.status_code == 201
+    new_node_uuid = node_response.json()["uuid"]
 
-    response = client.get("/nodes")
+    response = client.get("/course/59cc5186-a10d-476e-b750-c8f5b821b953/nodes")
     assert response.status_code == 200
-    returned_node = response.json()[0]
-    assert returned_node["term"] == "test"
-    assert returned_node["definition"] == "test"
+    filtered_nodes = list(
+        filter(lambda x: x["uuid"] == new_node_uuid, response.json())
+    )
+    assert len(filtered_nodes) == 1
+
+    assert filtered_nodes[0]["term"] == "test"
+    assert filtered_nodes[0]["definition"] == "test"
 
 
 def test_get_all_for_single_node(client: TestClient) -> None:

@@ -1,4 +1,3 @@
-import uuid
 from uuid import UUID
 
 from fastapi.testclient import TestClient
