@@ -19,6 +19,7 @@ class TagOut(BaseModel):  # type: ignore
 class TagIn(BaseModel):  # type: ignore
     title: str
     description: str
+    course_uuid: UUID4
 
 
 class Tag(BaseModel):  # type: ignore

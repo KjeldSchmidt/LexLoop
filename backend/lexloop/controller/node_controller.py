@@ -38,9 +38,11 @@ async def add_tag_to_node(
     return NodeOut.from_internal_model(updated_node)
 
 
-@router.get("/nodes")
-async def get_nodes(session: Session = Depends(get_db)) -> list[NodeOut]:
-    node_list = node_service.get_all(session)
+@router.get("/course/{course_uuid}/nodes")
+async def get_nodes(
+    course_uuid: UUID4, session: Session = Depends(get_db)
+) -> list[NodeOut]:
+    node_list = node_service.get_by_course_uuid(session, course_uuid)
     return [NodeOut.from_internal_model(node) for node in node_list]
 
 

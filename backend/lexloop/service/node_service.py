@@ -26,6 +26,10 @@ def get_all(session: Session) -> list[Node]:
     return node_repository.get_all(session)
 
 
+def get_by_course_uuid(session: Session, course_uuid: UUID4) -> list[Node]:
+    return node_repository.get_by_course_uuid(session, course_uuid)
+
+
 def get_by_uuid(uuid: UUID4, session: Session) -> Node:
     return node_repository.get_by_uuid(uuid, session)
 

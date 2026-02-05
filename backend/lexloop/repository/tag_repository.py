@@ -50,6 +50,7 @@ def add(tag: TagIn, session: Session) -> Tag:
         uuid=str(uuid4()),
         title=tag.title,
         description=tag.description,
+        course_uuid=tag.course_uuid,
     )
     session.add(tag_repo)
     session.commit()

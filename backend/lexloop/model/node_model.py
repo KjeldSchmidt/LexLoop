@@ -25,6 +25,7 @@ class NodeIn(BaseModel):  # type: ignore
     term: str
     definition: str
     tags: list[str]
+    course_uuid: UUID4
 
 
 class Node(BaseModel):  # type: ignore

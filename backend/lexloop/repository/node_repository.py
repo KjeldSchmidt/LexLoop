@@ -73,6 +73,7 @@ def add(node: NodeIn, session: Session) -> Node:
         term=node.term,
         definition=node.definition,
         tags=tag_repos,
+        course_uuid=node.course_uuid,
     )
     session.add(node_repo)
     session.commit()
@@ -82,6 +83,13 @@ def add(node: NodeIn, session: Session) -> Node:
 
 def get_all(session: Session) -> list[Node]:
     all_nodes: list[NodeRepo] = session.query(NodeRepo).all()
+    return [node.to_internal_model() for node in all_nodes]
+
+
+def get_by_course_uuid(session: Session, course_uuid: UUID4) -> list[Node]:
+    all_nodes: list[NodeRepo] = (
+        session.query(NodeRepo).where(NodeRepo.course_uuid == course_uuid).all()
+    )
     return [node.to_internal_model() for node in all_nodes]
 
 

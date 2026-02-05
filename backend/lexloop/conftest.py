@@ -1,5 +1,6 @@
+from pathlib import Path
 from typing import Generator
-from sqlalchemy import create_engine, Engine
+from sqlalchemy import create_engine, Engine, text
 from sqlalchemy.orm import sessionmaker, Session
 from lexloop.repository.base import Base
 from fastapi.testclient import TestClient
@@ -33,6 +34,10 @@ def db_session(
     connection = engine.connect()
     transaction = connection.begin()
     session = sessionmaker(bind=connection)(autoflush=False, autocommit=False)
+
+    seed_path = Path(__file__).parent.parent / "db_seed.sql"
+    seed_command = seed_path.read_text()
+    session.execute(text(seed_command))
 
     yield session
 

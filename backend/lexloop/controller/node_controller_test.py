@@ -7,9 +7,15 @@ def test_add_node_returns_2xx(client: TestClient) -> None:
     response = client.post(
         "/nodes",
         json={
-            "node": {"term": "test", "definition": "test", "tags": []},
+            "node": {
+                "term": "test",
+                "definition": "test",
+                "tags": [],
+                "course_uuid": "59cc5186-a10d-476e-b750-c8f5b821b953",
+            },
         },
     )
+    print(response.text)
     assert response.status_code == 201
     data = response.json()
     UUID(data["uuid"])
@@ -18,7 +24,7 @@ def test_add_node_returns_2xx(client: TestClient) -> None:
 def test_get_nodes_when_none_are_stored_returns_empty_list(
     client: TestClient,
 ) -> None:
-    response = client.get("/nodes")
+    response = client.get("/course/0419df0c-080f-4a93-bb4e-82fc6121b073/nodes")
     assert response.status_code == 200
     assert response.json() == []
 
@@ -26,7 +32,13 @@ def test_get_nodes_when_none_are_stored_returns_empty_list(
 def test_get_nodes_when_nodes_are_added(client: TestClient) -> None:
     tag_response = client.post(
         "/tags",
-        json={"tag": {"title": "test_tag", "description": "test"}},
+        json={
+            "tag": {
+                "title": "test_tag",
+                "description": "test",
+                "course_uuid": "59cc5186-a10d-476e-b750-c8f5b821b953",
+            }
+        },
     )
     response = client.post(
         "/nodes",

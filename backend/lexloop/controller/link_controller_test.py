@@ -1,3 +1,4 @@
+import uuid
 from uuid import UUID
 
 from fastapi.testclient import TestClient
@@ -13,6 +14,7 @@ def test_add_link_returns_2xx(client: TestClient) -> None:
                 "term": "test1",
                 "definition": "test",
                 "tags": [],
+                "course_uuid": "44abe87e-02cc-11f1-bf14-00155d0892d6",
             }
         },
     )
@@ -24,6 +26,7 @@ def test_add_link_returns_2xx(client: TestClient) -> None:
                 "term": "test2",
                 "definition": "test",
                 "tags": [],
+                "course_uuid": "44abe87e-02cc-11f1-bf14-00155d0892d6",
             }
         },
     )
