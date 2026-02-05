@@ -6,7 +6,13 @@ from fastapi.testclient import TestClient
 def test_add_tag_returns_2xx(client: TestClient) -> None:
     response = client.post(
         "/tags",
-        json={"tag": {"title": "test_tag", "description": "test"}},
+        json={
+            "tag": {
+                "title": "test_tag",
+                "description": "test",
+                "course_uuid": "59cc5186-a10d-476e-b750-c8f5b821b953",
+            }
+        },
     )
 
     assert response.status_code == 201
@@ -25,7 +31,13 @@ def test_get_tags_when_none_are_stored_returns_empty_list(
 def test_get_tag_by_uuid(client: TestClient) -> None:
     tag_response = client.post(
         "/tags",
-        json={"tag": {"title": "test_tag", "description": "test"}},
+        json={
+            "tag": {
+                "title": "test_tag",
+                "description": "test",
+                "course_uuid": "59cc5186-a10d-476e-b750-c8f5b821b953",
+            }
+        },
     )
     assert tag_response.status_code == 201
 
@@ -37,16 +49,27 @@ def test_get_tag_by_uuid(client: TestClient) -> None:
 
 
 def test_get_tags_when_tags_are_added(client: TestClient) -> None:
-    tag1_response = client.post(
+    tag_response = client.post(
         "/tags",
-        json={"tag": {"title": "test_tag", "description": "test"}},
+        json={
+            "tag": {
+                "title": "test_tag",
+                "description": "test",
+                "course_uuid": "59cc5186-a10d-476e-b750-c8f5b821b953",
+            }
+        },
     )
-    assert tag1_response.status_code == 201
+    assert tag_response.status_code == 201
+    new_tag_uuid = tag_response.json()["uuid"]
 
-    response = client.get("/tags")
+    response = client.get("/course/59cc5186-a10d-476e-b750-c8f5b821b953/tags")
     assert response.status_code == 200
-    assert len(response.json()) == 1
-    returned_tag = response.json()[0]
+    filtered_tags = list(
+        filter(lambda x: x["uuid"] == new_tag_uuid, response.json())
+    )
+    assert len(filtered_tags) == 1
+
+    returned_tag = filtered_tags[0]
     assert returned_tag["title"] == "test_tag"
     assert returned_tag["description"] == "test"
 

@@ -45,8 +45,7 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Get Nodes */
-    get: operations['get_nodes_nodes_get']
+    get?: never
     put?: never
     /** Add Node */
     post: operations['add_node_nodes_post']
@@ -84,6 +83,23 @@ export interface paths {
     put?: never
     /** Add Tag To Node */
     post: operations['add_tag_to_node_nodes__node_uuid___tag_uuid__post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/course/{course_uuid}/nodes': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get Nodes */
+    get: operations['get_nodes_course__course_uuid__nodes_get']
+    put?: never
+    post?: never
     delete?: never
     options?: never
     head?: never
@@ -200,11 +216,27 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Get Tags */
-    get: operations['get_tags_tags_get']
+    get?: never
     put?: never
     /** Add Tag */
     post: operations['add_tag_tags_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/course/{course_uuid}/tags': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get Tags */
+    get: operations['get_tags_course__course_uuid__tags_get']
+    put?: never
+    post?: never
     delete?: never
     options?: never
     head?: never
@@ -407,6 +439,11 @@ export interface components {
       definition: string
       /** Tags */
       tags: string[]
+      /**
+       * Course Uuid
+       * Format: uuid4
+       */
+      course_uuid: string
     }
     /** NodeOut */
     NodeOut: {
@@ -428,6 +465,11 @@ export interface components {
       title: string
       /** Description */
       description: string
+      /**
+       * Course Uuid
+       * Format: uuid4
+       */
+      course_uuid: string
     }
     /** TagOut */
     TagOut: {
@@ -552,26 +594,6 @@ export interface operations {
       }
     }
   }
-  get_nodes_nodes_get: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['NodeOut'][]
-        }
-      }
-    }
-  }
   add_node_nodes_post: {
     parameters: {
       query?: never
@@ -659,6 +681,37 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['NodeOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  get_nodes_course__course_uuid__nodes_get: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        course_uuid: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['NodeOut'][]
         }
       }
       /** @description Validation Error */
@@ -869,26 +922,6 @@ export interface operations {
       }
     }
   }
-  get_tags_tags_get: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['TagOut'][]
-        }
-      }
-    }
-  }
   add_tag_tags_post: {
     parameters: {
       query?: never
@@ -909,6 +942,37 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['TagOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  get_tags_course__course_uuid__tags_get: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        course_uuid: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['TagOut'][]
         }
       }
       /** @description Validation Error */

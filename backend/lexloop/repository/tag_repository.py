@@ -64,6 +64,13 @@ def get_all(session: Session) -> list[Tag]:
     return [tag.to_internal_model() for tag in all_tags]
 
 
+def get_by_course_uuid(session: Session, course_uuid: UUID4) -> list[Tag]:
+    all_nodes: list[TagRepo] = (
+        session.query(TagRepo).where(TagRepo.course_uuid == course_uuid).all()
+    )
+    return [node.to_internal_model() for node in all_nodes]
+
+
 def get_by_uuid(uuid: UUID4, session: Session) -> Tag:
     tag: TagRepo | None = session.get(TagRepo, uuid)
     if tag is None:
