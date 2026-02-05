@@ -82,7 +82,7 @@ def test_get_all_for_tags(client: TestClient) -> None:
         "c24f126f-6a1f-4ff9-bf08-65488a179a3e",
         "c5a5fb3e-894d-4c0b-bbea-535a12f7ceff",
     }
-    response = client.get(f"/nodes/tag/e0694e62-b746-4ed0-b24e-be1abb194eda")
+    response = client.get("/nodes/tag/e0694e62-b746-4ed0-b24e-be1abb194eda")
     assert response.status_code == 200
     data = response.json()
     actual_node_uuids = {node["uuid"] for node in data}
