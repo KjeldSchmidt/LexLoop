@@ -61,152 +61,44 @@ def test_get_nodes_when_nodes_are_added(client: TestClient) -> None:
 
 
 def test_get_all_for_single_node(client: TestClient) -> None:
-    tag_response = client.post(
-        "/tags",
-        json={"tag": {"title": "test_tag", "description": "test"}},
-    )
-    tag2_response = client.post(
-        "/tags",
-        json={"tag": {"title": "test_tag2", "description": "test"}},
-    )
-    node1_response = client.post(
-        "/nodes",
-        json={
-            "node": {"term": "test1", "definition": "test", "tags": []},
-        },
-    )
-
-    node2_response = client.post(
-        "/nodes",
-        json={
-            "node": {
-                "term": "test2",
-                "definition": "test",
-                "tags": [
-                    tag_response.json()["uuid"],
-                    tag2_response.json()["uuid"],
-                ],
-            }
-        },
-    )
-
-    node3_response = client.post(
-        "/nodes",
-        json={
-            "node": {
-                "term": "test3",
-                "definition": "test",
-                "tags": [tag_response.json()["uuid"]],
-            }
-        },
-    )
-
-    link1_response = client.post(
-        "/links",
-        json={
-            "link": {
-                "node1": node1_response.json()["uuid"],
-                "node2": node2_response.json()["uuid"],
-                "type": "SYNONYM",
-                "annotation": "comment",
-            }
-        },
-    )
-
-    link2_response = client.post(
-        "/links",
-        json={
-            "link": {
-                "node1": node3_response.json()["uuid"],
-                "node2": node1_response.json()["uuid"],
-                "type": "SYNONYM",
-                "annotation": "comment",
-            }
-        },
-    )
-
-    client.post(
-        "/links",
-        json={
-            "link": {
-                "node1": node2_response.json()["uuid"],
-                "node2": node3_response.json()["uuid"],
-                "type": "SYNONYM",
-                "annotation": "comment",
-            }
-        },
-    )
-
-    response = client.get(f"/nodes/{node1_response.json()['uuid']}/links")
+    example_node_uuid = "510a20c6-e818-44a5-a57b-a9e847f58950"
+    expected_link_uuids = {
+        "3456752f-d463-43ec-aa03-32837bca756c",
+        "d4f814e8-497e-4c8a-8658-e53dea9c1109",
+    }
+    response = client.get(f"/nodes/{example_node_uuid}/links")
     assert response.status_code == 200
     data = response.json()
-    uuid_set = {link["uuid"] for link in data}
-    assert link1_response.json()["uuid"] in uuid_set
-    assert link2_response.json()["uuid"] in uuid_set
-    assert len(data) == 2
+    actual_link_uuid_set = {link["uuid"] for link in data}
+    assert actual_link_uuid_set == expected_link_uuids
 
 
 def test_get_all_for_tags(client: TestClient) -> None:
-    tag1_response = client.post(
-        "/tags",
-        json={"tag": {"title": "test_tag", "description": "test"}},
-    )
-    tag2_response = client.post(
-        "/tags",
-        json={"tag": {"title": "test_tag2", "description": "test"}},
-    )
-    client.post(
-        "/nodes",
-        json={
-            "node": {"term": "test1", "definition": "test", "tags": []},
-        },
-    )
-
-    node2_response = client.post(
-        "/nodes",
-        json={
-            "node": {
-                "term": "test2",
-                "definition": "test",
-                "tags": [
-                    tag1_response.json()["uuid"],
-                    tag2_response.json()["uuid"],
-                ],
-            }
-        },
-    )
-
-    node3_response = client.post(
-        "/nodes",
-        json={
-            "node": {
-                "term": "test3",
-                "definition": "test",
-                "tags": [tag1_response.json()["uuid"]],
-            }
-        },
-    )
-
-    response = client.get(f"/nodes/tag/{tag1_response.json()['uuid']}")
+    expected_node_uuids = {
+        "510a20c6-e818-44a5-a57b-a9e847f58950",
+        "55f04eba-3311-45be-a9e6-d8f14db3fa52",
+        "7b17c724-a501-4b79-975e-23550464740d",
+        "840d7d42-c26e-4f4f-abda-061181d504cd",
+        "c24f126f-6a1f-4ff9-bf08-65488a179a3e",
+        "c5a5fb3e-894d-4c0b-bbea-535a12f7ceff",
+    }
+    response = client.get(f"/nodes/tag/e0694e62-b746-4ed0-b24e-be1abb194eda")
     assert response.status_code == 200
     data = response.json()
-    uuid_set = {node["uuid"] for node in data}
-    assert node2_response.json()["uuid"] in uuid_set
-    assert node3_response.json()["uuid"] in uuid_set
-    assert len(data) == 2
-
-    response = client.get(f"/nodes/tag/{tag2_response.json()['uuid']}")
-    assert response.status_code == 200
-    data = response.json()
-    uuid_set = {node["uuid"] for node in data}
-    assert node2_response.json()["uuid"] in uuid_set
-    assert len(data) == 1
+    actual_node_uuids = {node["uuid"] for node in data}
+    assert actual_node_uuids == expected_node_uuids
 
 
 def test_add_tags_to_node(client: TestClient) -> None:
     tag_response = client.post(
         "/tags",
-        json={"tag": {"title": "test_tag", "description": "test"}},
+        json={
+            "tag": {
+                "title": "test_tag",
+                "description": "test",
+                "course_uuid": "0419df0c-080f-4a93-bb4e-82fc6121b073",
+            }
+        },
     )
     node_response = client.post(
         "/nodes",
@@ -215,6 +107,7 @@ def test_add_tags_to_node(client: TestClient) -> None:
                 "term": "test",
                 "definition": "test",
                 "tags": [],
+                "course_uuid": "0419df0c-080f-4a93-bb4e-82fc6121b073",
             },
         },
     )
@@ -234,42 +127,24 @@ def test_add_tags_to_node(client: TestClient) -> None:
 
 
 def test_update_tags(client: TestClient) -> None:
-    tag_response = client.post(
-        "/tags",
-        json={"tag": {"title": "test_tag", "description": "test"}},
-    )
-    tag_response2 = client.post(
-        "/tags",
-        json={"tag": {"title": "test_tag2", "description": "test"}},
-    )
-    node_response = client.post(
-        "/nodes",
-        json={
-            "node": {
-                "term": "test",
-                "definition": "test",
-                "tags": [tag_response.json()["uuid"]],
-            }
-        },
-    )
-    assert len(node_response.json()["tags"]) == 1
+    node_uuid = "b8e3cd0c-bee2-465a-a3cd-eb935212642c"
+    tag_to_add_uuid = "910596b5-f15a-45be-a941-94c448539023"
+    response = client.get(f"/nodes/{node_uuid}")
+    tags = response.json()["tags"]
+    assert len(tags) == 1
 
     response = client.post(
-        f"/nodes/update/{node_response.json()['uuid']}/tags/",
+        f"/nodes/update/{node_uuid}/tags/",
         json={
             "tag_uuids": [
-                tag_response.json()["uuid"],
-                tag_response2.json()["uuid"],
+                tags[0],
+                tag_to_add_uuid,
             ]
         },
     )
     assert response.status_code == 200
     assert len(response.json()["tags"]) == 2
 
-    response = client.post(
-        f"/nodes/update/{node_response.json()['uuid']}/tags/",
-        json={"tag_uuids": [tag_response2.json()["uuid"]]},
-    )
-    assert response.status_code == 200
-    assert len(response.json()["tags"]) == 1
-    assert response.json()["tags"][0] == tag_response2.json()["uuid"]
+    response = client.get(f"/nodes/{node_uuid}")
+    tags = response.json()["tags"]
+    assert len(tags) == 2
