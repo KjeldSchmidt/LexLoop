@@ -17,11 +17,6 @@ from sqlalchemy.dialects.postgresql import UUID as POSTGRES_UUID
 
 
 class LinkRepo(Base):
-    """
-    Repository for storing links with two GSIs so search for both nodes of the link
-    separately
-    """
-
     __tablename__ = "lexloop_links"
 
     uuid: Mapped[UUID4] = mapped_column(

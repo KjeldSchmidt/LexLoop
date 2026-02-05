@@ -8,6 +8,7 @@ from sqlalchemy.orm import Mapped, mapped_column, Session, relationship
 from lexloop.model.node_model import NodeIn, Node
 
 from lexloop.repository.base import Base
+from lexloop.repository.course_repository import CourseRepo
 from lexloop.repository.tag_repository import TagRepo
 from sqlalchemy.dialects.postgresql import UUID as POSTGRES_UUID
 
@@ -43,6 +44,14 @@ class NodeRepo(Base):
     tags: Mapped[list[TagRepo]] = relationship(
         "TagRepo",
         secondary="lexloop_node_to_tags",
+    )
+
+    course_uuid: Mapped[UUID4] = mapped_column(
+        POSTGRES_UUID(as_uuid=True),
+        ForeignKey("lexloop_courses.uuid", name="node_course_fk"),
+    )
+    course: Mapped[CourseRepo] = relationship(
+        "CourseRepo", foreign_keys=[course_uuid], lazy="selectin"
     )
 
     def to_internal_model(self) -> Node:
