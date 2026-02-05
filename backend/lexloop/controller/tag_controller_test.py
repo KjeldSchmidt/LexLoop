@@ -23,7 +23,7 @@ def test_add_tag_returns_2xx(client: TestClient) -> None:
 def test_get_tags_when_none_are_stored_returns_empty_list(
     client: TestClient,
 ) -> None:
-    response = client.get("/tags")
+    response = client.get("/course/0419df0c-080f-4a93-bb4e-82fc6121b073/tags")
     assert response.status_code == 200
     assert response.json() == []
 
@@ -77,11 +77,23 @@ def test_get_tags_when_tags_are_added(client: TestClient) -> None:
 def test_get_tags_for_node(client: TestClient) -> None:
     tag1_response = client.post(
         "/tags",
-        json={"tag": {"title": "test_tag", "description": "test"}},
+        json={
+            "tag": {
+                "title": "test_tag",
+                "description": "test",
+                "course_uuid": "59cc5186-a10d-476e-b750-c8f5b821b953",
+            }
+        },
     )
     tag2_response = client.post(
         "/tags",
-        json={"tag": {"title": "test_tag2", "description": "test2"}},
+        json={
+            "tag": {
+                "title": "test_tag2",
+                "description": "test2",
+                "course_uuid": "59cc5186-a10d-476e-b750-c8f5b821b953",
+            }
+        },
     )
     node_response = client.post(
         "/nodes",
@@ -93,6 +105,7 @@ def test_get_tags_for_node(client: TestClient) -> None:
                     tag1_response.json()["uuid"],
                     tag2_response.json()["uuid"],
                 ],
+                "course_uuid": "59cc5186-a10d-476e-b750-c8f5b821b953",
             },
         },
     )
