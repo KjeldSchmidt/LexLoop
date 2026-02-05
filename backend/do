@@ -90,7 +90,7 @@ function task_db_migration_new {
   path=$(uv run alembic revision --autogenerate -m "$title" | grep -oE "[^ ]+versions/[^ ]+\.py")
   dir=$(dirname "$path")
   file=$(basename "$path")
-  highest=$(ls "$dir" | grep -v "$file" | grep -oE "^0[0-9]{3}" | sort -n | tail -n 1)
+  highest=$(ls "$dir" | grep -v "$file" | grep -oE "^[0-9]{4}" | sort -n | tail -n 1)
   next=$(printf "%04d" $(( ${highest#0} + 1 )))
   newfile="${next}_${file}"
   mv "$path" "$dir/$newfile"
@@ -103,7 +103,7 @@ function task_db_migrate_up {
   uv run alembic upgrade head
 }
 
-## db-migrate-up
+## db-migrate-down
 function task_db_migrate_down {
   task_db_up
   uv run alembic downgrade -1
