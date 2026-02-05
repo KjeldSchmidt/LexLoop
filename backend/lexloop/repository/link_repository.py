@@ -8,6 +8,7 @@ from sqlalchemy.orm import mapped_column, Mapped, relationship, Session
 
 from lexloop.model.link_model import LinkType, LinkIn, Link
 from lexloop.repository.base import Base
+from lexloop.repository.course_repository import CourseRepo
 
 if TYPE_CHECKING:
     from lexloop.repository import NodeRepo
@@ -40,6 +41,13 @@ class LinkRepo(Base):
     node2: Mapped[NodeRepo] = relationship(
         "NodeRepo", foreign_keys=[node2_uuid], lazy="selectin"
     )
+    course_uuid: Mapped[UUID4] = mapped_column(
+        POSTGRES_UUID(as_uuid=True),
+        ForeignKey("lexloop_courses.uuid", name="node_course_fk"),
+    )
+    course: Mapped[CourseRepo] = relationship(
+        "CourseRepo", foreign_keys=[course_uuid], lazy="selectin"
+    )
 
     def to_internal_model(self) -> Link:
         """
@@ -65,12 +73,16 @@ def add(link: LinkIn, session: Session) -> Link:
     if node1_repo is None or node2_repo is None:
         raise ValueError("Node not found")
 
+    if node1_repo.course_uuid != node2_repo.course_uuid:
+        raise ValueError("Linked nodes do not match")
+
     link_repo = LinkRepo(
         uuid=str(uuid4()),
         type=link.type,  # Store as string, not enum
         node1_uuid=link.node1,
         node2_uuid=link.node2,
         annotation=link.annotation,
+        course_uuid=node1_repo.course_uuid,
     )
     session.add(link_repo)
     session.commit()
@@ -81,7 +93,14 @@ def add(link: LinkIn, session: Session) -> Link:
 def get_all(session: Session) -> list[Link]:
     # Todo: paginate
     all_links: list[LinkRepo] = session.query(LinkRepo).all()
-    return [node.to_internal_model() for node in all_links]
+    return [link.to_internal_model() for link in all_links]
+
+
+def get_by_course_uuid(session: Session, course_uuid: UUID4) -> list[Link]:
+    all_links: list[LinkRepo] = (
+        session.query(LinkRepo).where(LinkRepo.course_uuid == course_uuid).all()
+    )
+    return [link.to_internal_model() for link in all_links]
 
 
 def get_all_for_node_uuid(node_uuid: UUID4, session: Session) -> list[Link]:

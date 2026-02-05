@@ -58,9 +58,21 @@ def upgrade() -> None:
     )
     op.alter_column("lexloop_tags", "course_uuid", server_default=None)
 
+    op.add_column(
+        "lexloop_links",
+        sa.Column(
+            "course_uuid",
+            sa.UUID(),
+            nullable=False,
+            server_default=str(english_course_uuid),
+        ),
+    )
+    op.alter_column("lexloop_links", "course_uuid", server_default=None)
+
 
 def downgrade() -> None:
     """Downgrade schema."""
     op.drop_column("lexloop_tags", "course_uuid")
     op.drop_column("lexloop_nodes", "course_uuid")
+    op.drop_column("lexloop_links", "course_uuid")
     op.drop_table("lexloop_courses")

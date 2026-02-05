@@ -19,9 +19,11 @@ async def add_link(
     return LinkOut.from_internal_model(added_link)
 
 
-@router.get("/links")
-async def get_links(session: Session = Depends(get_db)) -> list[LinkOut]:
-    link_list = link_service.get_all(session)
+@router.get("/course/{course_uuid}/links")
+async def get_links(
+    course_uuid: UUID4, session: Session = Depends(get_db)
+) -> list[LinkOut]:
+    link_list = link_service.get_by_course_uuid(session, course_uuid)
     return [LinkOut.from_internal_model(link) for link in link_list]
 
 

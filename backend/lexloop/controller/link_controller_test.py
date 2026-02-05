@@ -13,7 +13,7 @@ def test_add_link_returns_2xx(client: TestClient) -> None:
                 "term": "test1",
                 "definition": "test",
                 "tags": [],
-                "course_uuid": "44abe87e-02cc-11f1-bf14-00155d0892d6",
+                "course_uuid": "59cc5186-a10d-476e-b750-c8f5b821b953",
             }
         },
     )
@@ -25,7 +25,7 @@ def test_add_link_returns_2xx(client: TestClient) -> None:
                 "term": "test2",
                 "definition": "test",
                 "tags": [],
-                "course_uuid": "44abe87e-02cc-11f1-bf14-00155d0892d6",
+                "course_uuid": "59cc5186-a10d-476e-b750-c8f5b821b953",
             }
         },
     )
@@ -49,7 +49,7 @@ def test_add_link_returns_2xx(client: TestClient) -> None:
 def test_get_links_when_none_are_stored_returns_empty_list(
     client: TestClient,
 ) -> None:
-    response = client.get("/links")
+    response = client.get("/course/0419df0c-080f-4a93-bb4e-82fc6121b073/links")
     assert response.status_code == 200
     assert response.json() == []
 
@@ -58,14 +58,24 @@ def test_get_links_when_links_are_added(client: TestClient) -> None:
     node1_response = client.post(
         "/nodes",
         json={
-            "node": {"term": "test1", "definition": "test", "tags": []},
+            "node": {
+                "term": "test1",
+                "definition": "test",
+                "tags": [],
+                "course_uuid": "59cc5186-a10d-476e-b750-c8f5b821b953",
+            },
         },
     )
 
     node2_response = client.post(
         "/nodes",
         json={
-            "node": {"term": "test2", "definition": "test", "tags": []},
+            "node": {
+                "term": "test2",
+                "definition": "test",
+                "tags": [],
+                "course_uuid": "59cc5186-a10d-476e-b750-c8f5b821b953",
+            },
         },
     )
     response = client.post(
@@ -81,9 +91,20 @@ def test_get_links_when_links_are_added(client: TestClient) -> None:
     )
     assert response.status_code == 201
 
-    response = client.get("/links")
+    response = client.get("/course/59cc5186-a10d-476e-b750-c8f5b821b953/links")
     assert response.status_code == 200
-    returned_link = response.json()[0]
+
+    print(response.json())
+    filtered_links = list(
+        filter(
+            lambda x: x["node1"] == node1_response.json()["uuid"]
+            and x["node2"] == node2_response.json()["uuid"],
+            response.json(),
+        )
+    )
+    assert len(filtered_links) == 1
+
+    returned_link = filtered_links[0]
     assert returned_link["node1"] == node1_response.json()["uuid"]
     assert returned_link["node2"] == node2_response.json()["uuid"]
     assert LinkType(returned_link["type"]) == LinkType.SYNONYM

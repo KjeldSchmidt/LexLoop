@@ -164,11 +164,27 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Get Links */
-    get: operations['get_links_links_get']
+    get?: never
     put?: never
     /** Add Link */
     post: operations['add_link_links_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  'course/{course_uuid}/links': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get Links */
+    get: operations['get_linkscourse__course_uuid__links_get']
+    put?: never
+    post?: never
     delete?: never
     options?: never
     head?: never
@@ -818,26 +834,6 @@ export interface operations {
       }
     }
   }
-  get_links_links_get: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['LinkOut'][]
-        }
-      }
-    }
-  }
   add_link_links_post: {
     parameters: {
       query?: never
@@ -858,6 +854,37 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['LinkOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  get_linkscourse__course_uuid__links_get: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        course_uuid: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['LinkOut'][]
         }
       }
       /** @description Validation Error */

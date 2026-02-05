@@ -120,16 +120,17 @@ INSERT INTO lexloop_node_to_tags (node_uuid, tag_uuid) VALUES
 ('f0b5f926-ae24-4732-9ccf-bebbc4b3a250', '98ff40e8-d8b3-43e5-9573-2247d12532f2');
 
 -- Links (various relationship types)
-INSERT INTO lexloop_links (uuid, type, annotation, node1_uuid, node2_uuid) VALUES
-('08501ef6-26a8-47bd-a201-ffa6b9f91be5', 'WORD_FAMILY', '', 'b1c5e908-dab4-4c69-920f-796a785d6b44', 'e4eec2f9-0a0e-45b5-99c1-c3b7201980ab'),
-('2a6ce10d-b94f-49a7-9364-19d9870be369', 'HOMOPHONE', 'Same pronunciation /ðeər/', '1c9e5bd6-7092-4b90-8203-ef9a60e2fe63', '7a60bad0-f53f-4ce1-8572-4afb8744f7b0'),
-('3456752f-d463-43ec-aa03-32837bca756c', 'WORD_FAMILY', '', '510a20c6-e818-44a5-a57b-a9e847f58950', 'e4eec2f9-0a0e-45b5-99c1-c3b7201980ab'),
-('5c12634f-007e-46bc-b3e7-4a73ac187cc0', 'ANTONYM', 'Opposite points in time/process', '7b17c724-a501-4b79-975e-23550464740d', '55f04eba-3311-45be-a9e6-d8f14db3fa52'), ('631ccfbb-2952-4de9-97b8-06f8c199fc8f', 'HOMOPHONE', 'Same pronunciation /raɪt/', '840d7d42-c26e-4f4f-abda-061181d504cd', 'b8e3cd0c-bee2-465a-a3cd-eb935212642c'),
-('744ea99c-11f7-46e4-a725-a06039d7d1a8', 'ANTONYM', 'Opposite temperature extremes', '1b6de3dd-49a3-4b16-b143-99a1aafba41b', '56265a23-07fb-472b-8a00-390689bf15d7'),
-('852dc7ca-ddfb-4b49-84f8-0d0ca203ac70', 'SYNONYM', '', '2dd453db-a93d-4645-9070-81a8bd51c7fb', 'b1c5e908-dab4-4c69-920f-796a785d6b44'),
-('9aaa5cc8-387a-492d-8018-6b5dea9d2455', 'SYNONYM', 'Both express positive emotions', '5b6d3820-5dba-4e57-9900-698f84d3e283', 'f0b5f926-ae24-4732-9ccf-bebbc4b3a250'),
-('af6e400e-6d65-4116-ba34-8276cf91ea31', 'SYNONYM', 'Both describe something of considerable size', 'bd3f2a56-99d9-4b19-bdba-ca513c0ec652', '5f61e0a6-c753-446c-b76f-828a9e60f7e8'),
-('b017ecfb-e93b-4d09-865d-7deb5507e6ad', 'ANTONYM', 'Opposite ends of the age spectrum', '0d3734fc-0938-44ad-a03b-e321f1d5242b', '4bc4d24d-c4ea-4db0-9da9-ff925ef8eea7'),
-('d4f814e8-497e-4c8a-8658-e53dea9c1109', 'WORD_FAMILY', '', 'b1c5e908-dab4-4c69-920f-796a785d6b44', '510a20c6-e818-44a5-a57b-a9e847f58950'),
-('f16d1873-679d-498a-82e4-3bba123a862a', 'HOMOPHONE', 'Same pronunciation /noʊ/', 'c24f126f-6a1f-4ff9-bf08-65488a179a3e', '9e2db5c6-6363-4f42-adc0-430b6ab2c745'),
-('ff1cc70a-6445-4ed7-816e-f365cd566a2f', 'SYNONYM', 'Both describe high speed', '05980c50-724d-454c-ad92-3c2dd4dc85ff', '25f34165-8c53-46e0-b378-42bfdf4854c2');
+INSERT INTO lexloop_links (uuid, type, annotation, node1_uuid, node2_uuid, course_uuid) VALUES
+('08501ef6-26a8-47bd-a201-ffa6b9f91be5', 'WORD_FAMILY', '', 'b1c5e908-dab4-4c69-920f-796a785d6b44', 'e4eec2f9-0a0e-45b5-99c1-c3b7201980ab', '59cc5186-a10d-476e-b750-c8f5b821b953'),
+('2a6ce10d-b94f-49a7-9364-19d9870be369', 'HOMOPHONE', 'Same pronunciation /ðeər/', '1c9e5bd6-7092-4b90-8203-ef9a60e2fe63', '7a60bad0-f53f-4ce1-8572-4afb8744f7b0', '59cc5186-a10d-476e-b750-c8f5b821b953'),
+('3456752f-d463-43ec-aa03-32837bca756c', 'WORD_FAMILY', '', '510a20c6-e818-44a5-a57b-a9e847f58950', 'e4eec2f9-0a0e-45b5-99c1-c3b7201980ab', '59cc5186-a10d-476e-b750-c8f5b821b953'),
+('5c12634f-007e-46bc-b3e7-4a73ac187cc0', 'ANTONYM', 'Opposite points in time/process', '7b17c724-a501-4b79-975e-23550464740d', '55f04eba-3311-45be-a9e6-d8f14db3fa52', '59cc5186-a10d-476e-b750-c8f5b821b953'),
+('631ccfbb-2952-4de9-97b8-06f8c199fc8f', 'HOMOPHONE', 'Same pronunciation /raɪt/', '840d7d42-c26e-4f4f-abda-061181d504cd', 'b8e3cd0c-bee2-465a-a3cd-eb935212642c', '59cc5186-a10d-476e-b750-c8f5b821b953'),
+('744ea99c-11f7-46e4-a725-a06039d7d1a8', 'ANTONYM', 'Opposite temperature extremes', '1b6de3dd-49a3-4b16-b143-99a1aafba41b', '56265a23-07fb-472b-8a00-390689bf15d7', '59cc5186-a10d-476e-b750-c8f5b821b953'),
+('852dc7ca-ddfb-4b49-84f8-0d0ca203ac70', 'SYNONYM', '', '2dd453db-a93d-4645-9070-81a8bd51c7fb', 'b1c5e908-dab4-4c69-920f-796a785d6b44', '59cc5186-a10d-476e-b750-c8f5b821b953'),
+('9aaa5cc8-387a-492d-8018-6b5dea9d2455', 'SYNONYM', 'Both express positive emotions', '5b6d3820-5dba-4e57-9900-698f84d3e283', 'f0b5f926-ae24-4732-9ccf-bebbc4b3a250', '59cc5186-a10d-476e-b750-c8f5b821b953'),
+('af6e400e-6d65-4116-ba34-8276cf91ea31', 'SYNONYM', 'Both describe something of considerable size', 'bd3f2a56-99d9-4b19-bdba-ca513c0ec652', '5f61e0a6-c753-446c-b76f-828a9e60f7e8', '59cc5186-a10d-476e-b750-c8f5b821b953'),
+('b017ecfb-e93b-4d09-865d-7deb5507e6ad', 'ANTONYM', 'Opposite ends of the age spectrum', '0d3734fc-0938-44ad-a03b-e321f1d5242b', '4bc4d24d-c4ea-4db0-9da9-ff925ef8eea7', '59cc5186-a10d-476e-b750-c8f5b821b953'),
+('d4f814e8-497e-4c8a-8658-e53dea9c1109', 'WORD_FAMILY', '', 'b1c5e908-dab4-4c69-920f-796a785d6b44', '510a20c6-e818-44a5-a57b-a9e847f58950', '59cc5186-a10d-476e-b750-c8f5b821b953'),
+('f16d1873-679d-498a-82e4-3bba123a862a', 'HOMOPHONE', 'Same pronunciation /noʊ/', 'c24f126f-6a1f-4ff9-bf08-65488a179a3e', '9e2db5c6-6363-4f42-adc0-430b6ab2c745', '59cc5186-a10d-476e-b750-c8f5b821b953'),
+('ff1cc70a-6445-4ed7-816e-f365cd566a2f', 'SYNONYM', 'Both describe high speed', '05980c50-724d-454c-ad92-3c2dd4dc85ff', '25f34165-8c53-46e0-b378-42bfdf4854c2', '59cc5186-a10d-476e-b750-c8f5b821b953');
