@@ -9,6 +9,7 @@ type Link = schemas['LinkOut']
 type LinkTypeInfo = schemas['LinkTypeInfo']
 
 const props = defineProps<{
+  course_id: string
   show_modal: boolean
   node: Node
 }>()
@@ -22,6 +23,15 @@ const linkTypes = ref<LinkTypeInfo[]>([])
 const selectedLinkType = ref<string>('')
 const selectedNode = ref<Node | null>(null)
 const annotation = ref('')
+
+const mutableCourseId = ref(props.course_id)
+
+watch(
+  () => props.course_id,
+  (newValue) => {
+    mutableCourseId.value = newValue
+  },
+)
 
 function close() {
   selectedNode.value = null
@@ -105,7 +115,7 @@ async function confirm() {
         </select>
 
         <p>To Node</p>
-        <SearchBar @select="handleNodeSelect" />
+        <SearchBar v-model:course_id="mutableCourseId" @select="handleNodeSelect" />
         <p v-if="selectedNode" class="selected-node">Selected: {{ selectedNode.term }}</p>
 
         <p>Annotation</p>

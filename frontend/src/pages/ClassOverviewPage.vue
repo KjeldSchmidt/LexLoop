@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { getTagsList, getNodesList } from '@/api'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import type { components } from '@/api/schema.ts'
 import HeaderBar from '@/components/HeaderBar.vue'
 import { useNavigationHistoryStore } from '@/stores/navigationHistory'
@@ -11,6 +11,9 @@ import TagCreationModal from '@/components/TagCreationModal.vue'
 type Tag = components['schemas']['TagOut']
 type Node = components['schemas']['NodeOut']
 
+const route = useRoute()
+const course_id = route.params.id as string
+
 const router = useRouter()
 const tags = ref<Tag[]>([])
 const nodes = ref<Node[]>([])
@@ -19,9 +22,8 @@ const show_node_modal = ref(false)
 const show_tag_modal = ref(false)
 
 onMounted(async () => {
-  navigationStore.resetToClass('Class')
-
-  const [tagsRes, nodesRes] = await Promise.all([getTagsList(), getNodesList()])
+  navigationStore.resetToClass('Class', course_id)
+  const [tagsRes, nodesRes] = await Promise.all([getTagsList(course_id), getNodesList(course_id)])
 
   if (tagsRes && Array.isArray(tagsRes)) {
     tags.value = tagsRes
@@ -49,7 +51,7 @@ async function handleTagCreation(result: { new_tag: Tag }) {
 </script>
 
 <template>
-  <HeaderBar />
+  <HeaderBar :course_id="course_id" />
   <div class="book-container">
     <div class="page left-page">
       <h2 class="page-title">All Tags</h2>
@@ -72,9 +74,17 @@ async function handleTagCreation(result: { new_tag: Tag }) {
     </div>
   </div>
 
-  <NodeCreationModal v-model:show_modal="show_node_modal" @confirm="handleNodeCreation">
+  <NodeCreationModal
+    v-model:course_id="course_id"
+    v-model:show_modal="show_node_modal"
+    @confirm="handleNodeCreation"
+  >
   </NodeCreationModal>
-  <TagCreationModal v-model:show_modal="show_tag_modal" @confirm="handleTagCreation">
+  <TagCreationModal
+    v-model:course_uuid="course_id"
+    v-model:show_modal="show_tag_modal"
+    @confirm="handleTagCreation"
+  >
   </TagCreationModal>
 </template>
 

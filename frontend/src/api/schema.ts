@@ -38,6 +38,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/courses': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get Courses */
+    get: operations['get_courses_courses_get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/nodes': {
     parameters: {
       query?: never
@@ -174,7 +191,7 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  'course/{course_uuid}/links': {
+  '/course/{course_uuid}/links': {
     parameters: {
       query?: never
       header?: never
@@ -182,7 +199,7 @@ export interface paths {
       cookie?: never
     }
     /** Get Links */
-    get: operations['get_linkscourse__course_uuid__links_get']
+    get: operations['get_links_course__course_uuid__links_get']
     put?: never
     post?: never
     delete?: never
@@ -389,6 +406,16 @@ export interface components {
       /** Tag Uuids */
       tag_uuids: string[]
     }
+    /** CourseOut */
+    CourseOut: {
+      /**
+       * Uuid
+       * Format: uuid4
+       */
+      uuid: string
+      /** Name */
+      name: string
+    }
     /** ErrorModel */
     ErrorModel: {
       /** Detail */
@@ -474,6 +501,11 @@ export interface components {
       definition: string
       /** Tags */
       tags: string[]
+      /**
+       * Course Uuid
+       * Format: uuid4
+       */
+      course_uuid: string
     }
     /** TagIn */
     TagIn: {
@@ -498,6 +530,11 @@ export interface components {
       title: string
       /** Description */
       description: string
+      /**
+       * Course Uuid
+       * Format: uuid4
+       */
+      course_uuid: string
     }
     /** UserCreate */
     UserCreate: {
@@ -606,6 +643,26 @@ export interface operations {
         }
         content: {
           'application/json': unknown
+        }
+      }
+    }
+  }
+  get_courses_courses_get: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CourseOut'][]
         }
       }
     }
@@ -867,7 +924,7 @@ export interface operations {
       }
     }
   }
-  get_linkscourse__course_uuid__links_get: {
+  get_links_course__course_uuid__links_get: {
     parameters: {
       query?: never
       header?: never

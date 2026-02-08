@@ -11,7 +11,7 @@ const router = createRouter({
   routes: [
     { path: '/node/:id', name: 'NodePage', component: NodePage },
     { path: '/tag/:id', name: 'TagPage', component: TagPage },
-    { path: '/class', name: 'ClassOverview', component: ClassOverviewPage },
+    { path: '/class/:id', name: 'ClassOverview', component: ClassOverviewPage },
     { path: '/user-start', component: UserStartPage },
     { path: '/login', component: LoginPage },
     { path: '/', component: StartPage },

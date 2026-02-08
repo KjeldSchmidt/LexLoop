@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from lexloop.auth.auth_controller import router as auth_router
 from lexloop.controller import get_db
+from lexloop.controller.course_controller import router as course_router
 from lexloop.controller.link_controller import router as link_router
 from lexloop.controller.node_controller import router as word_router
 from lexloop.controller.tag_controller import router as tag_router
@@ -33,6 +34,7 @@ async def db_health(session: Session = Depends(get_db)) -> Response:
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
+app.include_router(course_router)
 app.include_router(word_router)
 app.include_router(link_router)
 app.include_router(tag_router)

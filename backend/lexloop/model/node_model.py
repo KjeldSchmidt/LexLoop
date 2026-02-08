@@ -10,6 +10,7 @@ class NodeOut(BaseModel):  # type: ignore
     term: str
     definition: str
     tags: set[UUID4]
+    course_uuid: UUID4
 
     @classmethod
     def from_internal_model(cls, internal_model: Node) -> NodeOut:
@@ -18,6 +19,7 @@ class NodeOut(BaseModel):  # type: ignore
             term=internal_model.term,
             definition=internal_model.definition,
             tags={tag.uuid for tag in internal_model.tags},
+            course_uuid=internal_model.course_uuid,
         )
 
 
@@ -33,3 +35,4 @@ class Node(BaseModel):  # type: ignore
     term: str
     definition: str
     tags: set[Tag]
+    course_uuid: UUID4

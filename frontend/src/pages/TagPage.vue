@@ -43,8 +43,6 @@ onMounted(async () => {
 })
 
 function handleClick(item: NodeOut) {
-  console.log(item.term)
-
   router.push({
     name: 'NodePage',
     params: { id: item.uuid },
@@ -61,7 +59,7 @@ async function handleNodeCreation(result: { new_node: NodeOut }) {
 </script>
 
 <template>
-  <HeaderBar />
+  <HeaderBar v-if="tag" :course_id="tag.course_uuid" />
   <div class="page-container">
     <div class="left-panel" v-if="tag">
       <h2 class="tag-title">{{ tag.title }}</h2>
@@ -81,6 +79,8 @@ async function handleNodeCreation(result: { new_node: NodeOut }) {
   </div>
 
   <NodeCreationModal
+    v-if="tag"
+    v-model:course_id="tag.course_uuid"
     v-model:show_modal="show_modal"
     v-model:tags="tags"
     @confirm="handleNodeCreation"

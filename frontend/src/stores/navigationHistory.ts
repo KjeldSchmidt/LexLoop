@@ -34,8 +34,9 @@ export const useNavigationHistoryStore = defineStore('navigationHistory', () => 
     }
   }
 
-  function resetToClass(className: string) {
-    history.value = [{ name: className, path: '/class', type: 'class' }]
+  function resetToClass(className: string, courseId?: string) {
+    const path = courseId ? `/class/${courseId}` : '/class'
+    history.value = [{ name: className, path: path, type: 'class' }]
   }
 
   return {

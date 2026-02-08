@@ -60,6 +60,7 @@ class NodeRepo(Base):
             term=str(self.term),
             definition=str(self.definition),
             tags={tag.to_internal_model() for tag in self.tags},
+            course_uuid=self.course_uuid,
         )
 
 

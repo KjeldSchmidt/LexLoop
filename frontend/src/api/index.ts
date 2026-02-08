@@ -7,13 +7,21 @@ type NodeIn = schemas['NodeIn']
 type TagIn = schemas['TagIn']
 type LinkIn = schemas['LinkIn']
 
-export const getNodesList = async () => {
-  const { data } = await client.GET('/nodes', {})
+export const getNodesList = async (course_uuid: string) => {
+  const { data } = await client.GET(`/course/{course_uuid}/nodes`, {
+    params: {
+      path: { course_uuid: course_uuid },
+    },
+  })
   return data
 }
 
-export const getTagsList = async () => {
-  const { data } = await client.GET('/tags', {})
+export const getTagsList = async (course_uuid: string) => {
+  const { data } = await client.GET(`/course/{course_uuid}/tags`, {
+    params: {
+      path: { course_uuid: course_uuid },
+    },
+  })
   return data
 }
 
@@ -116,5 +124,10 @@ export const addLink = async (link: LinkIn) => {
 
 export const getLinkTypes = async () => {
   const { data } = await client.GET('/links/types', {})
+  return data
+}
+
+export const getCourses = async () => {
+  const { data } = await client.GET('/courses', {})
   return data
 }

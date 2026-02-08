@@ -58,6 +58,10 @@ def test_get_nodes_when_nodes_are_added(client: TestClient) -> None:
 
     assert filtered_nodes[0]["term"] == "test"
     assert filtered_nodes[0]["definition"] == "test"
+    assert (
+        filtered_nodes[0]["course_uuid"]
+        == "59cc5186-a10d-476e-b750-c8f5b821b953"
+    )
 
 
 def test_get_all_for_single_node(client: TestClient) -> None:

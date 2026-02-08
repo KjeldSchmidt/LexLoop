@@ -6,6 +6,7 @@ class TagOut(BaseModel):  # type: ignore
     uuid: UUID4
     title: str
     description: str
+    course_uuid: UUID4
 
     @classmethod
     def from_internal_model(cls, internal_model: Tag) -> TagOut:
@@ -13,6 +14,7 @@ class TagOut(BaseModel):  # type: ignore
             uuid=internal_model.uuid,
             title=internal_model.title,
             description=internal_model.description,
+            course_uuid=internal_model.course_uuid,
         )
 
 
@@ -26,6 +28,7 @@ class Tag(BaseModel):  # type: ignore
     uuid: UUID4
     title: str
     description: str
+    course_uuid: UUID4
 
     # hash function so that tags can be stored in set
     def __hash__(self) -> int:

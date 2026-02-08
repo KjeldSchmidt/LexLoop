@@ -6,6 +6,7 @@ export type schemas = components['schemas']
 type Tag = schemas['TagOut']
 
 const props = defineProps<{
+  course_id: string
   show_modal: boolean
   tags: Tag[]
 }>()
@@ -34,7 +35,7 @@ function onToggle(item: Tag, event: Event) {
 }
 
 onMounted(async () => {
-  const res = await getTagsList()
+  const res = await getTagsList(props.course_id)
 
   if (res != undefined && Array.isArray(res)) {
     all_tags.value = res

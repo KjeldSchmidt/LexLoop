@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { useNavigationHistoryStore } from '@/stores/navigationHistory'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
+import { ref, watch } from 'vue'
 import SearchBar from '@/components/SearchBar.vue'
 import type { components } from '@/api/schema.ts'
 
@@ -10,13 +11,36 @@ type Node = components['schemas']['NodeOut']
 const store = useNavigationHistoryStore()
 const { history } = storeToRefs(store)
 const router = useRouter()
+const route = useRoute()
+
+const props = defineProps<{
+  course_id: string
+}>()
+
+// Create a mutable local ref that syncs with the prop
+const mutableCourseId = ref(props.course_id)
+
+// Watch for prop changes and update the local ref
+watch(
+  () => props.course_id,
+  (newValue) => {
+    mutableCourseId.value = newValue
+  },
+)
 
 function goTo(path: string) {
   router.push(path)
 }
 
 function goToClasses() {
-  router.push('/class')
+  // Get course ID from current route if available
+  const courseId = route.params.id as string | undefined
+  if (courseId) {
+    router.push({ name: 'ClassOverview', params: { id: courseId } })
+  } else {
+    // Fallback: navigate to user-start to choose a course
+    router.push('/user-start')
+  }
 }
 
 function handleSelect(result: { selected_node: Node }) {
@@ -40,7 +64,7 @@ function handleSelect(result: { selected_node: Node }) {
     </nav>
 
     <div class="search-container">
-      <SearchBar @select="handleSelect" />
+      <SearchBar v-model:course_id="mutableCourseId" @select="handleSelect" />
     </div>
 
     <div class="header-actions">

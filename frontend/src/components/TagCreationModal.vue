@@ -6,6 +6,7 @@ export type schemas = components['schemas']
 type TagOut = schemas['TagOut']
 
 const props = defineProps<{
+  course_uuid: string
   show_modal: boolean
 }>()
 
@@ -30,6 +31,7 @@ async function confirm() {
   const new_tag = await addTag({
     title: (document.getElementById('title') as HTMLInputElement).value,
     description: (document.getElementById('description') as HTMLInputElement).value,
+    course_uuid: props.course_uuid,
   })
 
   if (new_tag != undefined) emit('confirm', { new_tag: new_tag })

@@ -9,12 +9,16 @@ const searchQuery = ref('')
 const nodes = ref<Node[]>([])
 const isOpen = ref(false)
 
+const props = defineProps<{
+  course_id: string
+}>()
+
 const emit = defineEmits<{
   (e: 'select', result: { selected_node: Node }): void
 }>()
 
 onMounted(async () => {
-  const res = await getNodesList()
+  const res = await getNodesList(props.course_id)
   if (res != undefined && Array.isArray(res)) {
     nodes.value = res
   }

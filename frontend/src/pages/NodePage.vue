@@ -160,7 +160,7 @@ watch(
 </script>
 
 <template>
-  <HeaderBar />
+  <HeaderBar v-if="node" :course_id="node.course_uuid" />
   <div class="page-container">
     <div class="left-panel" v-if="node">
       <h2 class="word-title">{{ node.term }}</h2>
@@ -201,6 +201,8 @@ watch(
   </div>
 
   <TagUpdateModal
+    v-if="node"
+    v-model:course_id="node.course_uuid"
     v-model:show_modal="show_tag_modal"
     v-model:tags="tags"
     @confirm="handleTagsConfirm"
@@ -209,6 +211,7 @@ watch(
 
   <LinkCreationModal
     v-if="node"
+    v-model:course_id="node.course_uuid"
     v-model:show_modal="show_link_modal"
     @confirm="handleLinksConfirm"
     v-model:node="node"

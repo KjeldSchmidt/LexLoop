@@ -7,6 +7,7 @@ type NodeOut = schemas['NodeOut']
 type Tag = schemas['TagOut']
 
 const props = defineProps<{
+  course_id: string
   show_modal: boolean
   tags?: Tag[]
 }>()
@@ -35,7 +36,7 @@ function onToggle(item: Tag, event: Event) {
 }
 
 onMounted(async () => {
-  const res = await getTagsList()
+  const res = await getTagsList(props.course_id)
 
   if (res != undefined && Array.isArray(res)) {
     all_tags.value = res
@@ -49,7 +50,7 @@ watch(
     if (newValue) {
       selected_tags.value = [...(props.tags || [])]
     }
-    const res = await getTagsList()
+    const res = await getTagsList(props.course_id)
 
     if (res != undefined && Array.isArray(res)) {
       all_tags.value = res
@@ -67,6 +68,7 @@ async function confirm() {
     term: (document.getElementById('term') as HTMLInputElement).value,
     definition: (document.getElementById('definition') as HTMLInputElement).value,
     tags: tag_uuids,
+    course_uuid: props.course_id,
   })
 
   if (new_node != undefined) emit('confirm', { new_node: new_node })

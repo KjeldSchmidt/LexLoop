@@ -42,6 +42,7 @@ class TagRepo(Base):
             uuid=self.uuid,
             title=str(self.title),
             description=str(self.description),
+            course_uuid=self.course_uuid,
         )
 
 
