@@ -11,3 +11,4 @@ alwaysApply: false
 - Update wrappers in `frontend/src/api/index.ts` to use generated `paths` only — no hand-written paths that are missing from OpenAPI.
 - POST bodies use embed wrappers: `{ "node": … }`, `{ "tag": … }`, `{ "link": … }`.
 - List routes are `/courses` and `/course/{course_uuid}/nodes|tags|links`. Callers must pass a real `course_uuid` from UI context.
+- Paginated lists return `{ items, total, offset, limit }` (`offset`/`limit` query params). Exceptions: `/links/types`, `/tags/node/{node_uuid}`.

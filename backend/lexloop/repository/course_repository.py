@@ -28,7 +28,12 @@ class CourseRepo(Base):
         )
 
 
-def get_all(session: Session) -> list[Course]:
-    # Todo: paginate
-    all_courses: list[CourseRepo] = session.query(CourseRepo).all()
-    return [course.to_internal_model() for course in all_courses]
+def get_all(
+    session: Session, *, offset: int, limit: int
+) -> tuple[list[Course], int]:
+    """Return a page of courses and the total count."""
+    total = session.query(CourseRepo).count()
+    rows: list[CourseRepo] = (
+        session.query(CourseRepo).offset(offset).limit(limit).all()
+    )
+    return [course.to_internal_model() for course in rows], total

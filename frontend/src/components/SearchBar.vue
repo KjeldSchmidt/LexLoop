@@ -19,8 +19,8 @@ const emit = defineEmits<{
 
 onMounted(async () => {
   const res = await getNodesList(props.course_id)
-  if (res != undefined && Array.isArray(res)) {
-    nodes.value = res
+  if (res?.items) {
+    nodes.value = res.items
   }
 })
 

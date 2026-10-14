@@ -21,7 +21,11 @@ def test_get_nodes_when_none_are_stored_returns_empty_list(
 ) -> None:
     response = client.get("/course/0419df0c-080f-4a93-bb4e-82fc6121b073/nodes")
     assert response.status_code == 200
-    assert response.json() == []
+    body = response.json()
+    assert body["items"] == []
+    assert body["total"] == 0
+    assert body["offset"] == 0
+    assert body["limit"] == 50
 
 
 def test_get_nodes_when_nodes_are_added(client: TestClient) -> None:
@@ -52,7 +56,7 @@ def test_get_nodes_when_nodes_are_added(client: TestClient) -> None:
     response = client.get("/course/59cc5186-a10d-476e-b750-c8f5b821b953/nodes")
     assert response.status_code == 200
     filtered_nodes = list(
-        filter(lambda x: x["uuid"] == new_node_uuid, response.json())
+        filter(lambda x: x["uuid"] == new_node_uuid, response.json()["items"])
     )
     assert len(filtered_nodes) == 1
 
@@ -73,7 +77,8 @@ def test_get_all_for_single_node(client: TestClient) -> None:
     response = client.get(f"/nodes/{example_node_uuid}/links")
     assert response.status_code == 200
     data = response.json()
-    actual_link_uuid_set = {link["uuid"] for link in data}
+    assert data["total"] == 2
+    actual_link_uuid_set = {link["uuid"] for link in data["items"]}
     assert actual_link_uuid_set == expected_link_uuids
 
 
@@ -89,8 +94,32 @@ def test_get_all_for_tags(client: TestClient) -> None:
     response = client.get("/nodes/tag/e0694e62-b746-4ed0-b24e-be1abb194eda")
     assert response.status_code == 200
     data = response.json()
-    actual_node_uuids = {node["uuid"] for node in data}
+    assert data["total"] == 6
+    actual_node_uuids = {node["uuid"] for node in data["items"]}
     assert actual_node_uuids == expected_node_uuids
+
+
+def test_get_nodes_respects_limit_and_offset(client: TestClient) -> None:
+    course = "59cc5186-a10d-476e-b750-c8f5b821b953"
+    first = client.get(
+        f"/course/{course}/nodes", params={"limit": 2, "offset": 0}
+    )
+    assert first.status_code == 200
+    first_body = first.json()
+    assert len(first_body["items"]) == 2
+    assert first_body["limit"] == 2
+    assert first_body["offset"] == 0
+    assert first_body["total"] > 2
+
+    second = client.get(
+        f"/course/{course}/nodes", params={"limit": 2, "offset": 2}
+    )
+    assert second.status_code == 200
+    second_body = second.json()
+    first_ids = {node["uuid"] for node in first_body["items"]}
+    second_ids = {node["uuid"] for node in second_body["items"]}
+    assert first_ids.isdisjoint(second_ids)
+    assert second_body["total"] == first_body["total"]
 
 
 def test_add_tags_to_node(client: TestClient) -> None:

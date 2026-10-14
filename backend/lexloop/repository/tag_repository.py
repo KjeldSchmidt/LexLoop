@@ -59,17 +59,25 @@ def add(tag: TagIn, session: Session) -> Tag:
     return tag_repo.to_internal_model()
 
 
-def get_all(session: Session) -> list[Tag]:
-    # Todo: paginate
-    all_tags: list[TagRepo] = session.query(TagRepo).all()
-    return [tag.to_internal_model() for tag in all_tags]
-
-
-def get_by_course_uuid(session: Session, course_uuid: UUID4) -> list[Tag]:
-    all_nodes: list[TagRepo] = (
-        session.query(TagRepo).where(TagRepo.course_uuid == course_uuid).all()
+def get_all(
+    session: Session, *, offset: int, limit: int
+) -> tuple[list[Tag], int]:
+    """Return a page of all tags and the total count."""
+    total = session.query(TagRepo).count()
+    rows: list[TagRepo] = (
+        session.query(TagRepo).offset(offset).limit(limit).all()
     )
-    return [node.to_internal_model() for node in all_nodes]
+    return [tag.to_internal_model() for tag in rows], total
+
+
+def get_by_course_uuid(
+    session: Session, course_uuid: UUID4, *, offset: int, limit: int
+) -> tuple[list[Tag], int]:
+    """Return a page of tags for a course and the total count."""
+    query = session.query(TagRepo).where(TagRepo.course_uuid == course_uuid)
+    total = query.count()
+    rows: list[TagRepo] = query.offset(offset).limit(limit).all()
+    return [tag.to_internal_model() for tag in rows], total
 
 
 def get_by_uuid(uuid: UUID4, session: Session) -> Tag:

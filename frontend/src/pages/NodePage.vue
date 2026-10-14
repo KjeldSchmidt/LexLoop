@@ -76,9 +76,9 @@ async function update(id: string) {
       type: 'node',
     })
     const res2 = await getLinksForNode(node.value.uuid)
-    if (res2 != undefined && Array.isArray(res2)) {
+    if (res2?.items) {
       links.value = []
-      for (const item of res2 as Link[]) {
+      for (const item of res2.items as Link[]) {
         const link_type = getLinkTypeInfo(item.type)
         if (node.value.uuid == item.node1) {
           const other_node = await getNodeForUUID(item.node2)

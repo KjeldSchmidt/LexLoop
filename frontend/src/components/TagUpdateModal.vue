@@ -37,8 +37,8 @@ function onToggle(item: Tag, event: Event) {
 onMounted(async () => {
   const res = await getTagsList(props.course_id)
 
-  if (res != undefined && Array.isArray(res)) {
-    all_tags.value = res
+  if (res?.items) {
+    all_tags.value = res.items
   }
 })
 

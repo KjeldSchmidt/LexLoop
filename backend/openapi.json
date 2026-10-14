@@ -42,19 +42,54 @@
     "/courses": {
       "get": {
         "summary": "Get Courses",
-        "description": "List all courses.",
+        "description": "List courses (paginated).",
         "operationId": "get_courses_courses_get",
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of items to skip",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Number of items to skip"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Page size (max 100)",
+              "default": 50,
+              "title": "Limit"
+            },
+            "description": "Page size (max 100)"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/CourseOut"
-                  },
-                  "type": "array",
-                  "title": "Response Get Courses Courses Get"
+                  "$ref": "#/components/schemas/Page_CourseOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
@@ -206,7 +241,7 @@
     "/course/{course_uuid}/nodes": {
       "get": {
         "summary": "Get Nodes",
-        "description": "List all nodes belonging to a course.",
+        "description": "List nodes belonging to a course (paginated).",
         "operationId": "get_nodes_course__course_uuid__nodes_get",
         "parameters": [
           {
@@ -218,6 +253,33 @@
               "format": "uuid4",
               "title": "Course Uuid"
             }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of items to skip",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Number of items to skip"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Page size (max 100)",
+              "default": 50,
+              "title": "Limit"
+            },
+            "description": "Page size (max 100)"
           }
         ],
         "responses": {
@@ -226,11 +288,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/NodeOut"
-                  },
-                  "title": "Response Get Nodes Course  Course Uuid  Nodes Get"
+                  "$ref": "#/components/schemas/Page_NodeOut_"
                 }
               }
             }
@@ -292,7 +350,7 @@
     "/nodes/{node_uuid}/links": {
       "get": {
         "summary": "Get Node Links",
-        "description": "List links that involve the given node.",
+        "description": "List links that involve the given node (paginated).",
         "operationId": "get_node_links_nodes__node_uuid__links_get",
         "parameters": [
           {
@@ -304,6 +362,33 @@
               "format": "uuid4",
               "title": "Node Uuid"
             }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of items to skip",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Number of items to skip"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Page size (max 100)",
+              "default": 50,
+              "title": "Limit"
+            },
+            "description": "Page size (max 100)"
           }
         ],
         "responses": {
@@ -312,11 +397,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/LinkOut"
-                  },
-                  "title": "Response Get Node Links Nodes  Node Uuid  Links Get"
+                  "$ref": "#/components/schemas/Page_LinkOut_"
                 }
               }
             }
@@ -337,7 +418,7 @@
     "/nodes/tag/{tag_uuid}": {
       "get": {
         "summary": "Get Tag Nodes",
-        "description": "List nodes that have the given tag.",
+        "description": "List nodes that have the given tag (paginated).",
         "operationId": "get_tag_nodes_nodes_tag__tag_uuid__get",
         "parameters": [
           {
@@ -349,6 +430,33 @@
               "format": "uuid4",
               "title": "Tag Uuid"
             }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of items to skip",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Number of items to skip"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Page size (max 100)",
+              "default": 50,
+              "title": "Limit"
+            },
+            "description": "Page size (max 100)"
           }
         ],
         "responses": {
@@ -357,11 +465,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/NodeOut"
-                  },
-                  "title": "Response Get Tag Nodes Nodes Tag  Tag Uuid  Get"
+                  "$ref": "#/components/schemas/Page_NodeOut_"
                 }
               }
             }
@@ -421,7 +525,7 @@
     "/course/{course_uuid}/links": {
       "get": {
         "summary": "Get Links",
-        "description": "List all links belonging to a course.",
+        "description": "List links belonging to a course (paginated).",
         "operationId": "get_links_course__course_uuid__links_get",
         "parameters": [
           {
@@ -433,6 +537,33 @@
               "format": "uuid4",
               "title": "Course Uuid"
             }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of items to skip",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Number of items to skip"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Page size (max 100)",
+              "default": 50,
+              "title": "Limit"
+            },
+            "description": "Page size (max 100)"
           }
         ],
         "responses": {
@@ -441,11 +572,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/LinkOut"
-                  },
-                  "title": "Response Get Links Course  Course Uuid  Links Get"
+                  "$ref": "#/components/schemas/Page_LinkOut_"
                 }
               }
             }
@@ -569,7 +696,7 @@
     "/course/{course_uuid}/tags": {
       "get": {
         "summary": "Get Tags",
-        "description": "List all tags belonging to a course.",
+        "description": "List tags belonging to a course (paginated).",
         "operationId": "get_tags_course__course_uuid__tags_get",
         "parameters": [
           {
@@ -581,6 +708,33 @@
               "format": "uuid4",
               "title": "Course Uuid"
             }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of items to skip",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Number of items to skip"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Page size (max 100)",
+              "default": 50,
+              "title": "Limit"
+            },
+            "description": "Page size (max 100)"
           }
         ],
         "responses": {
@@ -589,11 +743,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TagOut"
-                  },
-                  "title": "Response Get Tags Course  Course Uuid  Tags Get"
+                  "$ref": "#/components/schemas/Page_TagOut_"
                 }
               }
             }
@@ -655,7 +805,7 @@
     "/tags/node/{node_uuid}": {
       "get": {
         "summary": "Get Node Tags",
-        "description": "List tags attached to a node.",
+        "description": "List tags attached to a node (unpaginated; typically few).",
         "operationId": "get_node_tags_tags_node__node_uuid__get",
         "parameters": [
           {
@@ -1194,6 +1344,134 @@
           "course_uuid"
         ],
         "title": "NodeOut"
+      },
+      "Page_CourseOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CourseOut"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total",
+            "description": "Total matching rows across all pages"
+          },
+          "offset": {
+            "type": "integer",
+            "title": "Offset"
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "offset",
+          "limit"
+        ],
+        "title": "Page[CourseOut]"
+      },
+      "Page_LinkOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/LinkOut"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total",
+            "description": "Total matching rows across all pages"
+          },
+          "offset": {
+            "type": "integer",
+            "title": "Offset"
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "offset",
+          "limit"
+        ],
+        "title": "Page[LinkOut]"
+      },
+      "Page_NodeOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/NodeOut"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total",
+            "description": "Total matching rows across all pages"
+          },
+          "offset": {
+            "type": "integer",
+            "title": "Offset"
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "offset",
+          "limit"
+        ],
+        "title": "Page[NodeOut]"
+      },
+      "Page_TagOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/TagOut"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total",
+            "description": "Total matching rows across all pages"
+          },
+          "offset": {
+            "type": "integer",
+            "title": "Offset"
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "offset",
+          "limit"
+        ],
+        "title": "Page[TagOut]"
       },
       "TagIn": {
         "properties": {

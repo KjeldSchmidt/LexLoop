@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from lexloop.controller import get_db
 from lexloop.model.link_model import LinkOut
 from lexloop.model.node_model import NodeOut, NodeIn
+from lexloop.model.pagination import Page, PaginationParams, pagination_params
 
 from lexloop.service import node_service, link_service
 
@@ -45,11 +46,23 @@ async def add_tag_to_node(
 
 @router.get("/course/{course_uuid}/nodes")
 async def get_nodes(
-    course_uuid: UUID4, session: Session = Depends(get_db)
-) -> list[NodeOut]:
-    """List all nodes belonging to a course."""
-    node_list = node_service.get_by_course_uuid(session, course_uuid)
-    return [NodeOut.from_internal_model(node) for node in node_list]
+    course_uuid: UUID4,
+    session: Session = Depends(get_db),
+    pagination: PaginationParams = Depends(pagination_params),
+) -> Page[NodeOut]:
+    """List nodes belonging to a course (paginated)."""
+    nodes, total = node_service.get_by_course_uuid(
+        session,
+        course_uuid,
+        offset=pagination.offset,
+        limit=pagination.limit,
+    )
+    return Page(
+        items=[NodeOut.from_internal_model(node) for node in nodes],
+        total=total,
+        offset=pagination.offset,
+        limit=pagination.limit,
+    )
 
 
 @router.get("/nodes/{uuid}")
@@ -61,17 +74,41 @@ async def get_node(uuid: UUID4, session: Session = Depends(get_db)) -> NodeOut:
 
 @router.get("/nodes/{node_uuid}/links")
 async def get_node_links(
-    node_uuid: UUID4, session: Session = Depends(get_db)
-) -> list[LinkOut]:
-    """List links that involve the given node."""
-    links = link_service.get_all_for_node_uuid(node_uuid, session)
-    return [LinkOut.from_internal_model(link) for link in links]
+    node_uuid: UUID4,
+    session: Session = Depends(get_db),
+    pagination: PaginationParams = Depends(pagination_params),
+) -> Page[LinkOut]:
+    """List links that involve the given node (paginated)."""
+    links, total = link_service.get_all_for_node_uuid(
+        node_uuid,
+        session,
+        offset=pagination.offset,
+        limit=pagination.limit,
+    )
+    return Page(
+        items=[LinkOut.from_internal_model(link) for link in links],
+        total=total,
+        offset=pagination.offset,
+        limit=pagination.limit,
+    )
 
 
 @router.get("/nodes/tag/{tag_uuid}")
 async def get_tag_nodes(
-    tag_uuid: UUID4, session: Session = Depends(get_db)
-) -> list[NodeOut]:
-    """List nodes that have the given tag."""
-    nodes = node_service.get_all_for_tag_uuid(tag_uuid, session)
-    return [NodeOut.from_internal_model(node) for node in nodes]
+    tag_uuid: UUID4,
+    session: Session = Depends(get_db),
+    pagination: PaginationParams = Depends(pagination_params),
+) -> Page[NodeOut]:
+    """List nodes that have the given tag (paginated)."""
+    nodes, total = node_service.get_all_for_tag_uuid(
+        tag_uuid,
+        session,
+        offset=pagination.offset,
+        limit=pagination.limit,
+    )
+    return Page(
+        items=[NodeOut.from_internal_model(node) for node in nodes],
+        total=total,
+        offset=pagination.offset,
+        limit=pagination.limit,
+    )

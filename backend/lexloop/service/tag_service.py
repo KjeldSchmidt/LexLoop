@@ -13,14 +13,20 @@ def add(tag: TagIn, session: Session) -> Tag:
     return tag_repository.add(tag, session)
 
 
-def get_all(session: Session) -> list[Tag]:
-    """Return every tag (unscoped; prefer course-scoped queries)."""
-    return tag_repository.get_all(session)
+def get_all(
+    session: Session, *, offset: int, limit: int
+) -> tuple[list[Tag], int]:
+    """Return a page of every tag (prefer course-scoped queries)."""
+    return tag_repository.get_all(session, offset=offset, limit=limit)
 
 
-def get_by_course_uuid(session: Session, course_uuid: UUID4) -> list[Tag]:
-    """Return tags for a course."""
-    return tag_repository.get_by_course_uuid(session, course_uuid)
+def get_by_course_uuid(
+    session: Session, course_uuid: UUID4, *, offset: int, limit: int
+) -> tuple[list[Tag], int]:
+    """Return a page of tags for a course."""
+    return tag_repository.get_by_course_uuid(
+        session, course_uuid, offset=offset, limit=limit
+    )
 
 
 def get_by_uuid(uuid: UUID4, session: Session) -> Tag:
@@ -29,5 +35,5 @@ def get_by_uuid(uuid: UUID4, session: Session) -> Tag:
 
 
 def get_all_for_node_uuid(node_uuid: UUID4, session: Session) -> list[Tag]:
-    """Return tags attached to a node."""
+    """Return all tags attached to a node (small, unpaginated)."""
     return tag_repository.get_all_for_node_uuid(node_uuid, session)

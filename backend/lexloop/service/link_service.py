@@ -14,14 +14,20 @@ def add(link: LinkIn, session: Session) -> Link:
     return link_repository.add(link, session)
 
 
-def get_all(session: Session) -> list[Link]:
-    """Return every link (unscoped; prefer course-scoped queries)."""
-    return link_repository.get_all(session)
+def get_all(
+    session: Session, *, offset: int, limit: int
+) -> tuple[list[Link], int]:
+    """Return a page of every link (prefer course-scoped queries)."""
+    return link_repository.get_all(session, offset=offset, limit=limit)
 
 
-def get_by_course_uuid(session: Session, course_uuid: UUID4) -> list[Link]:
-    """Return links for a course."""
-    return link_repository.get_by_course_uuid(session, course_uuid)
+def get_by_course_uuid(
+    session: Session, course_uuid: UUID4, *, offset: int, limit: int
+) -> tuple[list[Link], int]:
+    """Return a page of links for a course."""
+    return link_repository.get_by_course_uuid(
+        session, course_uuid, offset=offset, limit=limit
+    )
 
 
 def get_by_uuid(uuid: UUID4, session: Session) -> Link:
@@ -29,6 +35,10 @@ def get_by_uuid(uuid: UUID4, session: Session) -> Link:
     return link_repository.get_by_uuid(uuid, session)
 
 
-def get_all_for_node_uuid(node_uuid: UUID4, session: Session) -> list[Link]:
-    """Return links that involve the given node."""
-    return link_repository.get_all_for_node_uuid(node_uuid, session)
+def get_all_for_node_uuid(
+    node_uuid: UUID4, session: Session, *, offset: int, limit: int
+) -> tuple[list[Link], int]:
+    """Return a page of links that involve the given node."""
+    return link_repository.get_all_for_node_uuid(
+        node_uuid, session, offset=offset, limit=limit
+    )

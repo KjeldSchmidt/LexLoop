@@ -36,6 +36,8 @@ List endpoints are course-scoped:
 - `GET /course/{course_uuid}/tags`
 - `GET /course/{course_uuid}/links`
 
+Paginated list responses use `{ items, total, offset, limit }` with query params `offset` (default 0) and `limit` (default 50, max 100). Unpaginated exceptions: `GET /links/types` (fixed enum) and `GET /tags/node/{node_uuid}` (few tags per node).
+
 Pass `course_uuid` from route/UI context (e.g. `/class/:id`). Do not hardcode course IDs in app code.
 
 ## Backend notes

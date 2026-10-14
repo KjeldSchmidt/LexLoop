@@ -82,16 +82,25 @@ def add(node: NodeIn, session: Session) -> Node:
     return node_repo.to_internal_model()
 
 
-def get_all(session: Session) -> list[Node]:
-    all_nodes: list[NodeRepo] = session.query(NodeRepo).all()
-    return [node.to_internal_model() for node in all_nodes]
-
-
-def get_by_course_uuid(session: Session, course_uuid: UUID4) -> list[Node]:
-    all_nodes: list[NodeRepo] = (
-        session.query(NodeRepo).where(NodeRepo.course_uuid == course_uuid).all()
+def get_all(
+    session: Session, *, offset: int, limit: int
+) -> tuple[list[Node], int]:
+    """Return a page of all nodes and the total count."""
+    total = session.query(NodeRepo).count()
+    rows: list[NodeRepo] = (
+        session.query(NodeRepo).offset(offset).limit(limit).all()
     )
-    return [node.to_internal_model() for node in all_nodes]
+    return [node.to_internal_model() for node in rows], total
+
+
+def get_by_course_uuid(
+    session: Session, course_uuid: UUID4, *, offset: int, limit: int
+) -> tuple[list[Node], int]:
+    """Return a page of nodes for a course and the total count."""
+    query = session.query(NodeRepo).where(NodeRepo.course_uuid == course_uuid)
+    total = query.count()
+    rows: list[NodeRepo] = query.offset(offset).limit(limit).all()
+    return [node.to_internal_model() for node in rows], total
 
 
 def get_by_uuid(uuid: UUID4, session: Session) -> Node:
@@ -101,15 +110,18 @@ def get_by_uuid(uuid: UUID4, session: Session) -> Node:
     return node.to_internal_model()
 
 
-def get_all_for_tag_uuid(tag_uuid: UUID4, session: Session) -> list[Node]:
-    statement = (
-        select(NodeRepo)
+def get_all_for_tag_uuid(
+    tag_uuid: UUID4, session: Session, *, offset: int, limit: int
+) -> tuple[list[Node], int]:
+    """Return a page of nodes that have the given tag."""
+    query = (
+        session.query(NodeRepo)
         .join(NodeToTagsRepo)
         .where(NodeToTagsRepo.tag_uuid == tag_uuid)
     )
-    nodes = session.scalars(statement).all()
-    return [node.to_internal_model() for node in nodes]
-    # Todo: paginate
+    total = query.count()
+    nodes = query.offset(offset).limit(limit).all()
+    return [node.to_internal_model() for node in nodes], total
 
 
 def add_tag_to_node(
