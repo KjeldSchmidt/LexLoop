@@ -27,14 +27,14 @@ class LinkType(Enum):
         return display_names.get(self, self.value)
 
 
-class LinkIn(BaseModel):  # type: ignore
+class LinkIn(BaseModel):  # type: ignore[explicit-any]
     node1: str
     node2: str
     type: str
     annotation: str
 
 
-class Link(BaseModel):  # type: ignore
+class Link(BaseModel):  # type: ignore[explicit-any]
     uuid: UUID4
     node1: Node
     node2: Node
@@ -42,7 +42,7 @@ class Link(BaseModel):  # type: ignore
     annotation: str
 
 
-class LinkOut(BaseModel):  # type: ignore
+class LinkOut(BaseModel):  # type: ignore[explicit-any]
     uuid: UUID4
     type: LinkType
     node1: UUID4
@@ -60,6 +60,6 @@ class LinkOut(BaseModel):  # type: ignore
         )
 
 
-class LinkTypeInfo(BaseModel):  # type: ignore
+class LinkTypeInfo(BaseModel):  # type: ignore[explicit-any]
     value: str
     display_name: str

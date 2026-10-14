@@ -2,7 +2,7 @@ from __future__ import annotations
 from pydantic import BaseModel, UUID4
 
 
-class TagOut(BaseModel):  # type: ignore
+class TagOut(BaseModel):  # type: ignore[explicit-any]
     uuid: UUID4
     title: str
     description: str
@@ -18,13 +18,13 @@ class TagOut(BaseModel):  # type: ignore
         )
 
 
-class TagIn(BaseModel):  # type: ignore
+class TagIn(BaseModel):  # type: ignore[explicit-any]
     title: str
     description: str
     course_uuid: UUID4
 
 
-class Tag(BaseModel):  # type: ignore
+class Tag(BaseModel):  # type: ignore[explicit-any]
     uuid: UUID4
     title: str
     description: str
