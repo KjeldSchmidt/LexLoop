@@ -50,4 +50,3 @@ See [`AGENTS.md`](AGENTS.md) for conventions, the OpenAPI contract, and known ga
 
 - Login UI is a stub; `/auth` exists but domain routes are not auth-gated
 - Frontend unit/e2e tests are mostly scaffolding
-- Lambda IAM still mentions DynamoDB while the app uses Postgres

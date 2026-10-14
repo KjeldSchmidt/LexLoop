@@ -32,7 +32,3 @@ No resources are defined in the `env/*` folders beyond module instantiation and 
 ./infrastructure/do apply-auto dev
 ./infrastructure/do get-bucket dev
 ```
-
-## Known leftovers
-
-- Lambda IAM still grants DynamoDB; the application uses Postgres only. Do not add DynamoDB usage to match the policy — clean up the policy in a later change.

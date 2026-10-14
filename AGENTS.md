@@ -67,8 +67,6 @@ Pass `course_uuid` from route/UI context (e.g. `/class/:id`). Do not hardcode co
 - **AWS** (eu-central-1): S3 static site, CloudFront, API Gateway HTTP API, Lambda (Python 3.13).
 - **Supabase** Postgres (session pooler for migrations, transaction pooler for Lambda).
 - Bootstrap IAM is GitHub OIDC → `lexloop-cicd-deploy-role` in `infrastructure/base/`.
-- Known leftover: Lambda IAM policy still allows DynamoDB; the app does **not** use DynamoDB — do not add DynamoDB to “match” the policy.
-
 ## Tests
 
 - Backend controller tests under `backend/lexloop/**/*_test.py` are the pattern to extend.

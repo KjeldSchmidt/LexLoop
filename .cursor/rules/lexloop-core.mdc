@@ -10,4 +10,4 @@ alwaysApply: true
 - After API changes: `./do update-api-schema`, then update `frontend/src/api/index.ts`.
 - Pass `course_uuid` from route/UI context; do not hardcode course IDs.
 - Auth and login UI are unfinished; do not fake-complete them unless asked.
-- Infra is AWS + Supabase, not Azure. App uses Postgres, not DynamoDB.
+- Infra is AWS + Supabase, not Azure. App uses Postgres (Supabase), not DynamoDB.
