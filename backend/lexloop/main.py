@@ -25,11 +25,13 @@ app.add_middleware(
 
 @app.get("/health")
 async def health() -> Response:
+    """Liveness probe; does not touch the database."""
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @app.get("/health/database")
 async def db_health(session: Session = Depends(get_db)) -> Response:
+    """Readiness probe; runs a simple DB round-trip."""
     session.execute(text("SELECT 1"))
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 

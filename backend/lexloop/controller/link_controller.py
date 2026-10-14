@@ -1,3 +1,5 @@
+"""HTTP endpoints for links between vocabulary nodes."""
+
 from fastapi import APIRouter, status, Depends, Body
 from sqlalchemy.orm import Session
 
@@ -15,6 +17,7 @@ router = APIRouter()
 async def add_link(
     link: LinkIn = Body(embed=True), session: Session = Depends(get_db)
 ) -> LinkOut:
+    """Create a typed link between two nodes."""
     added_link = link_service.add(link, session)
     return LinkOut.from_internal_model(added_link)
 
@@ -23,12 +26,14 @@ async def add_link(
 async def get_links(
     course_uuid: UUID4, session: Session = Depends(get_db)
 ) -> list[LinkOut]:
+    """List all links belonging to a course."""
     link_list = link_service.get_by_course_uuid(session, course_uuid)
     return [LinkOut.from_internal_model(link) for link in link_list]
 
 
 @router.get("/links/types")
 async def get_link_types() -> list[LinkTypeInfo]:
+    """Return the allowed link type values and display names."""
     return [
         LinkTypeInfo(value=link_type.value, display_name=link_type.display_name)
         for link_type in LinkType
@@ -37,5 +42,6 @@ async def get_link_types() -> list[LinkTypeInfo]:
 
 @router.get("/links/{uuid}")
 async def get_link(uuid: UUID4, session: Session = Depends(get_db)) -> LinkOut:
+    """Fetch a single link by UUID."""
     link = link_service.get_by_uuid(uuid, session)
     return LinkOut.from_internal_model(link)

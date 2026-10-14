@@ -10,4 +10,5 @@ alwaysApply: false
 - Domain sessions are sync (`get_db`). Auth uses async SQLAlchemy — keep them separate unless intentionally unifying.
 - Schema changes: Alembic (`./backend/do db-migration-new`). Tests use `create_all` + `db_seed.sql`.
 - Ruff for format/lint; mypy via `./backend/do types`. Quality gates include both.
+- Docstrings on public controller/service APIs; Pydantic models may use `# type: ignore[explicit-any]` only.
 - Mangum handler is `lexloop.main.aws_handler`; do not break Lambda packaging (`./backend/do build`).
