@@ -10,11 +10,6 @@ resource "aws_iam_role" "lambda_role" {
   })
 }
 
-moved {
-  from = aws_iam_role_policy.lambda_dynamo_policy
-  to   = aws_iam_role_policy.lambda_logs_policy
-}
-
 resource "aws_iam_role_policy" "lambda_logs_policy" {
   role = aws_iam_role.lambda_role.id
   policy = jsonencode({
