@@ -25,7 +25,9 @@ def test_get_tags_when_none_are_stored_returns_empty_list(
 ) -> None:
     response = client.get("/course/0419df0c-080f-4a93-bb4e-82fc6121b073/tags")
     assert response.status_code == 200
-    assert response.json() == []
+    body = response.json()
+    assert body["items"] == []
+    assert body["total"] == 0
 
 
 def test_get_tag_by_uuid(client: TestClient) -> None:
@@ -65,7 +67,7 @@ def test_get_tags_when_tags_are_added(client: TestClient) -> None:
     response = client.get("/course/59cc5186-a10d-476e-b750-c8f5b821b953/tags")
     assert response.status_code == 200
     filtered_tags = list(
-        filter(lambda x: x["uuid"] == new_tag_uuid, response.json())
+        filter(lambda x: x["uuid"] == new_tag_uuid, response.json()["items"])
     )
     assert len(filtered_tags) == 1
 

@@ -53,7 +53,7 @@ export interface paths {
     }
     /**
      * Get Courses
-     * @description List all courses.
+     * @description List courses (paginated).
      */
     get: operations['get_courses_courses_get']
     put?: never
@@ -133,7 +133,7 @@ export interface paths {
     }
     /**
      * Get Nodes
-     * @description List all nodes belonging to a course.
+     * @description List nodes belonging to a course (paginated).
      */
     get: operations['get_nodes_course__course_uuid__nodes_get']
     put?: never
@@ -173,7 +173,7 @@ export interface paths {
     }
     /**
      * Get Node Links
-     * @description List links that involve the given node.
+     * @description List links that involve the given node (paginated).
      */
     get: operations['get_node_links_nodes__node_uuid__links_get']
     put?: never
@@ -193,7 +193,7 @@ export interface paths {
     }
     /**
      * Get Tag Nodes
-     * @description List nodes that have the given tag.
+     * @description List nodes that have the given tag (paginated).
      */
     get: operations['get_tag_nodes_nodes_tag__tag_uuid__get']
     put?: never
@@ -233,7 +233,7 @@ export interface paths {
     }
     /**
      * Get Links
-     * @description List all links belonging to a course.
+     * @description List links belonging to a course (paginated).
      */
     get: operations['get_links_course__course_uuid__links_get']
     put?: never
@@ -313,7 +313,7 @@ export interface paths {
     }
     /**
      * Get Tags
-     * @description List all tags belonging to a course.
+     * @description List tags belonging to a course (paginated).
      */
     get: operations['get_tags_course__course_uuid__tags_get']
     put?: never
@@ -353,7 +353,7 @@ export interface paths {
     }
     /**
      * Get Node Tags
-     * @description List tags attached to a node.
+     * @description List tags attached to a node (unpaginated; typically few).
      */
     get: operations['get_node_tags_tags_node__node_uuid__get']
     put?: never
@@ -561,6 +561,62 @@ export interface components {
        */
       course_uuid: string
     }
+    /** Page[CourseOut] */
+    Page_CourseOut_: {
+      /** Items */
+      items: components['schemas']['CourseOut'][]
+      /**
+       * Total
+       * @description Total matching rows across all pages
+       */
+      total: number
+      /** Offset */
+      offset: number
+      /** Limit */
+      limit: number
+    }
+    /** Page[LinkOut] */
+    Page_LinkOut_: {
+      /** Items */
+      items: components['schemas']['LinkOut'][]
+      /**
+       * Total
+       * @description Total matching rows across all pages
+       */
+      total: number
+      /** Offset */
+      offset: number
+      /** Limit */
+      limit: number
+    }
+    /** Page[NodeOut] */
+    Page_NodeOut_: {
+      /** Items */
+      items: components['schemas']['NodeOut'][]
+      /**
+       * Total
+       * @description Total matching rows across all pages
+       */
+      total: number
+      /** Offset */
+      offset: number
+      /** Limit */
+      limit: number
+    }
+    /** Page[TagOut] */
+    Page_TagOut_: {
+      /** Items */
+      items: components['schemas']['TagOut'][]
+      /**
+       * Total
+       * @description Total matching rows across all pages
+       */
+      total: number
+      /** Offset */
+      offset: number
+      /** Limit */
+      limit: number
+    }
     /** TagIn */
     TagIn: {
       /** Title */
@@ -703,7 +759,12 @@ export interface operations {
   }
   get_courses_courses_get: {
     parameters: {
-      query?: never
+      query?: {
+        /** @description Number of items to skip */
+        offset?: number
+        /** @description Page size (max 100) */
+        limit?: number
+      }
       header?: never
       path?: never
       cookie?: never
@@ -716,7 +777,16 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['CourseOut'][]
+          'application/json': components['schemas']['Page_CourseOut_']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
         }
       }
     }
@@ -823,7 +893,12 @@ export interface operations {
   }
   get_nodes_course__course_uuid__nodes_get: {
     parameters: {
-      query?: never
+      query?: {
+        /** @description Number of items to skip */
+        offset?: number
+        /** @description Page size (max 100) */
+        limit?: number
+      }
       header?: never
       path: {
         course_uuid: string
@@ -838,7 +913,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['NodeOut'][]
+          'application/json': components['schemas']['Page_NodeOut_']
         }
       }
       /** @description Validation Error */
@@ -885,7 +960,12 @@ export interface operations {
   }
   get_node_links_nodes__node_uuid__links_get: {
     parameters: {
-      query?: never
+      query?: {
+        /** @description Number of items to skip */
+        offset?: number
+        /** @description Page size (max 100) */
+        limit?: number
+      }
       header?: never
       path: {
         node_uuid: string
@@ -900,7 +980,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['LinkOut'][]
+          'application/json': components['schemas']['Page_LinkOut_']
         }
       }
       /** @description Validation Error */
@@ -916,7 +996,12 @@ export interface operations {
   }
   get_tag_nodes_nodes_tag__tag_uuid__get: {
     parameters: {
-      query?: never
+      query?: {
+        /** @description Number of items to skip */
+        offset?: number
+        /** @description Page size (max 100) */
+        limit?: number
+      }
       header?: never
       path: {
         tag_uuid: string
@@ -931,7 +1016,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['NodeOut'][]
+          'application/json': components['schemas']['Page_NodeOut_']
         }
       }
       /** @description Validation Error */
@@ -980,7 +1065,12 @@ export interface operations {
   }
   get_links_course__course_uuid__links_get: {
     parameters: {
-      query?: never
+      query?: {
+        /** @description Number of items to skip */
+        offset?: number
+        /** @description Page size (max 100) */
+        limit?: number
+      }
       header?: never
       path: {
         course_uuid: string
@@ -995,7 +1085,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['LinkOut'][]
+          'application/json': components['schemas']['Page_LinkOut_']
         }
       }
       /** @description Validation Error */
@@ -1095,7 +1185,12 @@ export interface operations {
   }
   get_tags_course__course_uuid__tags_get: {
     parameters: {
-      query?: never
+      query?: {
+        /** @description Number of items to skip */
+        offset?: number
+        /** @description Page size (max 100) */
+        limit?: number
+      }
       header?: never
       path: {
         course_uuid: string
@@ -1110,7 +1205,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['TagOut'][]
+          'application/json': components['schemas']['Page_TagOut_']
         }
       }
       /** @description Validation Error */

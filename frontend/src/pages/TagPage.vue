@@ -36,8 +36,8 @@ onMounted(async () => {
     })
     tags.value.push(tag.value)
     const res2 = await getNodesForTag(tag.value.uuid)
-    if (res2 != undefined && Array.isArray(res2)) {
-      tag_nodes.value = res2
+    if (res2?.items) {
+      tag_nodes.value = res2.items
     }
   }
 })

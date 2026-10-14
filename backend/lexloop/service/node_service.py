@@ -27,14 +27,20 @@ def add_tag_to_node(
     return node_repository.add_tag_to_node(node_uuid, tag_uuid, session)
 
 
-def get_all(session: Session) -> list[Node]:
-    """Return every node (unscoped; prefer course-scoped queries)."""
-    return node_repository.get_all(session)
+def get_all(
+    session: Session, *, offset: int, limit: int
+) -> tuple[list[Node], int]:
+    """Return a page of every node (prefer course-scoped queries)."""
+    return node_repository.get_all(session, offset=offset, limit=limit)
 
 
-def get_by_course_uuid(session: Session, course_uuid: UUID4) -> list[Node]:
-    """Return nodes for a course."""
-    return node_repository.get_by_course_uuid(session, course_uuid)
+def get_by_course_uuid(
+    session: Session, course_uuid: UUID4, *, offset: int, limit: int
+) -> tuple[list[Node], int]:
+    """Return a page of nodes for a course."""
+    return node_repository.get_by_course_uuid(
+        session, course_uuid, offset=offset, limit=limit
+    )
 
 
 def get_by_uuid(uuid: UUID4, session: Session) -> Node:
@@ -42,6 +48,10 @@ def get_by_uuid(uuid: UUID4, session: Session) -> Node:
     return node_repository.get_by_uuid(uuid, session)
 
 
-def get_all_for_tag_uuid(tag_uuid: UUID4, session: Session) -> list[Node]:
-    """Return nodes that have the given tag."""
-    return node_repository.get_all_for_tag_uuid(tag_uuid, session)
+def get_all_for_tag_uuid(
+    tag_uuid: UUID4, session: Session, *, offset: int, limit: int
+) -> tuple[list[Node], int]:
+    """Return a page of nodes that have the given tag."""
+    return node_repository.get_all_for_tag_uuid(
+        tag_uuid, session, offset=offset, limit=limit
+    )

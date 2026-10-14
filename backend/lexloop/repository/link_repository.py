@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
-from sqlalchemy import String, ForeignKey, select
+from sqlalchemy import String, ForeignKey
 from sqlalchemy.orm import mapped_column, Mapped, relationship, Session
 
 from lexloop.model.link_model import LinkType, LinkIn, Link
@@ -90,27 +90,37 @@ def add(link: LinkIn, session: Session) -> Link:
     return link_repo.to_internal_model()
 
 
-def get_all(session: Session) -> list[Link]:
-    # Todo: paginate
-    all_links: list[LinkRepo] = session.query(LinkRepo).all()
-    return [link.to_internal_model() for link in all_links]
-
-
-def get_by_course_uuid(session: Session, course_uuid: UUID4) -> list[Link]:
-    all_links: list[LinkRepo] = (
-        session.query(LinkRepo).where(LinkRepo.course_uuid == course_uuid).all()
+def get_all(
+    session: Session, *, offset: int, limit: int
+) -> tuple[list[Link], int]:
+    """Return a page of all links and the total count."""
+    total = session.query(LinkRepo).count()
+    rows: list[LinkRepo] = (
+        session.query(LinkRepo).offset(offset).limit(limit).all()
     )
-    return [link.to_internal_model() for link in all_links]
+    return [link.to_internal_model() for link in rows], total
 
 
-def get_all_for_node_uuid(node_uuid: UUID4, session: Session) -> list[Link]:
-    # search in both columns
-    statement = select(LinkRepo).where(
+def get_by_course_uuid(
+    session: Session, course_uuid: UUID4, *, offset: int, limit: int
+) -> tuple[list[Link], int]:
+    """Return a page of links for a course and the total count."""
+    query = session.query(LinkRepo).where(LinkRepo.course_uuid == course_uuid)
+    total = query.count()
+    rows: list[LinkRepo] = query.offset(offset).limit(limit).all()
+    return [link.to_internal_model() for link in rows], total
+
+
+def get_all_for_node_uuid(
+    node_uuid: UUID4, session: Session, *, offset: int, limit: int
+) -> tuple[list[Link], int]:
+    """Return a page of links that involve the given node."""
+    query = session.query(LinkRepo).where(
         (LinkRepo.node1_uuid == node_uuid) | (LinkRepo.node2_uuid == node_uuid)
     )
-    links = session.scalars(statement).all()
-    # Todo: paginate
-    return [link.to_internal_model() for link in links]
+    total = query.count()
+    links = query.offset(offset).limit(limit).all()
+    return [link.to_internal_model() for link in links], total
 
 
 def get_by_uuid(uuid: UUID4, session: Session) -> Link:

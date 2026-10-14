@@ -7,28 +7,45 @@ type NodeIn = schemas['NodeIn']
 type TagIn = schemas['TagIn']
 type LinkIn = schemas['LinkIn']
 
-export const getNodesList = async (course_uuid: string) => {
+/** Max page size allowed by the API; use for UI that still wants a full first page. */
+export const API_MAX_PAGE_SIZE = 100
+
+type PageParams = { offset?: number; limit?: number }
+
+export const getNodesList = async (
+  course_uuid: string,
+  { offset = 0, limit = API_MAX_PAGE_SIZE }: PageParams = {},
+) => {
   const { data } = await client.GET(`/course/{course_uuid}/nodes`, {
     params: {
       path: { course_uuid: course_uuid },
+      query: { offset, limit },
     },
   })
   return data
 }
 
-export const getTagsList = async (course_uuid: string) => {
+export const getTagsList = async (
+  course_uuid: string,
+  { offset = 0, limit = API_MAX_PAGE_SIZE }: PageParams = {},
+) => {
   const { data } = await client.GET(`/course/{course_uuid}/tags`, {
     params: {
       path: { course_uuid: course_uuid },
+      query: { offset, limit },
     },
   })
   return data
 }
 
-export const getLinksForNode = async (node_uuid: string) => {
+export const getLinksForNode = async (
+  node_uuid: string,
+  { offset = 0, limit = API_MAX_PAGE_SIZE }: PageParams = {},
+) => {
   const { data } = await client.GET('/nodes/{node_uuid}/links', {
     params: {
       path: { node_uuid: node_uuid },
+      query: { offset, limit },
     },
   })
   return data
@@ -52,10 +69,14 @@ export const getTagForUUID = async (tag_uuid: string) => {
   return data
 }
 
-export const getNodesForTag = async (tag_uuid: string) => {
+export const getNodesForTag = async (
+  tag_uuid: string,
+  { offset = 0, limit = API_MAX_PAGE_SIZE }: PageParams = {},
+) => {
   const { data } = await client.GET('/nodes/tag/{tag_uuid}', {
     params: {
       path: { tag_uuid: tag_uuid },
+      query: { offset, limit },
     },
   })
   return data
@@ -127,7 +148,11 @@ export const getLinkTypes = async () => {
   return data
 }
 
-export const getCourses = async () => {
-  const { data } = await client.GET('/courses', {})
+export const getCourses = async ({ offset = 0, limit = API_MAX_PAGE_SIZE }: PageParams = {}) => {
+  const { data } = await client.GET('/courses', {
+    params: {
+      query: { offset, limit },
+    },
+  })
   return data
 }

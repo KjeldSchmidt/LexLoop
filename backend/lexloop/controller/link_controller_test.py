@@ -51,7 +51,9 @@ def test_get_links_when_none_are_stored_returns_empty_list(
 ) -> None:
     response = client.get("/course/0419df0c-080f-4a93-bb4e-82fc6121b073/links")
     assert response.status_code == 200
-    assert response.json() == []
+    body = response.json()
+    assert body["items"] == []
+    assert body["total"] == 0
 
 
 def test_get_links_when_links_are_added(client: TestClient) -> None:
@@ -94,12 +96,11 @@ def test_get_links_when_links_are_added(client: TestClient) -> None:
     response = client.get("/course/59cc5186-a10d-476e-b750-c8f5b821b953/links")
     assert response.status_code == 200
 
-    print(response.json())
     filtered_links = list(
         filter(
             lambda x: x["node1"] == node1_response.json()["uuid"]
             and x["node2"] == node2_response.json()["uuid"],
-            response.json(),
+            response.json()["items"],
         )
     )
     assert len(filtered_links) == 1

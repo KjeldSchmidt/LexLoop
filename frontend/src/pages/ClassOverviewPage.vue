@@ -25,11 +25,11 @@ onMounted(async () => {
   navigationStore.resetToClass('Class', course_id)
   const [tagsRes, nodesRes] = await Promise.all([getTagsList(course_id), getNodesList(course_id)])
 
-  if (tagsRes && Array.isArray(tagsRes)) {
-    tags.value = tagsRes
+  if (tagsRes?.items) {
+    tags.value = tagsRes.items
   }
-  if (nodesRes && Array.isArray(nodesRes)) {
-    nodes.value = nodesRes
+  if (nodesRes?.items) {
+    nodes.value = nodesRes.items
   }
 })
 

@@ -11,8 +11,8 @@ const courses = ref<Course[]>([])
 
 onMounted(async () => {
   const coursesRes = await getCourses()
-  if (coursesRes && Array.isArray(coursesRes)) {
-    courses.value = coursesRes as Course[]
+  if (coursesRes?.items) {
+    courses.value = coursesRes.items
   }
 })
 
