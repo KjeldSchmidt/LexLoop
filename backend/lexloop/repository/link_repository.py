@@ -43,7 +43,7 @@ class LinkRepo(Base):
     )
     course_uuid: Mapped[UUID4] = mapped_column(
         POSTGRES_UUID(as_uuid=True),
-        ForeignKey("lexloop_courses.uuid", name="node_course_fk"),
+        ForeignKey("lexloop_courses.uuid", name="link_course_fk"),
     )
     course: Mapped[CourseRepo] = relationship(
         "CourseRepo", foreign_keys=[course_uuid], lazy="selectin"
