@@ -44,6 +44,8 @@ Pass `course_uuid` from route/UI context (e.g. `/class/:id`). Do not hardcode co
 - Domain DB access is **sync** SQLAlchemy (`get_db`). Auth (fastapi-users) uses a separate **async** engine/session. Do not merge them casually.
 - Production schema: Alembic. Tests: `Base.metadata.create_all` + `db_seed.sql` (possible drift — prefer matching migrations when adding tables).
 - Lint/format: Ruff. Types: mypy (strict). Both run in `./backend/do quality-gates`.
+- Docstrings: prefer them on public controller/service functions and modules. Do not skip them on new public APIs.
+- Pydantic / fastapi-users model classes may keep `# type: ignore[explicit-any]` under `disallow_any_explicit`; do not use bare `# type: ignore`.
 
 ## Frontend notes
 

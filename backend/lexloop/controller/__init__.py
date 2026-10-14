@@ -10,6 +10,7 @@ SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
 
 def get_db() -> Generator[Session, None, None]:
+    """Yield a sync SQLAlchemy session for domain routes."""
     db = SessionLocal()
     try:
         yield db

@@ -8,6 +8,7 @@
     "/health": {
       "get": {
         "summary": "Health",
+        "description": "Liveness probe; does not touch the database.",
         "operationId": "health_health_get",
         "responses": {
           "200": {
@@ -24,6 +25,7 @@
     "/health/database": {
       "get": {
         "summary": "Db Health",
+        "description": "Readiness probe; runs a simple DB round-trip.",
         "operationId": "db_health_health_database_get",
         "responses": {
           "200": {
@@ -40,6 +42,7 @@
     "/courses": {
       "get": {
         "summary": "Get Courses",
+        "description": "List all courses.",
         "operationId": "get_courses_courses_get",
         "responses": {
           "200": {
@@ -62,6 +65,7 @@
     "/nodes": {
       "post": {
         "summary": "Add Node",
+        "description": "Create a node in a course, optionally with initial tags.",
         "operationId": "add_node_nodes_post",
         "requestBody": {
           "content": {
@@ -100,6 +104,7 @@
     "/nodes/update/{node_uuid}/tags/": {
       "post": {
         "summary": "Update Tags",
+        "description": "Replace the full tag set on a node.",
         "operationId": "update_tags_nodes_update__node_uuid__tags__post",
         "parameters": [
           {
@@ -150,6 +155,7 @@
     "/nodes/{node_uuid}/{tag_uuid}": {
       "post": {
         "summary": "Add Tag To Node",
+        "description": "Attach a single tag to a node.",
         "operationId": "add_tag_to_node_nodes__node_uuid___tag_uuid__post",
         "parameters": [
           {
@@ -200,6 +206,7 @@
     "/course/{course_uuid}/nodes": {
       "get": {
         "summary": "Get Nodes",
+        "description": "List all nodes belonging to a course.",
         "operationId": "get_nodes_course__course_uuid__nodes_get",
         "parameters": [
           {
@@ -244,6 +251,7 @@
     "/nodes/{uuid}": {
       "get": {
         "summary": "Get Node",
+        "description": "Fetch a single node by UUID.",
         "operationId": "get_node_nodes__uuid__get",
         "parameters": [
           {
@@ -284,6 +292,7 @@
     "/nodes/{node_uuid}/links": {
       "get": {
         "summary": "Get Node Links",
+        "description": "List links that involve the given node.",
         "operationId": "get_node_links_nodes__node_uuid__links_get",
         "parameters": [
           {
@@ -328,6 +337,7 @@
     "/nodes/tag/{tag_uuid}": {
       "get": {
         "summary": "Get Tag Nodes",
+        "description": "List nodes that have the given tag.",
         "operationId": "get_tag_nodes_nodes_tag__tag_uuid__get",
         "parameters": [
           {
@@ -372,6 +382,7 @@
     "/links": {
       "post": {
         "summary": "Add Link",
+        "description": "Create a typed link between two nodes.",
         "operationId": "add_link_links_post",
         "requestBody": {
           "content": {
@@ -410,6 +421,7 @@
     "/course/{course_uuid}/links": {
       "get": {
         "summary": "Get Links",
+        "description": "List all links belonging to a course.",
         "operationId": "get_links_course__course_uuid__links_get",
         "parameters": [
           {
@@ -454,6 +466,7 @@
     "/links/types": {
       "get": {
         "summary": "Get Link Types",
+        "description": "Return the allowed link type values and display names.",
         "operationId": "get_link_types_links_types_get",
         "responses": {
           "200": {
@@ -476,6 +489,7 @@
     "/links/{uuid}": {
       "get": {
         "summary": "Get Link",
+        "description": "Fetch a single link by UUID.",
         "operationId": "get_link_links__uuid__get",
         "parameters": [
           {
@@ -516,6 +530,7 @@
     "/tags": {
       "post": {
         "summary": "Add Tag",
+        "description": "Create a tag in a course.",
         "operationId": "add_tag_tags_post",
         "requestBody": {
           "content": {
@@ -554,6 +569,7 @@
     "/course/{course_uuid}/tags": {
       "get": {
         "summary": "Get Tags",
+        "description": "List all tags belonging to a course.",
         "operationId": "get_tags_course__course_uuid__tags_get",
         "parameters": [
           {
@@ -598,6 +614,7 @@
     "/tags/{uuid}": {
       "get": {
         "summary": "Get Tag",
+        "description": "Fetch a single tag by UUID.",
         "operationId": "get_tag_tags__uuid__get",
         "parameters": [
           {
@@ -638,6 +655,7 @@
     "/tags/node/{node_uuid}": {
       "get": {
         "summary": "Get Node Tags",
+        "description": "List tags attached to a node.",
         "operationId": "get_node_tags_tags_node__node_uuid__get",
         "parameters": [
           {

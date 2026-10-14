@@ -52,8 +52,7 @@ def client(
 ) -> Generator[TestClient, None, None]:
     """Provide a test client with overridden database dependency"""
 
-    user_manager._async_engine = None
-    user_manager._async_sessionmaker = None
+    user_manager.reset_async_engine_for_tests()
 
     def override_get_db() -> Generator[Session, None, None]:
         yield db_session
@@ -64,9 +63,5 @@ def client(
 
     app.dependency_overrides.clear()
 
-    # Clean up async engine after test if it was created. We never set this
-    # explicitly, it gets it automatically from the TestClient context.
-    if user_manager._async_engine is not None:
-        asyncio.run(user_manager._async_engine.dispose())  # type: ignore[unreachable]
-        user_manager._async_engine = None
-        user_manager._async_sessionmaker = None
+    # Clean up async engine after test if it was created during the request.
+    asyncio.run(user_manager.dispose_async_engine())

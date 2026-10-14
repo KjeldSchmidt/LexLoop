@@ -2,7 +2,7 @@ from __future__ import annotations
 from pydantic import BaseModel, UUID4
 
 
-class CourseOut(BaseModel):  # type: ignore
+class CourseOut(BaseModel):  # type: ignore[explicit-any]
     uuid: UUID4
     name: str
 
@@ -14,11 +14,11 @@ class CourseOut(BaseModel):  # type: ignore
         )
 
 
-class CourseIn(BaseModel):  # type: ignore
+class CourseIn(BaseModel):  # type: ignore[explicit-any]
     name: str
 
 
-class Course(BaseModel):  # type: ignore
+class Course(BaseModel):  # type: ignore[explicit-any]
     uuid: UUID4
     name: str
 

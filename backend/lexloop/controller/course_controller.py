@@ -1,3 +1,5 @@
+"""HTTP endpoints for courses."""
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
@@ -11,5 +13,6 @@ router = APIRouter()
 
 @router.get("/courses")
 async def get_courses(session: Session = Depends(get_db)) -> list[CourseOut]:
+    """List all courses."""
     course_list = course_service.get_all(session)
     return [CourseOut.from_internal_model(course) for course in course_list]

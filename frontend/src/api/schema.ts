@@ -11,7 +11,10 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Health */
+    /**
+     * Health
+     * @description Liveness probe; does not touch the database.
+     */
     get: operations['health_health_get']
     put?: never
     post?: never
@@ -28,7 +31,10 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Db Health */
+    /**
+     * Db Health
+     * @description Readiness probe; runs a simple DB round-trip.
+     */
     get: operations['db_health_health_database_get']
     put?: never
     post?: never
@@ -45,7 +51,10 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Get Courses */
+    /**
+     * Get Courses
+     * @description List all courses.
+     */
     get: operations['get_courses_courses_get']
     put?: never
     post?: never
@@ -64,7 +73,10 @@ export interface paths {
     }
     get?: never
     put?: never
-    /** Add Node */
+    /**
+     * Add Node
+     * @description Create a node in a course, optionally with initial tags.
+     */
     post: operations['add_node_nodes_post']
     delete?: never
     options?: never
@@ -81,7 +93,10 @@ export interface paths {
     }
     get?: never
     put?: never
-    /** Update Tags */
+    /**
+     * Update Tags
+     * @description Replace the full tag set on a node.
+     */
     post: operations['update_tags_nodes_update__node_uuid__tags__post']
     delete?: never
     options?: never
@@ -98,7 +113,10 @@ export interface paths {
     }
     get?: never
     put?: never
-    /** Add Tag To Node */
+    /**
+     * Add Tag To Node
+     * @description Attach a single tag to a node.
+     */
     post: operations['add_tag_to_node_nodes__node_uuid___tag_uuid__post']
     delete?: never
     options?: never
@@ -113,7 +131,10 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Get Nodes */
+    /**
+     * Get Nodes
+     * @description List all nodes belonging to a course.
+     */
     get: operations['get_nodes_course__course_uuid__nodes_get']
     put?: never
     post?: never
@@ -130,7 +151,10 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Get Node */
+    /**
+     * Get Node
+     * @description Fetch a single node by UUID.
+     */
     get: operations['get_node_nodes__uuid__get']
     put?: never
     post?: never
@@ -147,7 +171,10 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Get Node Links */
+    /**
+     * Get Node Links
+     * @description List links that involve the given node.
+     */
     get: operations['get_node_links_nodes__node_uuid__links_get']
     put?: never
     post?: never
@@ -164,7 +191,10 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Get Tag Nodes */
+    /**
+     * Get Tag Nodes
+     * @description List nodes that have the given tag.
+     */
     get: operations['get_tag_nodes_nodes_tag__tag_uuid__get']
     put?: never
     post?: never
@@ -183,7 +213,10 @@ export interface paths {
     }
     get?: never
     put?: never
-    /** Add Link */
+    /**
+     * Add Link
+     * @description Create a typed link between two nodes.
+     */
     post: operations['add_link_links_post']
     delete?: never
     options?: never
@@ -198,7 +231,10 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Get Links */
+    /**
+     * Get Links
+     * @description List all links belonging to a course.
+     */
     get: operations['get_links_course__course_uuid__links_get']
     put?: never
     post?: never
@@ -215,7 +251,10 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Get Link Types */
+    /**
+     * Get Link Types
+     * @description Return the allowed link type values and display names.
+     */
     get: operations['get_link_types_links_types_get']
     put?: never
     post?: never
@@ -232,7 +271,10 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Get Link */
+    /**
+     * Get Link
+     * @description Fetch a single link by UUID.
+     */
     get: operations['get_link_links__uuid__get']
     put?: never
     post?: never
@@ -251,7 +293,10 @@ export interface paths {
     }
     get?: never
     put?: never
-    /** Add Tag */
+    /**
+     * Add Tag
+     * @description Create a tag in a course.
+     */
     post: operations['add_tag_tags_post']
     delete?: never
     options?: never
@@ -266,7 +311,10 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Get Tags */
+    /**
+     * Get Tags
+     * @description List all tags belonging to a course.
+     */
     get: operations['get_tags_course__course_uuid__tags_get']
     put?: never
     post?: never
@@ -283,7 +331,10 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Get Tag */
+    /**
+     * Get Tag
+     * @description Fetch a single tag by UUID.
+     */
     get: operations['get_tag_tags__uuid__get']
     put?: never
     post?: never
@@ -300,7 +351,10 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Get Node Tags */
+    /**
+     * Get Node Tags
+     * @description List tags attached to a node.
+     */
     get: operations['get_node_tags_tags_node__node_uuid__get']
     put?: never
     post?: never

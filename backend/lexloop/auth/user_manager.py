@@ -22,8 +22,8 @@ from sqlalchemy.pool import NullPool
 # Create async engine and sessionmaker for auth only
 
 # Lazy initialization to avoid event loop issues in tests
-_async_engine = None
-_async_sessionmaker = None
+_async_engine: AsyncEngine | None = None
+_async_sessionmaker: async_sessionmaker[AsyncSession] | None = None
 
 
 def get_engine() -> AsyncEngine:
@@ -42,6 +42,22 @@ def get_sessionmaker() -> async_sessionmaker[AsyncSession]:
             get_engine(), expire_on_commit=False
         )
     return _async_sessionmaker
+
+
+async def dispose_async_engine() -> None:
+    """Dispose the lazy auth engine if tests or shutdown created one."""
+    global _async_engine, _async_sessionmaker
+    if _async_engine is not None:
+        await _async_engine.dispose()
+        _async_engine = None
+        _async_sessionmaker = None
+
+
+def reset_async_engine_for_tests() -> None:
+    """Drop cached auth engine handles without disposing (test setup)."""
+    global _async_engine, _async_sessionmaker
+    _async_engine = None
+    _async_sessionmaker = None
 
 
 async def get_async_session() -> AsyncGenerator[AsyncSession, None]:

@@ -5,7 +5,7 @@ from pydantic import BaseModel, UUID4
 from lexloop.model.tag_model import Tag
 
 
-class NodeOut(BaseModel):  # type: ignore
+class NodeOut(BaseModel):  # type: ignore[explicit-any]
     uuid: UUID4
     term: str
     definition: str
@@ -23,14 +23,14 @@ class NodeOut(BaseModel):  # type: ignore
         )
 
 
-class NodeIn(BaseModel):  # type: ignore
+class NodeIn(BaseModel):  # type: ignore[explicit-any]
     term: str
     definition: str
     tags: list[str]
     course_uuid: UUID4
 
 
-class Node(BaseModel):  # type: ignore
+class Node(BaseModel):  # type: ignore[explicit-any]
     uuid: UUID4
     term: str
     definition: str

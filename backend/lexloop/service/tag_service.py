@@ -1,3 +1,5 @@
+"""Application service for tags."""
+
 from sqlalchemy.orm import Session
 
 from lexloop.model.tag_model import TagIn, Tag
@@ -7,20 +9,25 @@ from pydantic import UUID4
 
 
 def add(tag: TagIn, session: Session) -> Tag:
+    """Persist a new tag."""
     return tag_repository.add(tag, session)
 
 
 def get_all(session: Session) -> list[Tag]:
+    """Return every tag (unscoped; prefer course-scoped queries)."""
     return tag_repository.get_all(session)
 
 
 def get_by_course_uuid(session: Session, course_uuid: UUID4) -> list[Tag]:
+    """Return tags for a course."""
     return tag_repository.get_by_course_uuid(session, course_uuid)
 
 
 def get_by_uuid(uuid: UUID4, session: Session) -> Tag:
+    """Return a tag by UUID."""
     return tag_repository.get_by_uuid(uuid, session)
 
 
 def get_all_for_node_uuid(node_uuid: UUID4, session: Session) -> list[Tag]:
+    """Return tags attached to a node."""
     return tag_repository.get_all_for_node_uuid(node_uuid, session)
