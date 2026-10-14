@@ -1,0 +1,13 @@
+---
+description: LexLoop monorepo conventions for every agent session
+alwaysApply: true
+---
+
+# LexLoop core
+
+- Read [`AGENTS.md`](AGENTS.md) for full conventions.
+- Use `./do` / `backend/do` / `frontend/do` / `infrastructure/do` — do not invent scripts.
+- After API changes: `./do update-api-schema`, then update `frontend/src/api/index.ts`.
+- Pass `course_uuid` from route/UI context; do not hardcode course IDs.
+- Auth and login UI are unfinished; do not fake-complete them unless asked.
+- Infra is AWS + Supabase, not Azure. App uses Postgres, not DynamoDB.

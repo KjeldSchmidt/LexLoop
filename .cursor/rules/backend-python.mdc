@@ -1,0 +1,13 @@
+---
+description: FastAPI / SQLAlchemy backend conventions
+globs: backend/**/*.py
+alwaysApply: false
+---
+
+# Backend Python
+
+- Layers: `controller` → `service` → `repository`; API DTOs in `lexloop/model/`.
+- Domain sessions are sync (`get_db`). Auth uses async SQLAlchemy — keep them separate unless intentionally unifying.
+- Schema changes: Alembic (`./backend/do db-migration-new`). Tests use `create_all` + `db_seed.sql`.
+- Ruff for format/lint; mypy via `./backend/do types`. Quality gates include both.
+- Mangum handler is `lexloop.main.aws_handler`; do not break Lambda packaging (`./backend/do build`).

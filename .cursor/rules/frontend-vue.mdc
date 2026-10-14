@@ -1,0 +1,13 @@
+---
+description: Vue frontend and typed OpenAPI client conventions
+globs: frontend/src/**
+alwaysApply: false
+---
+
+# Frontend Vue
+
+- Vue 3 `<script setup>` + TypeScript; Pinia; vue-router; `openapi-fetch`.
+- Call the API through `frontend/src/api/index.ts`. Types come from `schema.ts` — regenerate with `./do update-api-schema`.
+- Course context comes from the router (`/class/:id`) and props into pages/modals — do not hardcode course UUIDs.
+- Prefer `v-model` / refs over `document.getElementById` when editing forms.
+- `npm run type-check` (`vue-tsc`) must stay green; it is part of quality gates.

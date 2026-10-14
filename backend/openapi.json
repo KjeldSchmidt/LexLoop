@@ -37,10 +37,10 @@
         }
       }
     },
-    "/nodes": {
+    "/courses": {
       "get": {
-        "summary": "Get Nodes",
-        "operationId": "get_nodes_nodes_get",
+        "summary": "Get Courses",
+        "operationId": "get_courses_courses_get",
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -48,16 +48,18 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/NodeOut"
+                    "$ref": "#/components/schemas/CourseOut"
                   },
                   "type": "array",
-                  "title": "Response Get Nodes Nodes Get"
+                  "title": "Response Get Courses Courses Get"
                 }
               }
             }
           }
         }
-      },
+      }
+    },
+    "/nodes": {
       "post": {
         "summary": "Add Node",
         "operationId": "add_node_nodes_post",
@@ -65,7 +67,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NodeIn"
+                "$ref": "#/components/schemas/Body_add_node_nodes_post"
               }
             }
           },
@@ -78,6 +80,150 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/NodeOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/nodes/update/{node_uuid}/tags/": {
+      "post": {
+        "summary": "Update Tags",
+        "operationId": "update_tags_nodes_update__node_uuid__tags__post",
+        "parameters": [
+          {
+            "name": "node_uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid4",
+              "title": "Node Uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_update_tags_nodes_update__node_uuid__tags__post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NodeOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/nodes/{node_uuid}/{tag_uuid}": {
+      "post": {
+        "summary": "Add Tag To Node",
+        "operationId": "add_tag_to_node_nodes__node_uuid___tag_uuid__post",
+        "parameters": [
+          {
+            "name": "node_uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid4",
+              "title": "Node Uuid"
+            }
+          },
+          {
+            "name": "tag_uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid4",
+              "title": "Tag Uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NodeOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/course/{course_uuid}/nodes": {
+      "get": {
+        "summary": "Get Nodes",
+        "operationId": "get_nodes_course__course_uuid__nodes_get",
+        "parameters": [
+          {
+            "name": "course_uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid4",
+              "title": "Course Uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NodeOut"
+                  },
+                  "title": "Response Get Nodes Course  Course Uuid  Nodes Get"
                 }
               }
             }
@@ -224,26 +370,6 @@
       }
     },
     "/links": {
-      "get": {
-        "summary": "Get Links",
-        "operationId": "get_links_links_get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/LinkOut"
-                  },
-                  "type": "array",
-                  "title": "Response Get Links Links Get"
-                }
-              }
-            }
-          }
-        }
-      },
       "post": {
         "summary": "Add Link",
         "operationId": "add_link_links_post",
@@ -251,7 +377,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/LinkIn"
+                "$ref": "#/components/schemas/Body_add_link_links_post"
               }
             }
           },
@@ -274,6 +400,72 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/course/{course_uuid}/links": {
+      "get": {
+        "summary": "Get Links",
+        "operationId": "get_links_course__course_uuid__links_get",
+        "parameters": [
+          {
+            "name": "course_uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid4",
+              "title": "Course Uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LinkOut"
+                  },
+                  "title": "Response Get Links Course  Course Uuid  Links Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/links/types": {
+      "get": {
+        "summary": "Get Link Types",
+        "operationId": "get_link_types_links_types_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/LinkTypeInfo"
+                  },
+                  "type": "array",
+                  "title": "Response Get Link Types Links Types Get"
                 }
               }
             }
@@ -322,26 +514,6 @@
       }
     },
     "/tags": {
-      "get": {
-        "summary": "Get Tags",
-        "operationId": "get_tags_tags_get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/TagOut"
-                  },
-                  "type": "array",
-                  "title": "Response Get Tags Tags Get"
-                }
-              }
-            }
-          }
-        }
-      },
       "post": {
         "summary": "Add Tag",
         "operationId": "add_tag_tags_post",
@@ -349,7 +521,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/TagIn"
+                "$ref": "#/components/schemas/Body_add_tag_tags_post"
               }
             }
           },
@@ -362,6 +534,50 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TagOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/course/{course_uuid}/tags": {
+      "get": {
+        "summary": "Get Tags",
+        "operationId": "get_tags_course__course_uuid__tags_get",
+        "parameters": [
+          {
+            "name": "course_uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid4",
+              "title": "Course Uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TagOut"
+                  },
+                  "title": "Response Get Tags Course  Course Uuid  Tags Get"
                 }
               }
             }
@@ -402,6 +618,50 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TagOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tags/node/{node_uuid}": {
+      "get": {
+        "summary": "Get Node Tags",
+        "operationId": "get_node_tags_tags_node__node_uuid__get",
+        "parameters": [
+          {
+            "name": "node_uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid4",
+              "title": "Node Uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TagOut"
+                  },
+                  "title": "Response Get Node Tags Tags Node  Node Uuid  Get"
                 }
               }
             }
@@ -586,6 +846,42 @@
   },
   "components": {
     "schemas": {
+      "Body_add_link_links_post": {
+        "properties": {
+          "link": {
+            "$ref": "#/components/schemas/LinkIn"
+          }
+        },
+        "type": "object",
+        "required": [
+          "link"
+        ],
+        "title": "Body_add_link_links_post"
+      },
+      "Body_add_node_nodes_post": {
+        "properties": {
+          "node": {
+            "$ref": "#/components/schemas/NodeIn"
+          }
+        },
+        "type": "object",
+        "required": [
+          "node"
+        ],
+        "title": "Body_add_node_nodes_post"
+      },
+      "Body_add_tag_tags_post": {
+        "properties": {
+          "tag": {
+            "$ref": "#/components/schemas/TagIn"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tag"
+        ],
+        "title": "Body_add_tag_tags_post"
+      },
       "Body_auth_jwt_login_auth_login_post": {
         "properties": {
           "grant_type": {
@@ -644,6 +940,42 @@
           "password"
         ],
         "title": "Body_auth_jwt_login_auth_login_post"
+      },
+      "Body_update_tags_nodes_update__node_uuid__tags__post": {
+        "properties": {
+          "tag_uuids": {
+            "items": {
+              "type": "string",
+              "format": "uuid4"
+            },
+            "type": "array",
+            "title": "Tag Uuids"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tag_uuids"
+        ],
+        "title": "Body_update_tags_nodes_update__node_uuid__tags__post"
+      },
+      "CourseOut": {
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "format": "uuid4",
+            "title": "Uuid"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "uuid",
+          "name"
+        ],
+        "title": "CourseOut"
       },
       "ErrorModel": {
         "properties": {
@@ -747,9 +1079,31 @@
       "LinkType": {
         "type": "string",
         "enum": [
-          "SYNONYM"
+          "SYNONYM",
+          "ANTONYM",
+          "WORD_FIELD",
+          "HOMOPHONE",
+          "WORD_FAMILY"
         ],
         "title": "LinkType"
+      },
+      "LinkTypeInfo": {
+        "properties": {
+          "value": {
+            "type": "string",
+            "title": "Value"
+          },
+          "display_name": {
+            "type": "string",
+            "title": "Display Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "value",
+          "display_name"
+        ],
+        "title": "LinkTypeInfo"
       },
       "NodeIn": {
         "properties": {
@@ -767,13 +1121,19 @@
             },
             "type": "array",
             "title": "Tags"
+          },
+          "course_uuid": {
+            "type": "string",
+            "format": "uuid4",
+            "title": "Course Uuid"
           }
         },
         "type": "object",
         "required": [
           "term",
           "definition",
-          "tags"
+          "tags",
+          "course_uuid"
         ],
         "title": "NodeIn"
       },
@@ -800,6 +1160,11 @@
             "type": "array",
             "uniqueItems": true,
             "title": "Tags"
+          },
+          "course_uuid": {
+            "type": "string",
+            "format": "uuid4",
+            "title": "Course Uuid"
           }
         },
         "type": "object",
@@ -807,7 +1172,8 @@
           "uuid",
           "term",
           "definition",
-          "tags"
+          "tags",
+          "course_uuid"
         ],
         "title": "NodeOut"
       },
@@ -820,12 +1186,18 @@
           "description": {
             "type": "string",
             "title": "Description"
+          },
+          "course_uuid": {
+            "type": "string",
+            "format": "uuid4",
+            "title": "Course Uuid"
           }
         },
         "type": "object",
         "required": [
           "title",
-          "description"
+          "description",
+          "course_uuid"
         ],
         "title": "TagIn"
       },
@@ -843,13 +1215,19 @@
           "description": {
             "type": "string",
             "title": "Description"
+          },
+          "course_uuid": {
+            "type": "string",
+            "format": "uuid4",
+            "title": "Course Uuid"
           }
         },
         "type": "object",
         "required": [
           "uuid",
           "title",
-          "description"
+          "description",
+          "course_uuid"
         ],
         "title": "TagOut"
       },

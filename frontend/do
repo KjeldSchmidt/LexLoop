@@ -4,7 +4,13 @@
 function task_quality_gates {
   task_fmt
   task_lint
+  task_type_check
   task_test_check
+}
+
+## type-check: Run vue-tsc type checking
+function task_type_check {
+  npm run type-check
 }
 
 ## fmt: apply automatic formatting
@@ -39,8 +45,9 @@ function task_test {
 
 ## test-check: run all tests in check-mode, without watcher
 function task_test_check {
+  npm run type-check
   npm run test:unit -- --run
-  npm run build
+  npm run build-only
   npm run test:e2e
 }
 

@@ -2,6 +2,7 @@
 
 ## quality-gates: Run quality checks for deployment confidence
 function task_quality_gates {
+  task_check_api_schema
   ./backend/do quality-gates
   ./frontend/do quality-gates
   ./infrastructure/do quality-gates
@@ -27,13 +28,59 @@ function task_setup {
   git config core.hooksPath .githooks
 }
 
+## update-api-schema: Regenerate backend/openapi.json and frontend/src/api/schema.ts
 function task_update_api_schema {
-  pushd backend/dev_tools
-  uv run python openapi_schema.py
-  popd
-  npx openapi-typescript backend/dev_tools/openapi.json > frontend/src/api/schema.ts
+  # DB_URL is required at import time; schema dump does not connect.
+  export DB_URL="${DB_URL:-postgresql+psycopg://schema-check:schema-check@127.0.0.1:5432/schema_check}"
+  if [ -f backend/.env ]; then
+    set -a
+    # shellcheck disable=SC1091
+    source backend/.env
+    set +a
+  fi
+
+  pushd backend/dev_tools >/dev/null
+  uv run python openapi_schema.py ../openapi.json
+  popd >/dev/null
+  (cd frontend && npm exec -- openapi-typescript ../backend/openapi.json -o src/api/schema.ts)
   ./frontend/do fmt
-  rm backend/dev_tools/openapi.json
+}
+
+## check-api-schema: Fail if committed OpenAPI or schema.ts are stale
+function task_check_api_schema {
+  local tmp
+  tmp=$(mktemp -d)
+  # Expand path when setting trap; local tmp is unbound when EXIT runs.
+  trap "rm -rf '$tmp'" EXIT
+
+  export DB_URL="${DB_URL:-postgresql+psycopg://schema-check:schema-check@127.0.0.1:5432/schema_check}"
+  if [ -f backend/.env ]; then
+    set -a
+    # shellcheck disable=SC1091
+    source backend/.env
+    set +a
+  fi
+
+  pushd backend/dev_tools >/dev/null
+  uv run python openapi_schema.py "$tmp/openapi.json"
+  popd >/dev/null
+
+  if ! diff -q backend/openapi.json "$tmp/openapi.json" >/dev/null; then
+    echo "backend/openapi.json is stale. Run: ./do update-api-schema" >&2
+    diff -u backend/openapi.json "$tmp/openapi.json" >&2 || true
+    exit 1
+  fi
+
+  (cd frontend && npm exec -- openapi-typescript ../backend/openapi.json -o "$tmp/schema.ts")
+  (cd frontend && npx prettier --write --config .prettierrc.json "$tmp/schema.ts" >/dev/null)
+
+  if ! diff -q frontend/src/api/schema.ts "$tmp/schema.ts" >/dev/null; then
+    echo "frontend/src/api/schema.ts is stale. Run: ./do update-api-schema" >&2
+    diff -u frontend/src/api/schema.ts "$tmp/schema.ts" >&2 || true
+    exit 1
+  fi
+
+  echo "OpenAPI and schema.ts are up to date ✅"
 }
 
 #-------- All task definitions go above this line --------#
