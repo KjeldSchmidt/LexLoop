@@ -1,4 +1,3 @@
-import os
 import uuid
 from typing import AsyncGenerator
 
@@ -13,15 +12,12 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     create_async_engine,
 )
-
-from lexloop.repository import UserRepo
-from .user_model import User
-from ..config import env_settings
 from sqlalchemy.pool import NullPool
 
-# Create async engine and sessionmaker for auth only
+from lexloop.auth.user_repository import OAuthAccountRepo, UserRepo
+from lexloop.auth.user_model import User
+from lexloop.config import env_settings
 
-# Lazy initialization to avoid event loop issues in tests
 _async_engine: AsyncEngine | None = None
 _async_sessionmaker: async_sessionmaker[AsyncSession] | None = None
 
@@ -69,16 +65,20 @@ async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
 async def get_user_db(
     session: AsyncSession = Depends(get_async_session),
 ) -> AsyncGenerator[SQLAlchemyUserDatabase[UserRepo, UUID4], None]:
-    yield SQLAlchemyUserDatabase(session, UserRepo)
-
-
-RESET_PASSWORD_TOKEN_SECRET = os.getenv("RESET_PASSWORD_TOKEN_SECRET", "")
-VERIFICATION_TOKEN_SECRET = os.getenv("VERIFICATION_TOKEN_SECRET", "")
+    yield SQLAlchemyUserDatabase(session, UserRepo, OAuthAccountRepo)
 
 
 class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
-    reset_password_token_secret = RESET_PASSWORD_TOKEN_SECRET
-    verification_token_secret = VERIFICATION_TOKEN_SECRET
+    reset_password_token_secret = env_settings.RESET_PASSWORD_TOKEN_SECRET
+    verification_token_secret = env_settings.VERIFICATION_TOKEN_SECRET
+
+    async def on_after_register(
+        self, user: User, request: object | None = None
+    ) -> None:
+        """Google (and any) signups are teachers."""
+        _ = request
+        if getattr(user, "role", None) != "teacher":
+            await self.user_db.update(user, {"role": "teacher"})
 
 
 async def get_user_manager(

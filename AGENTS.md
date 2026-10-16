@@ -56,11 +56,12 @@ Pass `course_uuid` from route/UI context (e.g. `/class/:id`). Do not hardcode co
 - Prefer `v-model` over `document.getElementById` when editing forms.
 - Course selection lives on `UserStartPage`; class routes carry `course_id` / `course_uuid` into pages and modals.
 
-## Auth (unfinished)
+## Auth
 
-- Backend exposes `/auth` (fastapi-users, JWT cookie).
-- Domain CRUD is **not** wired to `current_user()`.
-- Login/register UI is a stub. Do not “complete” auth unless the task asks for it.
+- **Teachers:** fastapi-users `user` table; Google OAuth at `/auth/google/*`; cookie `lexloop-userauth`. Public `/auth/register` is disabled.
+- **Students:** separate `lexloop_students` (username + password only; no email/name); `/students/login`; cookie `lexloop-studentauth`.
+- Domain routes require an authenticated principal (teacher or student).
+- Secrets: `JWT_SIGNING_SECRET`, `GOOGLE_OAUTH_CLIENT_ID`, `GOOGLE_OAUTH_CLIENT_SECRET` (see `backend/.env.example` and Terraform vars).
 
 ## Infrastructure
 

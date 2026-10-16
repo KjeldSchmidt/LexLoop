@@ -1,6 +1,9 @@
 import createClient from 'openapi-fetch'
 import type { components, paths } from '@/api/schema.ts'
-const client = createClient<paths>({ baseUrl: import.meta.env.VITE_API_URL })
+const client = createClient<paths>({
+  baseUrl: import.meta.env.VITE_API_URL,
+  credentials: 'include',
+})
 export default client
 export type schemas = components['schemas']
 type NodeIn = schemas['NodeIn']
@@ -154,5 +157,34 @@ export const getCourses = async ({ offset = 0, limit = API_MAX_PAGE_SIZE }: Page
       query: { offset, limit },
     },
   })
+  return data
+}
+
+export const studentLogin = async (username: string, password: string) => {
+  const { data, error } = await client.POST('/students/login', {
+    body: { username, password },
+  })
+  if (error) {
+    throw new Error('LOGIN_FAILED')
+  }
+  return data
+}
+
+export const studentLogout = async () => {
+  await client.POST('/students/logout', {})
+}
+
+export const getStudents = async () => {
+  const { data } = await client.GET('/students', {})
+  return data
+}
+
+export const createStudent = async (username: string, password: string) => {
+  const { data, error } = await client.POST('/students', {
+    body: { username, password },
+  })
+  if (error) {
+    throw new Error('CREATE_FAILED')
+  }
   return data
 }

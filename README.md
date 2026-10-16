@@ -46,7 +46,11 @@ After changing API routes or models:
 
 See [`AGENTS.md`](AGENTS.md) for conventions, the OpenAPI contract, and known gaps.
 
+## Auth secrets (local)
+
+Copy [`backend/.env.example`](backend/.env.example) values into `backend/.env`. For Google teacher login, set client ID/secret and add the callback URL in the Google Cloud console (typically `http://127.0.0.1:8000/api/auth/google/callback`). Deploy uses GitHub secrets → Terraform → Lambda env.
+
 ## Known gaps
 
-- Login UI is a stub; `/auth` exists but domain routes are not auth-gated
 - Frontend unit/e2e tests are mostly scaffolding
+- Course/cohort membership (#11) not tied to accounts yet

@@ -3,13 +3,14 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
+from lexloop.auth.principal import require_principal
 from lexloop.controller import get_db
 from lexloop.model.course_model import CourseOut
 from lexloop.model.pagination import Page, PaginationParams, pagination_params
 
 from lexloop.service import course_service
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(require_principal)])
 
 
 @router.get("/courses")

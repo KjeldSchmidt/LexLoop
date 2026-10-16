@@ -116,6 +116,11 @@ jobs:
         run: cd infrastructure && ./do apply-auto dev
         env:
           TF_VAR_supabase_access_token: ${{ secrets.SUPABASE_DEV_ACCESS_TOKEN }}
+          TF_VAR_jwt_signing_secret: ${{ secrets.JWT_SIGNING_SECRET }}
+          TF_VAR_google_oauth_client_id: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+          TF_VAR_google_oauth_client_secret: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+          TF_VAR_frontend_url: ${{ secrets.FRONTEND_URL_DEV }}
+          TF_VAR_google_oauth_redirect_url: ${{ secrets.GOOGLE_OAUTH_REDIRECT_URL_DEV }}
 
       - name: Get Terraform outputs
         id: terraform_output

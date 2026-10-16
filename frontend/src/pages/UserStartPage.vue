@@ -28,6 +28,9 @@ function goToClass(course_uuid: string) {
 <template>
   <div class="user-start-container">
     <div class="content">
+      <p>
+        <router-link to="/teacher/students">Manage students</router-link>
+      </p>
       <h2 class="prompt">Choose Course:</h2>
       <div class="course-list">
         <button

@@ -1,9 +1,20 @@
 <script setup lang="ts"></script>
 
 <template>
-  <router-link to="/login">
-    <button>Sign In</button>
-  </router-link>
+  <div class="start">
+    <h1>LexLoop</h1>
+    <router-link to="/login">
+      <button>Sign In</button>
+    </router-link>
+  </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.start {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 3rem;
+}
+</style>

@@ -5,15 +5,15 @@ from fastapi_users import schemas
 
 
 class UserRead(schemas.BaseUser[uuid.UUID]):  # type: ignore[explicit-any]
-    pass
+    role: str = "teacher"
 
 
 class UserCreate(schemas.BaseUserCreate):  # type: ignore[explicit-any]
-    pass
+    role: str = "teacher"
 
 
 class UserUpdate(schemas.BaseUserUpdate):  # type: ignore[explicit-any]
-    pass
+    role: str | None = None
 
 
 class User(BaseModel):  # type: ignore[explicit-any]
@@ -23,6 +23,7 @@ class User(BaseModel):  # type: ignore[explicit-any]
     is_active: bool = True
     is_superuser: bool = False
     is_verified: bool = False
+    role: str = "teacher"
 
 
 class UserCreateIn(BaseModel):  # type: ignore[explicit-any]
@@ -31,3 +32,4 @@ class UserCreateIn(BaseModel):  # type: ignore[explicit-any]
     is_active: bool = True
     is_superuser: bool = False
     is_verified: bool = False
+    role: str = "teacher"
