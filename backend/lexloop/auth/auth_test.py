@@ -1,24 +1,19 @@
 from fastapi.testclient import TestClient
 
 
-def test_can_register_new_user_but_not_log_in_without_verification(
-    client: TestClient,
-) -> None:
-    login_details = {
-        "username": "test@lexloop.com",
-        "password": "SECURE_PASSWORD",
-    }
-    register_details = {
-        "email": "test@lexloop.com",
-        "password": "SECURE_PASSWORD",
-    }
+def test_password_register_endpoint_is_disabled(client: TestClient) -> None:
+    response = client.post(
+        "/auth/register",
+        json={
+            "email": "test@lexloop.com",
+            "password": "SECURE_PASSWORD",
+        },
+    )
+    assert response.status_code == 404
 
-    first_login_attempt = client.post("/auth/login", data=login_details)
-    assert first_login_attempt.json()["detail"] == "LOGIN_BAD_CREDENTIALS"
 
-    response = client.post("/auth/register", json=register_details)
-
-    assert response.status_code == 201
-
-    second_login_attempt = client.post("/auth/login", data=login_details)
-    assert second_login_attempt.json()["detail"] == "LOGIN_USER_NOT_VERIFIED"
+def test_google_authorize_route_exists(client: TestClient) -> None:
+    # Without real Google credentials this may 500 on exchange, but authorize
+    # should at least be routed (redirect or error from OAuth client).
+    response = client.get("/auth/google/authorize", follow_redirects=False)
+    assert response.status_code in {200, 302, 400, 500}

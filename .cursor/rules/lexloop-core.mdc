@@ -9,5 +9,5 @@ alwaysApply: true
 - Use `./do` / `backend/do` / `frontend/do` / `infrastructure/do` — do not invent scripts.
 - After API changes: `./do update-api-schema`, then update `frontend/src/api/index.ts`.
 - Pass `course_uuid` from route/UI context; do not hardcode course IDs.
-- Auth and login UI are unfinished; do not fake-complete them unless asked.
+- Teachers: Google OAuth; students: username/password (no email/name). Domain routes need a principal.
 - Infra is AWS + Supabase, not Azure. App uses Postgres (Supabase), not DynamoDB.

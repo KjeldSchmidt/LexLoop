@@ -1,17 +1,26 @@
+import asyncio
+import uuid
 from pathlib import Path
 from typing import Generator
-from sqlalchemy import create_engine, Engine, text
-from sqlalchemy.orm import sessionmaker, Session
-from lexloop.repository.base import Base
-from fastapi.testclient import TestClient
-
-from .config import env_settings
-from .main import app
-from lexloop.controller import get_db
-from lexloop.auth import user_manager
 
 import pytest
-import asyncio
+from fastapi.testclient import TestClient
+from sqlalchemy import Engine, create_engine, text
+from sqlalchemy.orm import Session, sessionmaker
+
+# Import models so Base.metadata.create_all sees all tables.
+import lexloop.auth.user_repository  # noqa: F401
+import lexloop.repository.course_repository  # noqa: F401
+import lexloop.repository.link_repository  # noqa: F401
+import lexloop.repository.node_repository  # noqa: F401
+import lexloop.repository.student_repository  # noqa: F401
+import lexloop.repository.tag_repository  # noqa: F401
+from lexloop.auth import user_manager
+from lexloop.auth.principal import Principal, PrincipalKind, require_principal
+from lexloop.config import env_settings
+from lexloop.controller import get_db
+from lexloop.main import app
+from lexloop.repository.base import Base
 
 
 @pytest.fixture(scope="session")
@@ -57,7 +66,11 @@ def client(
     def override_get_db() -> Generator[Session, None, None]:
         yield db_session
 
+    def override_principal() -> Principal:
+        return Principal(kind=PrincipalKind.TEACHER, id=uuid.uuid4())
+
     app.dependency_overrides[get_db] = override_get_db
+    app.dependency_overrides[require_principal] = override_principal
 
     yield TestClient(app)
 

@@ -3,6 +3,7 @@
 from fastapi import APIRouter, status, Depends, Body
 from sqlalchemy.orm import Session
 
+from lexloop.auth.principal import require_principal
 from lexloop.controller import get_db
 from lexloop.model.link_model import LinkOut
 from lexloop.model.node_model import NodeOut, NodeIn
@@ -12,7 +13,7 @@ from lexloop.service import node_service, link_service
 
 from pydantic import UUID4
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(require_principal)])
 
 
 @router.post("/nodes", status_code=status.HTTP_201_CREATED)

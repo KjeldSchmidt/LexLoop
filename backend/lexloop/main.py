@@ -9,14 +9,16 @@ from lexloop.controller import get_db
 from lexloop.controller.course_controller import router as course_router
 from lexloop.controller.link_controller import router as link_router
 from lexloop.controller.node_controller import router as word_router
+from lexloop.controller.student_controller import router as student_router
 from lexloop.controller.tag_controller import router as tag_router
+from lexloop.config import env_settings
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(root_path="/api")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[env_settings.FRONTEND_URL, "http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -40,6 +42,7 @@ app.include_router(course_router)
 app.include_router(word_router)
 app.include_router(link_router)
 app.include_router(tag_router)
+app.include_router(student_router)
 app.include_router(auth_router)
 
 aws_handler = Mangum(app)

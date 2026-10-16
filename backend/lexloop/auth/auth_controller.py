@@ -1,4 +1,5 @@
-import os
+"""Teacher auth: cookie JWT + Google OAuth. Public password register is disabled."""
+
 import uuid
 
 from fastapi import APIRouter
@@ -8,13 +9,12 @@ from fastapi_users.authentication import (
     CookieTransport,
     JWTStrategy,
 )
+from httpx_oauth.clients.google import GoogleOAuth2
 
 from lexloop.auth.user_manager import get_user_manager
-from lexloop.auth.user_model import User, UserCreate, UserRead
+from lexloop.auth.user_model import User, UserRead, UserUpdate
+from lexloop.config import env_settings
 
-JWT_SIGNING_SECRET = os.getenv("JWT_SIGNING_SECRET", "")
-
-# Todo: Evaluate if systems are silly and we need to make the school secure with shorter timeouts
 cookie_transport = CookieTransport(
     cookie_name="lexloop-userauth",
     cookie_max_age=60 * 60 * 12,
@@ -22,7 +22,10 @@ cookie_transport = CookieTransport(
 
 
 def get_jwt_strategy() -> JWTStrategy[User, uuid.UUID]:
-    return JWTStrategy(secret=JWT_SIGNING_SECRET, lifetime_seconds=60 * 60 * 12)
+    return JWTStrategy(
+        secret=env_settings.JWT_SIGNING_SECRET,
+        lifetime_seconds=60 * 60 * 12,
+    )
 
 
 auth_backend = AuthenticationBackend(
@@ -36,6 +39,8 @@ fastapi_users = FastAPIUsers[User, uuid.UUID](
     [auth_backend],
 )
 
+current_active_teacher = fastapi_users.current_user(active=True, verified=True)
+
 router = APIRouter(prefix="/auth")
 
 router.include_router(
@@ -44,8 +49,25 @@ router.include_router(
 )
 
 router.include_router(
-    fastapi_users.get_register_router(
-        user_schema=UserRead, user_create_schema=UserCreate
+    fastapi_users.get_users_router(UserRead, UserUpdate),
+    prefix="/users",
+    tags=["auth"],
+)
+
+google_oauth_client = GoogleOAuth2(
+    env_settings.GOOGLE_OAUTH_CLIENT_ID,
+    env_settings.GOOGLE_OAUTH_CLIENT_SECRET,
+)
+
+router.include_router(
+    fastapi_users.get_oauth_router(
+        google_oauth_client,
+        auth_backend,
+        state_secret=env_settings.JWT_SIGNING_SECRET,
+        redirect_url=env_settings.GOOGLE_OAUTH_REDIRECT_URL,
+        associate_by_email=True,
+        is_verified_by_default=True,
     ),
+    prefix="/google",
     tags=["auth"],
 )

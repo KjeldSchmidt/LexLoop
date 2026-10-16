@@ -364,6 +364,130 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/students/login': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Student Login
+     * @description Log in a student with username and password.
+     */
+    post: operations['student_login_students_login_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/students/logout': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Student Logout
+     * @description Clear the student session cookie.
+     */
+    post: operations['student_logout_students_logout_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/students/me': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Student Me
+     * @description Return the current student principal.
+     */
+    get: operations['student_me_students_me_get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/students': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * List Students
+     * @description List students created by the current teacher.
+     */
+    get: operations['list_students_students_get']
+    put?: never
+    /**
+     * Create Student
+     * @description Teacher creates a student account.
+     */
+    post: operations['create_student_students_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/students/{student_uuid}/password': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Reset Student Password
+     * @description Teacher resets a student's password.
+     */
+    post: operations['reset_student_password_students__student_uuid__password_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/students/{student_uuid}/deactivate': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Deactivate Student
+     * @description Teacher deactivates a student.
+     */
+    post: operations['deactivate_student_students__student_uuid__deactivate_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/auth/login': {
     parameters: {
       query?: never
@@ -398,17 +522,74 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/auth/register': {
+  '/auth/users/me': {
     parameters: {
       query?: never
       header?: never
       path?: never
       cookie?: never
     }
-    get?: never
+    /** Users:Current User */
+    get: operations['users_current_user_auth_users_me_get']
     put?: never
-    /** Register:Register */
-    post: operations['register_register_auth_register_post']
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Users:Patch Current User */
+    patch: operations['users_patch_current_user_auth_users_me_patch']
+    trace?: never
+  }
+  '/auth/users/{id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Users:User */
+    get: operations['users_user_auth_users__id__get']
+    put?: never
+    post?: never
+    /** Users:Delete User */
+    delete: operations['users_delete_user_auth_users__id__delete']
+    options?: never
+    head?: never
+    /** Users:Patch User */
+    patch: operations['users_patch_user_auth_users__id__patch']
+    trace?: never
+  }
+  '/auth/google/authorize': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Oauth:Google.Jwt.Authorize */
+    get: operations['oauth_google_jwt_authorize_auth_google_authorize_get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/auth/google/callback': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Oauth:Google.Jwt.Callback
+     * @description The response varies based on the authentication backend used.
+     */
+    get: operations['oauth_google_jwt_callback_auth_google_callback_get']
+    put?: never
+    post?: never
     delete?: never
     options?: never
     head?: never
@@ -561,6 +742,11 @@ export interface components {
        */
       course_uuid: string
     }
+    /** OAuth2AuthorizeResponse */
+    OAuth2AuthorizeResponse: {
+      /** Authorization Url */
+      authorization_url: string
+    }
     /** Page[CourseOut] */
     Page_CourseOut_: {
       /** Items */
@@ -617,6 +803,37 @@ export interface components {
       /** Limit */
       limit: number
     }
+    /** StudentCreate */
+    StudentCreate: {
+      /** Username */
+      username: string
+      /** Password */
+      password: string
+    }
+    /** StudentLogin */
+    StudentLogin: {
+      /** Username */
+      username: string
+      /** Password */
+      password: string
+    }
+    /** StudentOut */
+    StudentOut: {
+      /**
+       * Uuid
+       * Format: uuid4
+       */
+      uuid: string
+      /** Username */
+      username: string
+      /** Is Active */
+      is_active: boolean
+    }
+    /** StudentPasswordReset */
+    StudentPasswordReset: {
+      /** Password */
+      password: string
+    }
     /** TagIn */
     TagIn: {
       /** Title */
@@ -646,31 +863,6 @@ export interface components {
        */
       course_uuid: string
     }
-    /** UserCreate */
-    UserCreate: {
-      /**
-       * Email
-       * Format: email
-       */
-      email: string
-      /** Password */
-      password: string
-      /**
-       * Is Active
-       * @default true
-       */
-      is_active: boolean | null
-      /**
-       * Is Superuser
-       * @default false
-       */
-      is_superuser: boolean | null
-      /**
-       * Is Verified
-       * @default false
-       */
-      is_verified: boolean | null
-    }
     /** UserRead */
     UserRead: {
       /**
@@ -698,6 +890,26 @@ export interface components {
        * @default false
        */
       is_verified: boolean
+      /**
+       * Role
+       * @default teacher
+       */
+      role: string
+    }
+    /** UserUpdate */
+    UserUpdate: {
+      /** Password */
+      password?: string | null
+      /** Email */
+      email?: string | null
+      /** Is Active */
+      is_active?: boolean | null
+      /** Is Superuser */
+      is_superuser?: boolean | null
+      /** Is Verified */
+      is_verified?: boolean | null
+      /** Role */
+      role?: string | null
     }
     /** ValidationError */
     ValidationError: {
@@ -1281,6 +1493,196 @@ export interface operations {
       }
     }
   }
+  student_login_students_login_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['StudentLogin']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['StudentOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  student_logout_students_logout_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
+  student_me_students_me_get: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['StudentOut']
+        }
+      }
+    }
+  }
+  list_students_students_get: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['StudentOut'][]
+        }
+      }
+    }
+  }
+  create_student_students_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['StudentCreate']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['StudentOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  reset_student_password_students__student_uuid__password_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        student_uuid: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['StudentPasswordReset']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['StudentOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  deactivate_student_students__student_uuid__deactivate_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        student_uuid: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['StudentOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   auth_jwt_login_auth_login_post: {
     parameters: {
       query?: never
@@ -1364,7 +1766,34 @@ export interface operations {
       }
     }
   }
-  register_register_auth_register_post: {
+  users_current_user_auth_users_me_get: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['UserRead']
+        }
+      }
+      /** @description Missing token or inactive user. */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
+  users_patch_current_user_auth_users_me_patch: {
     parameters: {
       query?: never
       header?: never
@@ -1373,17 +1802,265 @@ export interface operations {
     }
     requestBody: {
       content: {
-        'application/json': components['schemas']['UserCreate']
+        'application/json': components['schemas']['UserUpdate']
       }
     }
     responses: {
       /** @description Successful Response */
-      201: {
+      200: {
         headers: {
           [name: string]: unknown
         }
         content: {
           'application/json': components['schemas']['UserRead']
+        }
+      }
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorModel']
+        }
+      }
+      /** @description Missing token or inactive user. */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  users_user_auth_users__id__get: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['UserRead']
+        }
+      }
+      /** @description Missing token or inactive user. */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Not a superuser. */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description The user does not exist. */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  users_delete_user_auth_users__id__delete: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Missing token or inactive user. */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Not a superuser. */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description The user does not exist. */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  users_patch_user_auth_users__id__patch: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UserUpdate']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['UserRead']
+        }
+      }
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorModel']
+        }
+      }
+      /** @description Missing token or inactive user. */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Not a superuser. */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description The user does not exist. */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  oauth_google_jwt_authorize_auth_google_authorize_get: {
+    parameters: {
+      query?: {
+        scopes?: string[]
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['OAuth2AuthorizeResponse']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  oauth_google_jwt_callback_auth_google_callback_get: {
+    parameters: {
+      query?: {
+        code?: string | null
+        code_verifier?: string | null
+        state?: string | null
+        error?: string | null
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
         }
       }
       /** @description Bad Request */

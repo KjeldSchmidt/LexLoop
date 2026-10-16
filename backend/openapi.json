@@ -44,6 +44,11 @@
         "summary": "Get Courses",
         "description": "List courses (paginated).",
         "operationId": "get_courses_courses_get",
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ],
         "parameters": [
           {
             "name": "offset",
@@ -133,7 +138,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ]
       }
     },
     "/nodes/update/{node_uuid}/tags/": {
@@ -141,6 +151,11 @@
         "summary": "Update Tags",
         "description": "Replace the full tag set on a node.",
         "operationId": "update_tags_nodes_update__node_uuid__tags__post",
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ],
         "parameters": [
           {
             "name": "node_uuid",
@@ -192,6 +207,11 @@
         "summary": "Add Tag To Node",
         "description": "Attach a single tag to a node.",
         "operationId": "add_tag_to_node_nodes__node_uuid___tag_uuid__post",
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ],
         "parameters": [
           {
             "name": "node_uuid",
@@ -243,6 +263,11 @@
         "summary": "Get Nodes",
         "description": "List nodes belonging to a course (paginated).",
         "operationId": "get_nodes_course__course_uuid__nodes_get",
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ],
         "parameters": [
           {
             "name": "course_uuid",
@@ -311,6 +336,11 @@
         "summary": "Get Node",
         "description": "Fetch a single node by UUID.",
         "operationId": "get_node_nodes__uuid__get",
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ],
         "parameters": [
           {
             "name": "uuid",
@@ -352,6 +382,11 @@
         "summary": "Get Node Links",
         "description": "List links that involve the given node (paginated).",
         "operationId": "get_node_links_nodes__node_uuid__links_get",
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ],
         "parameters": [
           {
             "name": "node_uuid",
@@ -420,6 +455,11 @@
         "summary": "Get Tag Nodes",
         "description": "List nodes that have the given tag (paginated).",
         "operationId": "get_tag_nodes_nodes_tag__tag_uuid__get",
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ],
         "parameters": [
           {
             "name": "tag_uuid",
@@ -519,7 +559,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ]
       }
     },
     "/course/{course_uuid}/links": {
@@ -527,6 +572,11 @@
         "summary": "Get Links",
         "description": "List links belonging to a course (paginated).",
         "operationId": "get_links_course__course_uuid__links_get",
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ],
         "parameters": [
           {
             "name": "course_uuid",
@@ -610,7 +660,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ]
       }
     },
     "/links/{uuid}": {
@@ -618,6 +673,11 @@
         "summary": "Get Link",
         "description": "Fetch a single link by UUID.",
         "operationId": "get_link_links__uuid__get",
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ],
         "parameters": [
           {
             "name": "uuid",
@@ -690,7 +750,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ]
       }
     },
     "/course/{course_uuid}/tags": {
@@ -698,6 +763,11 @@
         "summary": "Get Tags",
         "description": "List tags belonging to a course (paginated).",
         "operationId": "get_tags_course__course_uuid__tags_get",
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ],
         "parameters": [
           {
             "name": "course_uuid",
@@ -766,6 +836,11 @@
         "summary": "Get Tag",
         "description": "Fetch a single tag by UUID.",
         "operationId": "get_tag_tags__uuid__get",
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ],
         "parameters": [
           {
             "name": "uuid",
@@ -807,6 +882,11 @@
         "summary": "Get Node Tags",
         "description": "List tags attached to a node (unpaginated; typically few).",
         "operationId": "get_node_tags_tags_node__node_uuid__get",
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ],
         "parameters": [
           {
             "name": "node_uuid",
@@ -830,6 +910,248 @@
                     "$ref": "#/components/schemas/TagOut"
                   },
                   "title": "Response Get Node Tags Tags Node  Node Uuid  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/students/login": {
+      "post": {
+        "summary": "Student Login",
+        "description": "Log in a student with username and password.",
+        "operationId": "student_login_students_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudentLogin"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/students/logout": {
+      "post": {
+        "summary": "Student Logout",
+        "description": "Clear the student session cookie.",
+        "operationId": "student_logout_students_logout_post",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          }
+        }
+      }
+    },
+    "/students/me": {
+      "get": {
+        "summary": "Student Me",
+        "description": "Return the current student principal.",
+        "operationId": "student_me_students_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/students": {
+      "get": {
+        "summary": "List Students",
+        "description": "List students created by the current teacher.",
+        "operationId": "list_students_students_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/StudentOut"
+                  },
+                  "type": "array",
+                  "title": "Response List Students Students Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ]
+      },
+      "post": {
+        "summary": "Create Student",
+        "description": "Teacher creates a student account.",
+        "operationId": "create_student_students_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudentCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ]
+      }
+    },
+    "/students/{student_uuid}/password": {
+      "post": {
+        "summary": "Reset Student Password",
+        "description": "Teacher resets a student's password.",
+        "operationId": "reset_student_password_students__student_uuid__password_post",
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "student_uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid4",
+              "title": "Student Uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudentPasswordReset"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/students/{student_uuid}/deactivate": {
+      "post": {
+        "summary": "Deactivate Student",
+        "description": "Teacher deactivates a student.",
+        "operationId": "deactivate_student_students__student_uuid__deactivate_post",
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "student_uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid4",
+              "title": "Student Uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentOut"
                 }
               }
             }
@@ -943,25 +1265,15 @@
         ]
       }
     },
-    "/auth/register": {
-      "post": {
+    "/auth/users/me": {
+      "get": {
         "tags": [
           "auth"
         ],
-        "summary": "Register:Register",
-        "operationId": "register_register_auth_register_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UserCreate"
-              }
-            }
-          },
-          "required": true
-        },
+        "summary": "Users:Current User",
+        "operationId": "users_current_user_auth_users_me_get",
         "responses": {
-          "201": {
+          "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
@@ -971,6 +1283,46 @@
               }
             }
           },
+          "401": {
+            "description": "Missing token or inactive user."
+          }
+        },
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Users:Patch Current User",
+        "operationId": "users_patch_current_user_auth_users_me_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserRead"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing token or inactive user."
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -979,17 +1331,17 @@
                   "$ref": "#/components/schemas/ErrorModel"
                 },
                 "examples": {
-                  "REGISTER_USER_ALREADY_EXISTS": {
+                  "UPDATE_USER_EMAIL_ALREADY_EXISTS": {
                     "summary": "A user with this email already exists.",
                     "value": {
-                      "detail": "REGISTER_USER_ALREADY_EXISTS"
+                      "detail": "UPDATE_USER_EMAIL_ALREADY_EXISTS"
                     }
                   },
-                  "REGISTER_INVALID_PASSWORD": {
+                  "UPDATE_USER_INVALID_PASSWORD": {
                     "summary": "Password validation failed.",
                     "value": {
                       "detail": {
-                        "code": "REGISTER_INVALID_PASSWORD",
+                        "code": "UPDATE_USER_INVALID_PASSWORD",
                         "reason": "Password should beat least 3 characters"
                       }
                     }
@@ -997,6 +1349,367 @@
                 }
               }
             }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ]
+      }
+    },
+    "/auth/users/{id}": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Users:User",
+        "operationId": "users_user_auth_users__id__get",
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserRead"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing token or inactive user."
+          },
+          "403": {
+            "description": "Not a superuser."
+          },
+          "404": {
+            "description": "The user does not exist."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Users:Patch User",
+        "operationId": "users_patch_user_auth_users__id__patch",
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserRead"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing token or inactive user."
+          },
+          "403": {
+            "description": "Not a superuser."
+          },
+          "404": {
+            "description": "The user does not exist."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "UPDATE_USER_EMAIL_ALREADY_EXISTS": {
+                    "summary": "A user with this email already exists.",
+                    "value": {
+                      "detail": "UPDATE_USER_EMAIL_ALREADY_EXISTS"
+                    }
+                  },
+                  "UPDATE_USER_INVALID_PASSWORD": {
+                    "summary": "Password validation failed.",
+                    "value": {
+                      "detail": {
+                        "code": "UPDATE_USER_INVALID_PASSWORD",
+                        "reason": "Password should beat least 3 characters"
+                      }
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Users:Delete User",
+        "operationId": "users_delete_user_auth_users__id__delete",
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Missing token or inactive user."
+          },
+          "403": {
+            "description": "Not a superuser."
+          },
+          "404": {
+            "description": "The user does not exist."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/google/authorize": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Oauth:Google.Jwt.Authorize",
+        "operationId": "oauth_google_jwt_authorize_auth_google_authorize_get",
+        "parameters": [
+          {
+            "name": "scopes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "title": "Scopes"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuth2AuthorizeResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/google/callback": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Oauth:Google.Jwt.Callback",
+        "description": "The response varies based on the authentication backend used.",
+        "operationId": "oauth_google_jwt_callback_auth_google_callback_get",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Code"
+            }
+          },
+          {
+            "name": "code_verifier",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Code Verifier"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "State"
+            }
+          },
+          {
+            "name": "error",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Error"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "INVALID_STATE_TOKEN": {
+                    "summary": "Invalid state token."
+                  },
+                  "LOGIN_BAD_CREDENTIALS": {
+                    "summary": "User is inactive.",
+                    "value": {
+                      "detail": "LOGIN_BAD_CREDENTIALS"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Bad Request"
           },
           "422": {
             "description": "Validation Error",
@@ -1345,6 +2058,19 @@
         ],
         "title": "NodeOut"
       },
+      "OAuth2AuthorizeResponse": {
+        "properties": {
+          "authorization_url": {
+            "type": "string",
+            "title": "Authorization Url"
+          }
+        },
+        "type": "object",
+        "required": [
+          "authorization_url"
+        ],
+        "title": "OAuth2AuthorizeResponse"
+      },
       "Page_CourseOut_": {
         "properties": {
           "items": {
@@ -1473,6 +2199,85 @@
         ],
         "title": "Page[TagOut]"
       },
+      "StudentCreate": {
+        "properties": {
+          "username": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 3,
+            "title": "Username"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 8,
+            "title": "Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "title": "StudentCreate"
+      },
+      "StudentLogin": {
+        "properties": {
+          "username": {
+            "type": "string",
+            "title": "Username"
+          },
+          "password": {
+            "type": "string",
+            "title": "Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "title": "StudentLogin"
+      },
+      "StudentOut": {
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "format": "uuid4",
+            "title": "Uuid"
+          },
+          "username": {
+            "type": "string",
+            "title": "Username"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          }
+        },
+        "type": "object",
+        "required": [
+          "uuid",
+          "username",
+          "is_active"
+        ],
+        "title": "StudentOut"
+      },
+      "StudentPasswordReset": {
+        "properties": {
+          "password": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 8,
+            "title": "Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "password"
+        ],
+        "title": "StudentPasswordReset"
+      },
       "TagIn": {
         "properties": {
           "title": {
@@ -1527,61 +2332,6 @@
         ],
         "title": "TagOut"
       },
-      "UserCreate": {
-        "properties": {
-          "email": {
-            "type": "string",
-            "format": "email",
-            "title": "Email"
-          },
-          "password": {
-            "type": "string",
-            "title": "Password"
-          },
-          "is_active": {
-            "anyOf": [
-              {
-                "type": "boolean"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Is Active",
-            "default": true
-          },
-          "is_superuser": {
-            "anyOf": [
-              {
-                "type": "boolean"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Is Superuser",
-            "default": false
-          },
-          "is_verified": {
-            "anyOf": [
-              {
-                "type": "boolean"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Is Verified",
-            "default": false
-          }
-        },
-        "type": "object",
-        "required": [
-          "email",
-          "password"
-        ],
-        "title": "UserCreate"
-      },
       "UserRead": {
         "properties": {
           "id": {
@@ -1608,6 +2358,11 @@
             "type": "boolean",
             "title": "Is Verified",
             "default": false
+          },
+          "role": {
+            "type": "string",
+            "title": "Role",
+            "default": "teacher"
           }
         },
         "type": "object",
@@ -1616,6 +2371,79 @@
           "email"
         ],
         "title": "UserRead"
+      },
+      "UserUpdate": {
+        "properties": {
+          "password": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Password"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "email"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "is_active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Active"
+          },
+          "is_superuser": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Superuser"
+          },
+          "is_verified": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Verified"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Role"
+          }
+        },
+        "type": "object",
+        "title": "UserUpdate"
       },
       "ValidationError": {
         "properties": {
