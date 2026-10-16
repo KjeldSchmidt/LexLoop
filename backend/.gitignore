@@ -1,2 +1,4 @@
 lex-api-bundle*
 backend.egg-info
+.env
+.env.local

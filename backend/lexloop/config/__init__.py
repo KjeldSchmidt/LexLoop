@@ -1,3 +1,7 @@
+import json
+import os
+from collections.abc import Mapping
+
 from dotenv import load_dotenv
 from pydantic_settings import (
     BaseSettings,
@@ -5,6 +9,40 @@ from pydantic_settings import (
 )
 
 load_dotenv()
+
+_AUTH_SECRET_KEYS = (
+    "JWT_SIGNING_SECRET",
+    "GOOGLE_OAUTH_CLIENT_ID",
+    "GOOGLE_OAUTH_CLIENT_SECRET",
+)
+
+
+def _apply_auth_secrets_from_aws() -> None:
+    """Load JWT/OAuth secrets from Secrets Manager when AUTH_SECRETS_ARN is set."""
+    arn = os.environ.get("AUTH_SECRETS_ARN")
+    if not arn:
+        return
+
+    # boto3 is provided by the Lambda runtime; listed under dependency-groups.dev.
+    import boto3
+
+    client = boto3.client("secretsmanager")
+    response = client.get_secret_value(SecretId=arn)
+    raw = response.get("SecretString")
+    if not isinstance(raw, str) or not raw:
+        raise RuntimeError(f"Auth secret {arn} has no SecretString")
+
+    payload: object = json.loads(raw)
+    if not isinstance(payload, Mapping):
+        raise RuntimeError(f"Auth secret {arn} must be a JSON object")
+
+    for key in _AUTH_SECRET_KEYS:
+        value = payload.get(key)
+        if isinstance(value, str) and value:
+            os.environ[key] = value
+
+
+_apply_auth_secrets_from_aws()
 
 
 class EnvSettings(BaseSettings):  # type: ignore[explicit-any]

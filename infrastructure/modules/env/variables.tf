@@ -13,27 +13,6 @@ variable "supabase_access_token" {
   sensitive   = true
 }
 
-variable "jwt_signing_secret" {
-  description = "Secret for signing auth JWTs (teachers and students)"
-  type        = string
-  sensitive   = true
-  default     = ""
-}
-
-variable "google_oauth_client_id" {
-  description = "Google OAuth client ID for teacher login"
-  type        = string
-  sensitive   = true
-  default     = ""
-}
-
-variable "google_oauth_client_secret" {
-  description = "Google OAuth client secret for teacher login"
-  type        = string
-  sensitive   = true
-  default     = ""
-}
-
 variable "frontend_url" {
   description = "Frontend origin for CORS (e.g. CloudFront URL)"
   type        = string

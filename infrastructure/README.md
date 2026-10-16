@@ -16,6 +16,7 @@ No resources are defined in the `env/*` folders beyond module instantiation and 
 
 - **Frontend:** S3 bucket + CloudFront (SPA). `/api/*` is forwarded to the API origin.
 - **API:** API Gateway HTTP API → Lambda (Python 3.13, Mangum handler `lexloop.main.aws_handler`). Artifact: `backend/lex-api-bundle.zip` (build with `./backend/do build` before apply).
+- **Auth secrets:** Secrets Manager `lex/auth/<env>` (JWT + Google OAuth). Lambda gets `AUTH_SECRETS_ARN` only; values are synced by CI or set in the console.
 - **Database:** Supabase Postgres. Session pooler URL for Alembic migrations; transaction pooler URL for Lambda `DB_URL`.
 
 ## Bootstrap vs CI

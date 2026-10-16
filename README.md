@@ -46,9 +46,16 @@ After changing API routes or models:
 
 See [`AGENTS.md`](AGENTS.md) for conventions, the OpenAPI contract, and known gaps.
 
-## Auth secrets (local)
+## Auth secrets
 
-Copy [`backend/.env.example`](backend/.env.example) values into `backend/.env`. For Google teacher login, set client ID/secret and add the callback URL in the Google Cloud console (typically `http://127.0.0.1:8000/api/auth/google/callback`). Deploy uses GitHub secrets → Terraform → Lambda env.
+**Local:** copy [`backend/.env.example`](backend/.env.example) into `backend/.env`. For Google teacher login, set client ID/secret and add the callback URL in the Google Cloud console (typically `http://127.0.0.1:8000/api/auth/google/callback`).
+
+**Deployed (dev/prod):** JWT + Google OAuth live in **AWS Secrets Manager** (`lex/auth/<env>`). Lambda reads them via `AUTH_SECRETS_ARN`. Non-secret config (`FRONTEND_URL`, `GOOGLE_OAUTH_REDIRECT_URL`) stays as Lambda env / Terraform vars.
+
+Seed or update the secret either:
+
+1. GitHub Actions secrets `JWT_SIGNING_SECRET`, `GOOGLE_OAUTH_CLIENT_ID`, `GOOGLE_OAUTH_CLIENT_SECRET` (CI syncs into Secrets Manager on deploy), or
+2. Console/CLI: set a JSON secret with those three keys on `lex/auth/dev` (or `prod`).
 
 ## Known gaps
 

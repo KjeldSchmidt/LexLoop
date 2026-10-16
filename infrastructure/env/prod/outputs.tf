@@ -18,6 +18,16 @@ output "api_base_url" {
   value       = module.env.api_base_url
 }
 
+output "auth_secrets_arn" {
+  description = "Secrets Manager ARN for JWT + Google OAuth credentials"
+  value       = module.env.auth_secrets_arn
+}
+
+output "auth_secrets_name" {
+  description = "Secrets Manager name for JWT + Google OAuth credentials"
+  value       = module.env.auth_secrets_name
+}
+
 output "db_url_session" {
   description = "Database URL (session mode, port 5432). Use for migrations and DDL."
   value       = module.env.db_url_session
