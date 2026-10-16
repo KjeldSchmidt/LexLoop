@@ -18,6 +18,16 @@ output "api_base_url" {
   value       = "https://${aws_cloudfront_distribution.cdn.domain_name}/api"
 }
 
+output "auth_secrets_arn" {
+  description = "Secrets Manager ARN for JWT + Google OAuth credentials"
+  value       = aws_secretsmanager_secret.auth.arn
+}
+
+output "auth_secrets_name" {
+  description = "Secrets Manager name for JWT + Google OAuth credentials"
+  value       = aws_secretsmanager_secret.auth.name
+}
+
 output "db_url_session" {
   description = "Database URL (session mode, port 5432). Use for migrations and DDL - supports all Postgres features."
   value       = local.db_url_session

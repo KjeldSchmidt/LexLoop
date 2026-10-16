@@ -26,6 +26,18 @@ resource "aws_iam_role_policy" "lambda_logs_policy" {
   })
 }
 
+resource "aws_iam_role_policy" "lambda_auth_secrets_policy" {
+  role = aws_iam_role.lambda_role.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect   = "Allow"
+      Action   = ["secretsmanager:GetSecretValue"]
+      Resource = [aws_secretsmanager_secret.auth.arn]
+    }]
+  })
+}
+
 resource "aws_lambda_function" "api" {
   function_name    = "${local.project_slug}-api-${var.env}"
   role             = aws_iam_role.lambda_role.arn
@@ -36,13 +48,11 @@ resource "aws_lambda_function" "api" {
 
   environment {
     variables = {
-      ENV                        = var.env
-      DB_URL                     = local.db_url_transaction
-      JWT_SIGNING_SECRET         = var.jwt_signing_secret
-      GOOGLE_OAUTH_CLIENT_ID     = var.google_oauth_client_id
-      GOOGLE_OAUTH_CLIENT_SECRET = var.google_oauth_client_secret
-      FRONTEND_URL               = var.frontend_url
-      GOOGLE_OAUTH_REDIRECT_URL  = var.google_oauth_redirect_url
+      ENV                       = var.env
+      DB_URL                    = local.db_url_transaction
+      AUTH_SECRETS_ARN          = aws_secretsmanager_secret.auth.arn
+      FRONTEND_URL              = var.frontend_url
+      GOOGLE_OAUTH_REDIRECT_URL = var.google_oauth_redirect_url
     }
   }
 }

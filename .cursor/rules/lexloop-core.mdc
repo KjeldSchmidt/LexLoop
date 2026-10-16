@@ -11,3 +11,4 @@ alwaysApply: true
 - Pass `course_uuid` from route/UI context; do not hardcode course IDs.
 - Teachers: Google OAuth; students: username/password (no email/name). Domain routes need a principal.
 - Infra is AWS + Supabase, not Azure. App uses Postgres (Supabase), not DynamoDB.
+- Deployed auth secrets live in Secrets Manager (`lex/auth/<env>`); local uses `backend/.env`.
