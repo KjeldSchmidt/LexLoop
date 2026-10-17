@@ -50,7 +50,7 @@ See [`AGENTS.md`](AGENTS.md) for conventions, the OpenAPI contract, and known ga
 
 **Local:** copy [`backend/.env.example`](backend/.env.example) into `backend/.env`. For Google teacher login, set client ID/secret and add the callback URL in the Google Cloud console (typically `http://127.0.0.1:8000/api/auth/google/callback`).
 
-**Deployed (dev/prod):** JWT + Google OAuth live in **AWS Secrets Manager** (`lex/auth/<env>`). Lambda reads them via `AUTH_SECRETS_ARN`. Manage values only in Secrets Manager (console/CLI)—not via GitHub Actions. Non-secret config (`FRONTEND_URL`, `GOOGLE_OAUTH_REDIRECT_URL`) stays as Lambda env / Terraform vars.
+**Deployed (dev/prod):** Auth lives in **AWS Secrets Manager** (`lex/auth/<env>`): JWT + Google OAuth client credentials (set once in the console/CLI) plus `FRONTEND_URL` / `GOOGLE_OAUTH_REDIRECT_URL` (CI refreshes these from CloudFront after each apply). Register the redirect URI in the Google Cloud console: `https://<cloudfront>/api/auth/google/callback`.
 
 ## Known gaps
 
