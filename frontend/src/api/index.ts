@@ -168,6 +168,26 @@ export const getGoogleAuthorizeUrl = async () => {
   return data.authorization_url
 }
 
+export const getTeacherMe = async () => {
+  const { data, error } = await client.GET('/auth/users/me')
+  if (error || !data) {
+    return null
+  }
+  return data
+}
+
+export const getStudentMe = async () => {
+  const { data, error } = await client.GET('/students/me')
+  if (error || !data) {
+    return null
+  }
+  return data
+}
+
+export const teacherLogout = async () => {
+  await client.POST('/auth/logout', {})
+}
+
 export const studentLogin = async (username: string, password: string) => {
   const { data, error } = await client.POST('/students/login', {
     body: { username, password },
