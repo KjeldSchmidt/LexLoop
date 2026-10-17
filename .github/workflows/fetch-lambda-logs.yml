@@ -1,0 +1,29 @@
+name: Fetch Lambda Logs
+
+on:
+  workflow_dispatch:
+    inputs:
+      since:
+        description: "CloudWatch --since (e.g. 1h, 30m)"
+        required: true
+        default: "1h"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  logs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::465836752303:role/lexloop-cicd-deploy-role
+          aws-region: eu-central-1
+      - name: Tail errors
+        run: |
+          aws logs tail /aws/lambda/lex-api-dev \
+            --since "${{ inputs.since }}" \
+            --format short 2>&1 | tee /tmp/logs.txt | tail -200
+          echo "---- ERRORS ----"
+          rg -i "error|traceback|exception|500|GetIdEmail|oauth" /tmp/logs.txt | tail -80 || true
