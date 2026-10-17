@@ -1,0 +1,217 @@
+:root {
+  --ll-ink: #1c2430;
+  --ll-ink-muted: #5a6578;
+  --ll-paper: #eef2f6;
+  --ll-paper-deep: #e2e8f0;
+  --ll-surface: #ffffff;
+  --ll-border: #c5ced9;
+  --ll-border-strong: #1c2430;
+  --ll-accent: #0f766e;
+  --ll-accent-hover: #0d9488;
+  --ll-accent-soft: #ccfbf1;
+  --ll-danger: #b42318;
+  --ll-danger-soft: #fef3f2;
+  --ll-focus: #0f766e;
+  --ll-radius: 10px;
+  --ll-radius-pill: 999px;
+  --ll-shadow: 0 1px 2px rgb(28 36 48 / 4%), 0 8px 24px rgb(28 36 48 / 6%);
+  --ll-font-display: 'Literata', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --ll-font-ui: 'Figtree', 'Avenir Next', 'Segoe UI', sans-serif;
+  --ll-space-page: clamp(1.25rem, 3vw, 2.5rem);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--ll-font-ui);
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--ll-ink);
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgb(15 118 110 / 10%), transparent 55%),
+    radial-gradient(900px 500px at 100% 0%, rgb(28 36 48 / 6%), transparent 50%),
+    linear-gradient(180deg, #f7f9fb 0%, var(--ll-paper) 45%, var(--ll-paper-deep) 100%);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--ll-font-display);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--ll-ink);
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: 1.25rem;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--ll-accent);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.15em;
+}
+
+a:hover {
+  color: var(--ll-accent-hover);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+code {
+  font-family: ui-monospace, 'Cascadia Code', 'SF Mono', Menlo, monospace;
+  font-size: 0.9em;
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  background: var(--ll-paper-deep);
+}
+
+/* Shared controls — pages can opt in with these classes */
+.ll-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.1rem;
+  border: 1.5px solid var(--ll-border-strong);
+  border-radius: var(--ll-radius);
+  background: var(--ll-surface);
+  color: var(--ll-ink);
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.2;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.ll-btn:hover:not(:disabled) {
+  background: var(--ll-paper);
+}
+
+.ll-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.ll-btn:focus-visible {
+  outline: 2px solid var(--ll-focus);
+  outline-offset: 2px;
+}
+
+.ll-btn-primary {
+  background: var(--ll-accent);
+  border-color: var(--ll-accent);
+  color: #fff;
+}
+
+.ll-btn-primary:hover:not(:disabled) {
+  background: var(--ll-accent-hover);
+  border-color: var(--ll-accent-hover);
+  color: #fff;
+}
+
+.ll-btn-danger {
+  background: var(--ll-surface);
+  border-color: var(--ll-danger);
+  color: var(--ll-danger);
+}
+
+.ll-btn-danger:hover:not(:disabled) {
+  background: var(--ll-danger-soft);
+}
+
+.ll-btn-ghost {
+  border-color: var(--ll-border);
+  background: transparent;
+  font-weight: 500;
+}
+
+.ll-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--ll-ink-muted);
+}
+
+.ll-field input,
+.ll-input {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1.5px solid var(--ll-border);
+  border-radius: var(--ll-radius);
+  background: var(--ll-surface);
+  color: var(--ll-ink);
+  font-weight: 400;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.ll-field input:focus,
+.ll-input:focus {
+  outline: none;
+  border-color: var(--ll-accent);
+  box-shadow: 0 0 0 3px rgb(15 118 110 / 18%);
+}
+
+.ll-panel {
+  background: var(--ll-surface);
+  border: 1px solid var(--ll-border);
+  border-radius: calc(var(--ll-radius) + 4px);
+  box-shadow: var(--ll-shadow);
+  padding: 1.25rem 1.35rem;
+}
+
+.ll-muted {
+  color: var(--ll-ink-muted);
+}
+
+.ll-error {
+  color: var(--ll-danger);
+  font-size: 0.9rem;
+}

@@ -16,10 +16,15 @@ async function onLogout() {
 <template>
   <div class="app-shell">
     <div v-if="isAuthenticated" class="session-bar">
-      <span class="session-label">
-        {{ isTeacher ? 'Teacher' : `Student (${student?.username ?? ''})` }}
-      </span>
-      <button type="button" class="logout-btn" @click="onLogout">Log out</button>
+      <span class="brand">LexLoop</span>
+      <div class="session-actions">
+        <span class="session-label">
+          {{ isTeacher ? 'Teacher' : `Student · ${student?.username ?? ''}` }}
+        </span>
+        <button type="button" class="ll-btn ll-btn-ghost logout-btn" @click="onLogout">
+          Log out
+        </button>
+      </div>
     </div>
     <router-view />
   </div>
@@ -29,27 +34,43 @@ async function onLogout() {
 .app-shell {
   min-height: 100vh;
 }
+
 .session-bar {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.5rem 1.5rem;
-  border-bottom: 1px solid #ddd;
-  background: #fafafa;
-  font-size: 0.85rem;
+  padding: 0.65rem var(--ll-space-page);
+  border-bottom: 1px solid var(--ll-border);
+  background: rgb(255 255 255 / 82%);
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 20;
 }
+
+.brand {
+  font-family: var(--ll-font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+  color: var(--ll-ink);
+}
+
+.session-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 .session-label {
-  color: #555;
+  color: var(--ll-ink-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
 }
+
 .logout-btn {
-  padding: 0.35rem 0.75rem;
-  border: 1px solid #333;
-  border-radius: 4px;
-  background: #fff;
-  cursor: pointer;
-}
-.logout-btn:hover {
-  background: #f0f0f0;
+  padding: 0.35rem 0.8rem;
+  font-size: 0.85rem;
 }
 </style>

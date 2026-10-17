@@ -222,35 +222,38 @@ watch(
 <style scoped>
 .page-container {
   display: flex;
-  min-height: calc(100vh - 53px);
-  background: #fff;
+  min-height: calc(100vh - 57px);
+  background: rgb(255 255 255 / 55%);
+  backdrop-filter: blur(4px);
 }
 
 .left-panel {
   flex: 1;
-  padding: 1.5rem;
-  border-right: 1px solid #ccc;
+  padding: 1.5rem var(--ll-space-page);
+  border-right: 1px solid var(--ll-border);
   display: flex;
   flex-direction: column;
 }
 
 .right-panel {
   flex: 1;
-  padding: 1.5rem;
+  padding: 1.5rem var(--ll-space-page);
   display: flex;
   flex-direction: column;
 }
 
 .word-title {
-  font-size: 1.5rem;
+  font-family: var(--ll-font-display);
+  font-size: 1.75rem;
   font-weight: 600;
-  margin-bottom: 1rem;
-  color: #333;
+  margin-bottom: 0.75rem;
+  color: var(--ll-ink);
+  letter-spacing: -0.02em;
 }
 
 .word-definition {
-  color: #555;
-  line-height: 1.5;
+  color: var(--ll-ink-muted);
+  line-height: 1.55;
   margin-bottom: 1.5rem;
 }
 
@@ -266,17 +269,21 @@ watch(
 }
 
 .tag-pill {
-  padding: 0.5rem 1rem;
-  border: 1px solid #333;
-  border-radius: 20px;
-  background: #fff;
+  padding: 0.45rem 0.95rem;
+  border: 1.5px solid var(--ll-border);
+  border-radius: var(--ll-radius-pill);
+  background: var(--ll-surface);
   cursor: pointer;
   font-size: 0.85rem;
-  transition: background-color 0.15s;
+  font-weight: 500;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .tag-pill:hover {
-  background-color: #f0f0f0;
+  background: #f8fffd;
+  border-color: var(--ll-accent);
 }
 
 .add-btn {
@@ -288,13 +295,22 @@ watch(
   justify-content: center;
   font-size: 1.25rem;
   border-radius: 50%;
+  border: 1.5px solid var(--ll-border);
+  background: var(--ll-surface);
+  cursor: pointer;
+}
+
+.add-btn:hover {
+  border-color: var(--ll-accent);
+  color: var(--ll-accent);
 }
 
 .panel-title {
+  font-family: var(--ll-font-display);
   font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 1rem;
-  color: #333;
+  color: var(--ll-ink);
 }
 
 .links-list {
@@ -302,22 +318,24 @@ watch(
 }
 
 .link-item {
-  padding: 0.5rem 0;
+  padding: 0.55rem 0;
   cursor: pointer;
-  color: #333;
+  color: var(--ll-ink);
+  font-weight: 500;
+  border-bottom: 1px solid transparent;
 }
 
 .link-item:hover {
-  color: #666;
+  color: var(--ll-accent);
 }
 
 .add-link-btn {
   width: 2rem;
   height: 2rem;
-  margin-top: 0.5rem;
-  border: 1px solid #333;
+  margin-top: 0.75rem;
+  border: 1.5px solid var(--ll-border);
   border-radius: 50%;
-  background: #fff;
+  background: var(--ll-surface);
   cursor: pointer;
   font-size: 1.25rem;
   display: flex;
@@ -326,7 +344,8 @@ watch(
 }
 
 .add-link-btn:hover {
-  background-color: #f0f0f0;
+  border-color: var(--ll-accent);
+  color: var(--ll-accent);
 }
 
 .filters-section {
@@ -334,7 +353,7 @@ watch(
   flex-wrap: wrap;
   gap: 1rem;
   padding-top: 1rem;
-  border-top: 1px solid #ccc;
+  border-top: 1px solid var(--ll-border);
   margin-top: 1rem;
 }
 
@@ -344,9 +363,21 @@ watch(
   gap: 0.25rem;
   cursor: pointer;
   font-size: 0.9rem;
+  color: var(--ll-ink-muted);
 }
 
 .filter-checkbox input {
   cursor: pointer;
+}
+
+@media (max-width: 720px) {
+  .page-container {
+    flex-direction: column;
+  }
+
+  .left-panel {
+    border-right: none;
+    border-bottom: 1px solid var(--ll-border);
+  }
 }
 </style>
