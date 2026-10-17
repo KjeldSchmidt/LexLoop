@@ -52,8 +52,9 @@ def bulk_create_for_teacher(
 
 
 def _unused_username(session: Session) -> str:
-    for _ in range(_MAX_USERNAME_ATTEMPTS):
-        candidate = generate_username()
+    for attempt in range(_MAX_USERNAME_ATTEMPTS):
+        # After a few collisions, attach a two-digit suffix.
+        candidate = generate_username(with_numeric_suffix=attempt >= 8)
         if student_repository.get_by_username(candidate, session) is None:
             return candidate
     raise RuntimeError("USERNAME_GENERATION_FAILED")

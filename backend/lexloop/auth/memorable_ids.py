@@ -1,20 +1,67 @@
 """Memorable username/password generators with deliberately different shapes.
 
-Usernames: three hyphen-joined words (what3words-ish), e.g. ``coral-lantern-kite``.
-Passwords: four space-joined words (xkcd-ish phrase), e.g. ``brave cedar quietly dances``.
+Usernames: PascalCase AdjectiveNoun, e.g. ``CoralLantern`` (optional ``42`` suffix).
+Passwords: space-joined passphrases from ``randompass`` (large wordlist).
 """
 
 from __future__ import annotations
 
 import secrets
+from functools import lru_cache
+from importlib.resources import files
+from pathlib import Path
 
-# Short, pronounceable, school-appropriate words. Username and password pools
-# are disjoint so the two credential strings never look alike.
-_USERNAME_WORDS: tuple[str, ...] = (
+from randompass import Passphrase  # type: ignore[import-untyped]
+
+_ADJECTIVES: tuple[str, ...] = (
     "amber",
+    "ancient",
+    "brave",
+    "bright",
+    "calm",
+    "clever",
+    "coral",
+    "cozy",
+    "crisp",
+    "curious",
+    "daring",
+    "eager",
+    "fancy",
+    "gentle",
+    "golden",
+    "happy",
+    "honest",
+    "ivory",
+    "jade",
+    "jolly",
+    "kind",
+    "lively",
+    "lucky",
+    "merry",
+    "noble",
+    "peaceful",
+    "proud",
+    "quick",
+    "quiet",
+    "rapid",
+    "rusty",
+    "sable",
+    "scarlet",
+    "silent",
+    "silver",
+    "simple",
+    "steady",
+    "sunny",
+    "swift",
+    "tidy",
+    "vivid",
+    "warm",
+    "wise",
+)
+
+_NOUNS: tuple[str, ...] = (
     "anchor",
     "apple",
-    "apricot",
     "arrow",
     "aspen",
     "aurora",
@@ -34,13 +81,10 @@ _USERNAME_WORDS: tuple[str, ...] = (
     "cloud",
     "cobalt",
     "comet",
-    "coral",
     "cosmos",
     "cricket",
     "delta",
-    "dew",
     "dove",
-    "dusk",
     "eagle",
     "echo",
     "ember",
@@ -51,7 +95,6 @@ _USERNAME_WORDS: tuple[str, ...] = (
     "flint",
     "flora",
     "flute",
-    "fog",
     "forest",
     "frost",
     "galaxy",
@@ -67,10 +110,7 @@ _USERNAME_WORDS: tuple[str, ...] = (
     "horizon",
     "iris",
     "island",
-    "ivory",
-    "jade",
     "jasper",
-    "jazz",
     "jewel",
     "juniper",
     "kayak",
@@ -79,7 +119,6 @@ _USERNAME_WORDS: tuple[str, ...] = (
     "lagoon",
     "lantern",
     "lark",
-    "lava",
     "leaf",
     "lemon",
     "lilac",
@@ -91,11 +130,8 @@ _USERNAME_WORDS: tuple[str, ...] = (
     "meteor",
     "mint",
     "mirror",
-    "mist",
-    "moon",
     "moss",
     "nectar",
-    "needle",
     "nest",
     "nova",
     "oak",
@@ -120,25 +156,17 @@ _USERNAME_WORDS: tuple[str, ...] = (
     "prism",
     "quartz",
     "quill",
-    "rain",
     "raven",
     "reef",
     "ridge",
     "river",
     "robin",
-    "rose",
     "ruby",
-    "sable",
     "saffron",
     "sage",
-    "sail",
-    "sand",
     "sapphire",
-    "scarlet",
     "shadow",
     "shell",
-    "silver",
-    "sky",
     "sparrow",
     "sprite",
     "star",
@@ -146,14 +174,12 @@ _USERNAME_WORDS: tuple[str, ...] = (
     "storm",
     "stream",
     "summit",
-    "sun",
     "swan",
     "tide",
     "tiger",
     "timber",
     "topaz",
     "trail",
-    "tree",
     "tulip",
     "valley",
     "velvet",
@@ -161,196 +187,37 @@ _USERNAME_WORDS: tuple[str, ...] = (
     "vista",
     "wave",
     "willow",
-    "wind",
     "wolf",
     "zephyr",
 )
 
-_PASSWORD_ADJECTIVES: tuple[str, ...] = (
-    "ancient",
-    "brave",
-    "bright",
-    "calm",
-    "clever",
-    "cozy",
-    "crisp",
-    "curious",
-    "daring",
-    "eager",
-    "fancy",
-    "gentle",
-    "golden",
-    "happy",
-    "honest",
-    "jolly",
-    "kind",
-    "lively",
-    "lucky",
-    "merry",
-    "noble",
-    "peaceful",
-    "proud",
-    "quick",
-    "quiet",
-    "rapid",
-    "rusty",
-    "silent",
-    "simple",
-    "steady",
-    "sunny",
-    "swift",
-    "tidy",
-    "vivid",
-    "warm",
-    "wise",
-)
-
-_PASSWORD_NOUNS: tuple[str, ...] = (
-    "ballot",
-    "basket",
-    "button",
-    "camera",
-    "candle",
-    "carpet",
-    "castle",
-    "circle",
-    "cookie",
-    "copper",
-    "crayon",
-    "curtain",
-    "dollar",
-    "drawer",
-    "engine",
-    "fabric",
-    "folder",
-    "guitar",
-    "hammer",
-    "helmet",
-    "jacket",
-    "ladder",
-    "magnet",
-    "marker",
-    "muffin",
-    "napkin",
-    "needle",
-    "number",
-    "orange",
-    "pencil",
-    "pillow",
-    "planet",
-    "pocket",
-    "puzzle",
-    "rabbit",
-    "rocket",
-    "saddle",
-    "school",
-    "socket",
-    "spider",
-    "sponge",
-    "spring",
-    "square",
-    "staple",
-    "ticket",
-    "tomato",
-    "tunnel",
-    "turtle",
-    "window",
-    "wrench",
-)
-
-_PASSWORD_VERBS: tuple[str, ...] = (
-    "adapts",
-    "builds",
-    "carries",
-    "climbs",
-    "dances",
-    "draws",
-    "drifts",
-    "explores",
-    "floats",
-    "follows",
-    "gathers",
-    "glides",
-    "grows",
-    "hides",
-    "hops",
-    "jumps",
-    "listens",
-    "marches",
-    "opens",
-    "paints",
-    "plants",
-    "plays",
-    "reads",
-    "rests",
-    "runs",
-    "sings",
-    "skips",
-    "smiles",
-    "spins",
-    "stretches",
-    "swims",
-    "travels",
-    "visits",
-    "walks",
-    "watches",
-    "writes",
-)
-
-_PASSWORD_ADVERBS: tuple[str, ...] = (
-    "boldly",
-    "briskly",
-    "calmly",
-    "clearly",
-    "closely",
-    "eagerly",
-    "fairly",
-    "firmly",
-    "freely",
-    "gladly",
-    "gently",
-    "happily",
-    "kindly",
-    "lightly",
-    "loudly",
-    "neatly",
-    "nicely",
-    "openly",
-    "proudly",
-    "quickly",
-    "quietly",
-    "rarely",
-    "safely",
-    "slowly",
-    "softly",
-    "steadily",
-    "sweetly",
-    "swiftly",
-    "warmly",
-)
+_PASSPHRASE_WORDS = 4
 
 
 def _pick(words: tuple[str, ...]) -> str:
     return words[secrets.randbelow(len(words))]
 
 
-def generate_username() -> str:
-    """Three distinct hyphen-joined words, e.g. ``coral-lantern-kite``."""
-    picks: list[str] = []
-    while len(picks) < 3:
-        word = _pick(_USERNAME_WORDS)
-        if word not in picks:
-            picks.append(word)
-    return "-".join(picks)
+@lru_cache(maxsize=1)
+def _passphrase_generator() -> Passphrase:
+    wordlist = Path(str(files("randompass").joinpath("assets/wordlist.txt")))
+    return Passphrase(
+        length=_PASSPHRASE_WORDS,
+        separator=" ",
+        wordlist=wordlist,
+    )
+
+
+def generate_username(*, with_numeric_suffix: bool = False) -> str:
+    """PascalCase AdjectiveNoun, e.g. ``CoralLantern`` or ``CoralLantern42``."""
+    adjective = _pick(_ADJECTIVES).capitalize()
+    noun = _pick(_NOUNS).capitalize()
+    username = f"{adjective}{noun}"
+    if with_numeric_suffix:
+        username = f"{username}{secrets.randbelow(90) + 10}"
+    return username
 
 
 def generate_password() -> str:
-    """Four space-joined words, e.g. ``brave cedar quietly dances``."""
-    return " ".join(
-        (
-            _pick(_PASSWORD_ADJECTIVES),
-            _pick(_PASSWORD_NOUNS),
-            _pick(_PASSWORD_ADVERBS),
-            _pick(_PASSWORD_VERBS),
-        )
-    )
+    """Space-joined passphrase from randompass (~7.7k-word list)."""
+    return str(_passphrase_generator().generate_passphrase())

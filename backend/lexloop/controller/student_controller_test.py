@@ -81,7 +81,8 @@ def test_teacher_can_bulk_create_students(
     usernames = {a["username"] for a in accounts}
     assert len(usernames) == 3
     for account in accounts:
-        assert "-" in account["username"]
+        assert account["username"][0].isupper()
+        assert "-" not in account["username"]
         assert " " in account["password"]
         login = client.post(
             "/students/login",
