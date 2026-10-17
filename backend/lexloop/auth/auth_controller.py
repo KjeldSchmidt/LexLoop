@@ -2,7 +2,8 @@
 
 import uuid
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Response, status
+from fastapi.responses import RedirectResponse
 from fastapi_users import FastAPIUsers
 from fastapi_users.authentication import (
     AuthenticationBackend,
@@ -20,6 +21,17 @@ cookie_transport = CookieTransport(
 )
 
 
+class OAuthRedirectCookieTransport(CookieTransport):
+    """After Google callback, set the auth cookie and send the browser to the SPA."""
+
+    async def get_login_response(self, token: str) -> Response:
+        destination = f"{env_settings.FRONTEND_URL.rstrip('/')}/user-start"
+        response: Response = RedirectResponse(
+            url=destination, status_code=status.HTTP_302_FOUND
+        )
+        return self._set_login_cookie(response, token)
+
+
 def get_jwt_strategy() -> JWTStrategy[User, uuid.UUID]:
     return JWTStrategy(
         secret=env_settings.JWT_SIGNING_SECRET,
@@ -30,6 +42,15 @@ def get_jwt_strategy() -> JWTStrategy[User, uuid.UUID]:
 auth_backend = AuthenticationBackend(
     name="jwt",
     transport=cookie_transport,
+    get_strategy=get_jwt_strategy,
+)
+
+oauth_auth_backend = AuthenticationBackend(
+    name="jwt",
+    transport=OAuthRedirectCookieTransport(
+        cookie_name="lexloop-userauth",
+        cookie_max_age=60 * 60 * 12,
+    ),
     get_strategy=get_jwt_strategy,
 )
 
@@ -61,7 +82,7 @@ google_oauth_client = GoogleOAuth2UserInfo(
 router.include_router(
     fastapi_users.get_oauth_router(
         google_oauth_client,
-        auth_backend,
+        oauth_auth_backend,
         state_secret=env_settings.JWT_SIGNING_SECRET,
         # Empty string (e.g. unset Lambda env) must be None so fastapi-users
         # does not send redirect_uri= to Google.
