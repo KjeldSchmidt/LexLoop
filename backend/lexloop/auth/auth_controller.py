@@ -9,8 +9,7 @@ from fastapi_users.authentication import (
     CookieTransport,
     JWTStrategy,
 )
-from httpx_oauth.clients.google import GoogleOAuth2
-
+from lexloop.auth.google_oauth import GoogleOAuth2UserInfo
 from lexloop.auth.user_manager import get_user_manager
 from lexloop.auth.user_model import User, UserRead, UserUpdate
 from lexloop.config import env_settings
@@ -54,7 +53,7 @@ router.include_router(
     tags=["auth"],
 )
 
-google_oauth_client = GoogleOAuth2(
+google_oauth_client = GoogleOAuth2UserInfo(
     env_settings.GOOGLE_OAUTH_CLIENT_ID,
     env_settings.GOOGLE_OAUTH_CLIENT_SECRET,
 )
