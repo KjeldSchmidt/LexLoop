@@ -83,7 +83,8 @@ def test_teacher_can_bulk_create_students(
     for account in accounts:
         assert account["username"][0].isupper()
         assert "-" not in account["username"]
-        assert " " in account["password"]
+        assert "-" in account["password"]
+        assert " " not in account["password"]
         login = client.post(
             "/students/login",
             json={
@@ -120,7 +121,8 @@ def test_teacher_can_bulk_reset_passwords_and_delete(
     assert len(reset_accounts) == 2
     new_password = reset_accounts[0]["password"]
     assert new_password != old_password
-    assert " " in new_password
+    assert "-" in new_password
+    assert " " not in new_password
 
     old_login = client.post(
         "/students/login",
