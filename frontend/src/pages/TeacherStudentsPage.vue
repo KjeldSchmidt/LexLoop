@@ -136,8 +136,8 @@ function downloadCredentials() {
     <form class="bulk" @submit.prevent="onBulkCreate">
       <h2>Create accounts</h2>
       <p class="hint">
-        Usernames look like <code>CoralLantern</code>; passwords are random four-word passphrases
-        (different shape, large word list).
+        Usernames look like <code>CoralLantern</code>; passwords look like
+        <code>calm-ticket-quietly-dances</code> (hyphenated phrase, large word list).
       </p>
       <label>
         Number of accounts

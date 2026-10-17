@@ -1,7 +1,7 @@
 """Memorable username/password generators with deliberately different shapes.
 
 Usernames: PascalCase AdjectiveNoun, e.g. ``CoralLantern`` (optional ``42`` suffix).
-Passwords: space-joined passphrases from ``randompass`` (large wordlist).
+Passwords: hyphen-joined passphrases from ``randompass`` (large wordlist).
 """
 
 from __future__ import annotations
@@ -203,7 +203,7 @@ def _passphrase_generator() -> Passphrase:
     wordlist = Path(str(files("randompass").joinpath("assets/wordlist.txt")))
     return Passphrase(
         length=_PASSPHRASE_WORDS,
-        separator=" ",
+        separator="-",
         wordlist=wordlist,
     )
 
@@ -219,5 +219,5 @@ def generate_username(*, with_numeric_suffix: bool = False) -> str:
 
 
 def generate_password() -> str:
-    """Space-joined passphrase from randompass (~7.7k-word list)."""
+    """Hyphen-joined passphrase from randompass (~7.7k-word list)."""
     return str(_passphrase_generator().generate_passphrase())
