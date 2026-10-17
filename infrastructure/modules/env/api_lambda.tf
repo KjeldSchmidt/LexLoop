@@ -39,11 +39,12 @@ resource "aws_iam_role_policy" "lambda_auth_secrets_policy" {
 }
 
 resource "aws_lambda_function" "api" {
-  function_name    = "${local.project_slug}-api-${var.env}"
-  role             = aws_iam_role.lambda_role.arn
-  handler          = "lexloop.main.aws_handler"
-  runtime          = "python3.13"
-  memory_size      = 512
+  function_name = "${local.project_slug}-api-${var.env}"
+  role          = aws_iam_role.lambda_role.arn
+  handler       = "lexloop.main.aws_handler"
+  runtime       = "python3.13"
+  # Argon2 bulk hashing needs headroom; CPU scales with memory on Lambda.
+  memory_size      = 1024
   timeout          = 30
   filename         = "../../../backend/lex-api-bundle.zip"
   source_code_hash = filebase64sha256("../../../backend/lex-api-bundle.zip")

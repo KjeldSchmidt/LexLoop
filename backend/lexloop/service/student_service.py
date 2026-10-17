@@ -1,5 +1,6 @@
 """Application service for students."""
 
+import os
 from concurrent.futures import ThreadPoolExecutor
 from typing import Sequence
 
@@ -17,7 +18,10 @@ from lexloop.repository import student_repository
 from lexloop.repository.student_repository import StudentInsert
 
 _MAX_USERNAME_ATTEMPTS = 64
+# pwdlib recommended Argon2 uses ~64MiB per hash; keep concurrency low on Lambda.
 _HASH_WORKERS = 8
+_ARGON2_MIB_PER_HASH = 96
+_LAMBDA_RESERVED_MIB = 256
 
 
 def create_for_teacher(
@@ -106,10 +110,19 @@ def _unique_usernames(count: int, session: Session) -> list[str]:
     return result
 
 
+def _hash_worker_count(n: int) -> int:
+    """Cap parallel Argon2 hashes so Lambda does not OOM."""
+    mem_mb = int(os.environ.get("AWS_LAMBDA_FUNCTION_MEMORY_SIZE", "2048"))
+    max_by_mem = max(1, (mem_mb - _LAMBDA_RESERVED_MIB) // _ARGON2_MIB_PER_HASH)
+    return min(_HASH_WORKERS, n, max_by_mem)
+
+
 def _hash_passwords(passwords: Sequence[str]) -> list[str]:
-    if len(passwords) == 1:
-        return [hash_password(passwords[0])]
-    workers = min(_HASH_WORKERS, len(passwords))
+    if len(passwords) <= 1:
+        return [hash_password(p) for p in passwords]
+    workers = _hash_worker_count(len(passwords))
+    if workers == 1:
+        return [hash_password(p) for p in passwords]
     with ThreadPoolExecutor(max_workers=workers) as pool:
         return list(pool.map(hash_password, passwords))
 
