@@ -124,31 +124,7 @@ jobs:
         run: |
           cd infrastructure/env/dev
           API_BASE_URL=$(terraform output -raw api_base_url)
-          AUTH_SECRETS_ARN=$(terraform output -raw auth_secrets_arn)
           echo "api_base_url=$API_BASE_URL" >> $GITHUB_OUTPUT
-          echo "auth_secrets_arn=$AUTH_SECRETS_ARN" >> $GITHUB_OUTPUT
-
-      - name: Sync auth secrets to Secrets Manager
-        env:
-          AUTH_SECRETS_ARN: ${{ steps.terraform_output.outputs.auth_secrets_arn }}
-          JWT_SIGNING_SECRET: ${{ secrets.JWT_SIGNING_SECRET }}
-          GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
-          GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
-        run: |
-          if [ -z "$JWT_SIGNING_SECRET" ] || [ -z "$GOOGLE_OAUTH_CLIENT_ID" ] || [ -z "$GOOGLE_OAUTH_CLIENT_SECRET" ]; then
-            echo "Skipping auth secret sync (set JWT_SIGNING_SECRET, GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET)"
-            exit 0
-          fi
-          jq -n \
-            --arg jwt "$JWT_SIGNING_SECRET" \
-            --arg id "$GOOGLE_OAUTH_CLIENT_ID" \
-            --arg secret "$GOOGLE_OAUTH_CLIENT_SECRET" \
-            '{JWT_SIGNING_SECRET:$jwt,GOOGLE_OAUTH_CLIENT_ID:$id,GOOGLE_OAUTH_CLIENT_SECRET:$secret}' \
-            > /tmp/lexloop-auth-secrets.json
-          aws secretsmanager put-secret-value \
-            --secret-id "$AUTH_SECRETS_ARN" \
-            --secret-string file:///tmp/lexloop-auth-secrets.json
-          rm -f /tmp/lexloop-auth-secrets.json
 
       - name: Run database migrations
         run: cd backend && ./do db-migrate-remote dev
