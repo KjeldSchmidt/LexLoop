@@ -43,6 +43,8 @@ resource "aws_lambda_function" "api" {
   role             = aws_iam_role.lambda_role.arn
   handler          = "lexloop.main.aws_handler"
   runtime          = "python3.13"
+  memory_size      = 512
+  timeout          = 30
   filename         = "../../../backend/lex-api-bundle.zip"
   source_code_hash = filebase64sha256("../../../backend/lex-api-bundle.zip")
 
