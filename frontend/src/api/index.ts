@@ -226,3 +226,22 @@ export const bulkCreateStudents = async (count: number) => {
   }
   return data
 }
+
+export const bulkDeleteStudents = async (student_uuids: string[]) => {
+  const { error } = await client.POST('/students/bulk-delete', {
+    body: { student_uuids },
+  })
+  if (error) {
+    throw new Error('BULK_DELETE_FAILED')
+  }
+}
+
+export const bulkResetStudentPasswords = async (student_uuids: string[]) => {
+  const { data, error } = await client.POST('/students/bulk-passwords', {
+    body: { student_uuids },
+  })
+  if (error) {
+    throw new Error('BULK_PASSWORD_RESET_FAILED')
+  }
+  return data
+}

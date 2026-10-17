@@ -99,3 +99,49 @@ def set_active(
     if row is None or row.created_by_teacher_id != teacher_id:
         raise KeyError
     return student_repository.set_active(student_uuid, is_active, session)
+
+
+def delete_for_teacher(
+    student_uuid: UUID4, teacher_id: UUID4, session: Session
+) -> None:
+    row = student_repository.get_by_uuid(student_uuid, session)
+    if row is None or row.created_by_teacher_id != teacher_id:
+        raise KeyError
+    student_repository.delete(student_uuid, session)
+
+
+def bulk_delete_for_teacher(
+    student_uuids: list[UUID4], teacher_id: UUID4, session: Session
+) -> int:
+    deleted = 0
+    for student_uuid in student_uuids:
+        row = student_repository.get_by_uuid(student_uuid, session)
+        if row is None or row.created_by_teacher_id != teacher_id:
+            raise KeyError
+        student_repository.delete(student_uuid, session)
+        deleted += 1
+    return deleted
+
+
+def bulk_reset_passwords_for_teacher(
+    student_uuids: list[UUID4], teacher_id: UUID4, session: Session
+) -> list[StudentCreatedCreds]:
+    """Reset passwords for owned students; return one-time plaintext phrases."""
+    accounts: list[StudentCreatedCreds] = []
+    for student_uuid in student_uuids:
+        row = student_repository.get_by_uuid(student_uuid, session)
+        if row is None or row.created_by_teacher_id != teacher_id:
+            raise KeyError
+        password = generate_password()
+        student = student_repository.set_password(
+            student_uuid, hash_password(password), session
+        )
+        accounts.append(
+            StudentCreatedCreds(
+                uuid=student.uuid,
+                username=student.username,
+                password=password,
+                is_active=student.is_active,
+            )
+        )
+    return accounts

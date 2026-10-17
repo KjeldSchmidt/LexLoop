@@ -19,6 +19,7 @@ from lexloop.model.student_model import (
     Student,
     StudentBulkCreate,
     StudentBulkCreateOut,
+    StudentBulkIds,
     StudentCreate,
     StudentLogin,
     StudentOut,
@@ -115,6 +116,41 @@ async def bulk_create_students(
                 detail="USERNAME_GENERATION_FAILED",
             ) from exc
         raise
+    return StudentBulkCreateOut(accounts=accounts)
+
+
+@router.post("/bulk-delete", status_code=status.HTTP_204_NO_CONTENT)
+async def bulk_delete_students(
+    payload: StudentBulkIds,
+    teacher: User = Depends(require_teacher),
+    session: Session = Depends(get_db),
+) -> None:
+    """Permanently delete selected students owned by the current teacher."""
+    try:
+        student_service.bulk_delete_for_teacher(
+            payload.student_uuids, teacher.id, session
+        )
+    except KeyError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Not found"
+        ) from exc
+
+
+@router.post("/bulk-passwords", status_code=status.HTTP_200_OK)
+async def bulk_reset_student_passwords(
+    payload: StudentBulkIds,
+    teacher: User = Depends(require_teacher),
+    session: Session = Depends(get_db),
+) -> StudentBulkCreateOut:
+    """Reset passwords for selected students; return one-time plaintext phrases."""
+    try:
+        accounts = student_service.bulk_reset_passwords_for_teacher(
+            payload.student_uuids, teacher.id, session
+        )
+    except KeyError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Not found"
+        ) from exc
     return StudentBulkCreateOut(accounts=accounts)
 
 

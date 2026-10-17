@@ -1111,6 +1111,87 @@
         ]
       }
     },
+    "/students/bulk-delete": {
+      "post": {
+        "summary": "Bulk Delete Students",
+        "description": "Permanently delete selected students owned by the current teacher.",
+        "operationId": "bulk_delete_students_students_bulk_delete_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudentBulkIds"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ]
+      }
+    },
+    "/students/bulk-passwords": {
+      "post": {
+        "summary": "Bulk Reset Student Passwords",
+        "description": "Reset passwords for selected students; return one-time plaintext phrases.",
+        "operationId": "bulk_reset_student_passwords_students_bulk_passwords_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudentBulkIds"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentBulkCreateOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ]
+      }
+    },
     "/students/{student_uuid}/password": {
       "post": {
         "summary": "Reset Student Password",
@@ -2273,6 +2354,25 @@
           "accounts"
         ],
         "title": "StudentBulkCreateOut"
+      },
+      "StudentBulkIds": {
+        "properties": {
+          "student_uuids": {
+            "items": {
+              "type": "string",
+              "format": "uuid4"
+            },
+            "type": "array",
+            "maxItems": 100,
+            "minItems": 1,
+            "title": "Student Uuids"
+          }
+        },
+        "type": "object",
+        "required": [
+          "student_uuids"
+        ],
+        "title": "StudentBulkIds"
       },
       "StudentCreate": {
         "properties": {
