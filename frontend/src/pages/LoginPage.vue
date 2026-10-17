@@ -46,58 +46,100 @@ async function onStudentLogin() {
 
 <template>
   <div class="login">
-    <h1>Sign in</h1>
-    <p v-if="needsAuthMessage" class="notice">You need to be logged in to see this page.</p>
+    <header class="intro">
+      <p class="eyebrow">LexLoop</p>
+      <h1>Sign in</h1>
+      <p v-if="needsAuthMessage" class="ll-muted notice">
+        You need to be logged in to see this page.
+      </p>
+    </header>
 
-    <section>
+    <section class="ll-panel">
       <h2>Teacher</h2>
-      <button type="button" :disabled="googleLoading" @click="onGoogleLogin">
+      <p class="ll-muted blurb">Continue with your Google account.</p>
+      <button
+        type="button"
+        class="ll-btn ll-btn-primary"
+        :disabled="googleLoading"
+        @click="onGoogleLogin"
+      >
         {{ googleLoading ? 'Waiting for Google…' : 'Sign in with Google' }}
       </button>
     </section>
 
-    <section>
+    <section class="ll-panel">
       <h2>Student</h2>
-      <form @submit.prevent="onStudentLogin">
-        <label>
+      <p class="ll-muted blurb">Use the username and passphrase from your teacher.</p>
+      <form class="student-form" @submit.prevent="onStudentLogin">
+        <label class="ll-field">
           Username
           <input v-model="username" autocomplete="username" required />
         </label>
-        <label>
+        <label class="ll-field">
           Password
           <input v-model="password" type="password" autocomplete="current-password" required />
         </label>
-        <button type="submit">Sign in</button>
+        <button type="submit" class="ll-btn ll-btn-primary">Sign in</button>
       </form>
     </section>
 
-    <p v-if="error" class="error">{{ error }}</p>
+    <p v-if="error" class="ll-error">{{ error }}</p>
   </div>
 </template>
 
 <style scoped>
 .login {
-  max-width: 24rem;
-  margin: 2rem auto;
+  width: min(100% - 2rem, 26rem);
+  margin: 0 auto;
+  padding: clamp(2rem, 6vh, 3.5rem) 0 3rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
+  animation: rise 0.45s ease-out both;
 }
-.notice {
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.eyebrow {
   margin: 0;
-  color: #444;
+  font-family: var(--ll-font-display);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--ll-accent);
 }
-section {
+
+.notice {
+  margin-top: 0.35rem;
+}
+
+.ll-panel {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.85rem;
 }
-label {
+
+.blurb {
+  font-size: 0.9rem;
+}
+
+.student-form {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.85rem;
 }
-.error {
-  color: #a00;
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 </style>

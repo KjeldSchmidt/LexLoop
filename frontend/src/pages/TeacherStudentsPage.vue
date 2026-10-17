@@ -128,43 +128,60 @@ function downloadCredentials() {
 
 <template>
   <div class="students">
-    <h1>Students</h1>
-    <p>
-      <router-link to="/user-start">Back to courses</router-link>
-    </p>
+    <header class="page-header">
+      <div>
+        <p class="eyebrow">Teacher tools</p>
+        <h1>Students</h1>
+        <p class="ll-muted">Create accounts and share credentials with your class.</p>
+      </div>
+      <router-link class="ll-btn ll-btn-ghost" to="/user-start">← Courses</router-link>
+    </header>
 
-    <form class="bulk" @submit.prevent="onBulkCreate">
+    <form class="ll-panel bulk" @submit.prevent="onBulkCreate">
       <h2>Create accounts</h2>
-      <p class="hint">
+      <p class="ll-muted hint">
         Usernames look like <code>CoralLantern</code>; passwords look like
-        <code>calm-ticket-quietly-dances</code> (hyphenated phrase, large word list).
+        <code>calm-ticket-quietly-dances</code>.
       </p>
-      <label>
-        Number of accounts
-        <input v-model.number="count" type="number" min="1" max="100" required />
-      </label>
-      <button type="submit" :disabled="busy">
-        {{ busy ? 'Working…' : 'Create accounts' }}
-      </button>
+      <div class="bulk-row">
+        <label class="ll-field count-field">
+          Number of accounts
+          <input v-model.number="count" type="number" min="1" max="100" required />
+        </label>
+        <button type="submit" class="ll-btn ll-btn-primary" :disabled="busy">
+          {{ busy ? 'Working…' : 'Create accounts' }}
+        </button>
+      </div>
     </form>
 
-    <section v-if="created.length" class="created">
-      <h2>{{ credentialsTitle }} ({{ created.length }})</h2>
-      <p class="hint">Download now — passwords are not shown again later.</p>
-      <button type="button" @click="downloadCredentials">Download .txt</button>
+    <section v-if="created.length" class="ll-panel created">
+      <div class="created-header">
+        <div>
+          <h2>{{ credentialsTitle }} ({{ created.length }})</h2>
+          <p class="ll-muted hint">Download now — passwords are not shown again later.</p>
+        </div>
+        <button type="button" class="ll-btn ll-btn-primary" @click="downloadCredentials">
+          Download .txt
+        </button>
+      </div>
       <pre class="creds">{{ credentialsText }}</pre>
     </section>
 
-    <section class="list">
+    <section class="ll-panel list">
       <div class="list-header">
         <h2>All students ({{ students.length }})</h2>
-        <div class="actions" v-if="students.length">
-          <button type="button" :disabled="busy || selectedCount === 0" @click="onBulkNewPasswords">
+        <div v-if="students.length" class="actions">
+          <button
+            type="button"
+            class="ll-btn"
+            :disabled="busy || selectedCount === 0"
+            @click="onBulkNewPasswords"
+          >
             New passwords ({{ selectedCount }})
           </button>
           <button
             type="button"
-            class="danger"
+            class="ll-btn ll-btn-danger"
             :disabled="busy || selectedCount === 0"
             @click="onBulkDelete"
           >
@@ -172,7 +189,7 @@ function downloadCredentials() {
           </button>
         </div>
       </div>
-      <p v-if="error" class="error">{{ error }}</p>
+      <p v-if="error" class="ll-error">{{ error }}</p>
       <label v-if="students.length" class="select-all">
         <input
           type="checkbox"
@@ -181,7 +198,7 @@ function downloadCredentials() {
         />
         Select all
       </label>
-      <ul>
+      <ul v-if="students.length">
         <li v-for="s in students" :key="s.uuid">
           <label class="row">
             <input
@@ -189,72 +206,122 @@ function downloadCredentials() {
               :checked="selected.has(s.uuid)"
               @change="toggleOne(s.uuid, ($event.target as HTMLInputElement).checked)"
             />
-            <span>{{ s.username }}</span>
-            <span v-if="!s.is_active" class="inactive">(inactive)</span>
+            <span class="username">{{ s.username }}</span>
+            <span v-if="!s.is_active" class="badge">Inactive</span>
           </label>
         </li>
       </ul>
+      <p v-else class="ll-muted empty">No students yet — create a batch above.</p>
     </section>
   </div>
 </template>
 
 <style scoped>
 .students {
-  max-width: 40rem;
-  margin: 2rem auto;
+  width: min(100% - 2rem, 42rem);
+  margin: 0 auto;
+  padding: var(--ll-space-page) 0 3rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
+
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.page-header > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ll-accent);
+}
+
 .bulk,
 .created,
 .list {
   display: flex;
   flex-direction: column;
+  gap: 0.85rem;
+}
+
+.hint {
+  font-size: 0.9rem;
+}
+
+.bulk-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
   gap: 0.75rem;
 }
+
+.count-field {
+  max-width: 10rem;
+}
+
+.created-header,
 .list-header {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 0.75rem;
 }
+
+.created-header > div,
 .list-header h2 {
-  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
+
 .actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
 }
-.hint {
-  margin: 0;
-  color: #555;
-  font-size: 0.9rem;
-}
-label {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  max-width: 12rem;
-}
-.select-all,
-.row {
-  flex-direction: row;
-  align-items: center;
-  gap: 0.5rem;
-  max-width: none;
-}
+
 .creds {
   margin: 0;
-  padding: 0.75rem;
-  background: #f6f6f6;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 0.9rem 1rem;
+  background: var(--ll-paper);
+  border: 1px solid var(--ll-border);
+  border-radius: var(--ll-radius);
   overflow-x: auto;
   font-size: 0.85rem;
+  line-height: 1.55;
 }
+
+.select-all,
+.row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.65rem;
+  max-width: none;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.select-all {
+  color: var(--ll-ink-muted);
+  font-size: 0.9rem;
+}
+
 ul {
   list-style: none;
   padding: 0;
@@ -263,14 +330,37 @@ ul {
   flex-direction: column;
   gap: 0.35rem;
 }
-.inactive {
-  color: #888;
+
+.row {
+  padding: 0.55rem 0.7rem;
+  border-radius: var(--ll-radius);
+  border: 1px solid transparent;
+  transition:
+    background-color 0.12s ease,
+    border-color 0.12s ease;
 }
-.danger {
-  color: #a00;
-  border-color: #a00;
+
+.row:hover {
+  background: var(--ll-paper);
+  border-color: var(--ll-border);
 }
-.error {
-  color: #a00;
+
+.username {
+  font-weight: 600;
+}
+
+.badge {
+  margin-left: auto;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ll-ink-muted);
+  background: var(--ll-paper-deep);
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--ll-radius-pill);
+}
+
+.empty {
+  text-align: center;
+  padding: 0.5rem 0;
 }
 </style>

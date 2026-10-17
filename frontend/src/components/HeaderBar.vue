@@ -86,10 +86,14 @@ async function onLogout() {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  padding: 0.75rem 1.5rem;
-  border-bottom: 1px solid #ccc;
-  background: #fff;
+  padding: 0.75rem var(--ll-space-page);
+  border-bottom: 1px solid var(--ll-border);
+  background: rgb(255 255 255 / 88%);
+  backdrop-filter: blur(10px);
   gap: 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 15;
 }
 
 .search-container {
@@ -103,42 +107,50 @@ async function onLogout() {
   align-items: center;
   gap: 0.5rem;
   font-size: 0.9rem;
+  flex-wrap: wrap;
 }
 
 .breadcrumb-item {
   cursor: pointer;
-  color: #555;
-}
-
-.breadcrumb-item:hover {
-  color: #000;
-}
-
-.breadcrumb-item.active {
-  color: #000;
+  color: var(--ll-ink-muted);
   font-weight: 500;
 }
 
+.breadcrumb-item:hover {
+  color: var(--ll-accent);
+}
+
+.breadcrumb-item.active {
+  color: var(--ll-ink);
+  font-weight: 600;
+}
+
 .separator {
-  color: #999;
+  color: var(--ll-border);
 }
 
 .header-actions {
   display: flex;
   gap: 0.5rem;
   justify-content: flex-end;
+  flex-wrap: wrap;
 }
 
 .header-btn {
-  padding: 0.5rem 1rem;
-  border: 1px solid #333;
-  border-radius: 4px;
-  background: #fff;
+  padding: 0.45rem 0.9rem;
+  border: 1.5px solid var(--ll-border);
+  border-radius: var(--ll-radius);
+  background: var(--ll-surface);
   cursor: pointer;
   font-size: 0.85rem;
+  font-weight: 600;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .header-btn:hover {
-  background: #f0f0f0;
+  background: var(--ll-paper);
+  border-color: var(--ll-ink);
 }
 </style>

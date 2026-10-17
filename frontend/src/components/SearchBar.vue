@@ -76,7 +76,7 @@ function handleFocus() {
         @focus="handleFocus"
         @blur="handleBlur"
       />
-      <span class="search-icon">🔍</span>
+      <span class="search-icon" aria-hidden="true"></span>
     </div>
 
     <div v-if="isOpen && filteredNodes.length > 0" class="search-results">
@@ -115,23 +115,42 @@ function handleFocus() {
 
 .search-input {
   width: 100%;
-  padding: 0.5rem 2.5rem 0.5rem 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 0.55rem 2.5rem 0.55rem 0.9rem;
+  border: 1.5px solid var(--ll-border);
+  border-radius: var(--ll-radius);
+  background: var(--ll-surface);
   font-size: 0.9rem;
   outline: none;
-  transition: border-color 0.2s;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .search-input:focus {
-  border-color: #333;
+  border-color: var(--ll-accent);
+  box-shadow: 0 0 0 3px rgb(15 118 110 / 18%);
 }
 
 .search-icon {
   position: absolute;
-  right: 0.75rem;
+  right: 0.85rem;
+  width: 0.85rem;
+  height: 0.85rem;
+  border: 1.5px solid var(--ll-ink-muted);
+  border-radius: 50%;
   pointer-events: none;
-  font-size: 1rem;
+  opacity: 0.7;
+}
+
+.search-icon::after {
+  content: '';
+  position: absolute;
+  width: 0.35rem;
+  height: 1.5px;
+  background: var(--ll-ink-muted);
+  right: -0.3rem;
+  bottom: -0.1rem;
+  transform: rotate(45deg);
 }
 
 .search-results {
@@ -139,11 +158,11 @@ function handleFocus() {
   top: 100%;
   left: 0;
   right: 0;
-  margin-top: 0.25rem;
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 0.35rem;
+  background: var(--ll-surface);
+  border: 1px solid var(--ll-border);
+  border-radius: var(--ll-radius);
+  box-shadow: var(--ll-shadow);
   max-height: 400px;
   overflow-y: auto;
   z-index: 1000;
@@ -152,8 +171,8 @@ function handleFocus() {
 .search-result-item {
   padding: 0.75rem 1rem;
   cursor: pointer;
-  border-bottom: 1px solid #f0f0f0;
-  transition: background-color 0.15s;
+  border-bottom: 1px solid var(--ll-paper-deep);
+  transition: background-color 0.15s ease;
 }
 
 .search-result-item:last-child {
@@ -161,18 +180,18 @@ function handleFocus() {
 }
 
 .search-result-item:hover {
-  background-color: #f5f5f5;
+  background-color: #f8fffd;
 }
 
 .result-term {
-  font-weight: 500;
-  color: #333;
+  font-weight: 600;
+  color: var(--ll-ink);
   margin-bottom: 0.25rem;
 }
 
 .result-definition {
   font-size: 0.85rem;
-  color: #666;
+  color: var(--ll-ink-muted);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -181,7 +200,7 @@ function handleFocus() {
 .no-results {
   padding: 1rem;
   text-align: center;
-  color: #999;
+  color: var(--ll-ink-muted);
   font-size: 0.9rem;
 }
 </style>

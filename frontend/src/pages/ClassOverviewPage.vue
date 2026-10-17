@@ -92,39 +92,61 @@ async function handleTagCreation(result: { new_tag: Tag }) {
 .fab {
   position: fixed;
   bottom: 2rem;
-  width: 3rem;
-  height: 3rem;
+  width: 3.25rem;
+  height: 3.25rem;
   border-radius: 50%;
-  border: 2px solid #333;
-  background: #fff;
-  font-size: 1.5rem;
+  border: none;
+  background: var(--ll-accent);
+  color: #fff;
+  font-size: 1.6rem;
+  font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: var(--ll-shadow);
+  transition:
+    background-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.fab:hover {
+  background: var(--ll-accent-hover);
+  transform: scale(1.05);
+}
+
+.left-page .fab {
+  left: 1.5rem;
+}
+
+.right-page .fab {
+  right: 1.5rem;
 }
 
 .book-container {
   display: flex;
-  min-height: calc(100vh - 53px);
-  background: #fff;
+  min-height: calc(100vh - 57px);
+  background: rgb(255 255 255 / 55%);
+  backdrop-filter: blur(4px);
 }
 
 .page {
   flex: 1;
-  padding: 1.5rem;
+  padding: 1.5rem var(--ll-space-page);
   overflow-y: auto;
+  position: relative;
 }
 
 .left-page {
-  border-right: 1px solid #ccc;
+  border-right: 1px solid var(--ll-border);
 }
 
 .page-title {
-  font-size: 1.25rem;
+  font-family: var(--ll-font-display);
+  font-size: 1.35rem;
   font-weight: 600;
-  margin-bottom: 1rem;
-  color: #333;
+  margin-bottom: 1.1rem;
+  color: var(--ll-ink);
 }
 
 .card-grid {
@@ -134,17 +156,45 @@ async function handleTagCreation(result: { new_tag: Tag }) {
 }
 
 .card {
-  padding: 0.75rem 1rem;
-  border: 1px solid #333;
-  border-radius: 20px;
-  background: #fff;
+  padding: 0.8rem 1rem;
+  border: 1.5px solid var(--ll-border);
+  border-radius: var(--ll-radius-pill);
+  background: var(--ll-surface);
   cursor: pointer;
   font-size: 0.9rem;
+  font-weight: 500;
   text-align: center;
-  transition: background-color 0.15s;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
 }
 
 .card:hover {
-  background-color: #f0f0f0;
+  background: #f8fffd;
+  border-color: var(--ll-accent);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 720px) {
+  .book-container {
+    flex-direction: column;
+  }
+
+  .left-page {
+    border-right: none;
+    border-bottom: 1px solid var(--ll-border);
+  }
+
+  .left-page .fab,
+  .right-page .fab {
+    left: auto;
+    right: 1.25rem;
+  }
+
+  .left-page .fab {
+    bottom: auto;
+    top: calc(100% - 4.5rem);
+  }
 }
 </style>
