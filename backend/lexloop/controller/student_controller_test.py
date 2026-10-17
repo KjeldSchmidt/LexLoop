@@ -68,6 +68,37 @@ def test_teacher_can_create_and_list_students(
     app.dependency_overrides.pop(require_teacher, None)
 
 
+def test_teacher_can_bulk_create_students(
+    client: TestClient, db_session: Session
+) -> None:
+    _ensure_teacher_row(db_session)
+    app.dependency_overrides[require_teacher] = _teacher
+
+    create = client.post("/students/bulk", json={"count": 3})
+    assert create.status_code == 201
+    accounts = create.json()["accounts"]
+    assert len(accounts) == 3
+    usernames = {a["username"] for a in accounts}
+    assert len(usernames) == 3
+    for account in accounts:
+        assert "-" in account["username"]
+        assert " " in account["password"]
+        login = client.post(
+            "/students/login",
+            json={
+                "username": account["username"],
+                "password": account["password"],
+            },
+        )
+        assert login.status_code == 200
+
+    listed = client.get("/students")
+    assert listed.status_code == 200
+    assert len(listed.json()) >= 3
+
+    app.dependency_overrides.pop(require_teacher, None)
+
+
 def test_student_login_and_me(client: TestClient, db_session: Session) -> None:
     _ensure_teacher_row(db_session)
     hashed = PasswordHash.recommended().hash("password123")

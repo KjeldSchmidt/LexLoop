@@ -1067,6 +1067,50 @@
         ]
       }
     },
+    "/students/bulk": {
+      "post": {
+        "summary": "Bulk Create Students",
+        "description": "Create many students with auto-generated memorable credentials.\n\nPlaintext passwords are returned once in the response for the teacher\nto download or distribute; they are stored hashed only.",
+        "operationId": "bulk_create_students_students_bulk_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudentBulkCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentBulkCreateOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ]
+      }
+    },
     "/students/{student_uuid}/password": {
       "post": {
         "summary": "Reset Student Password",
@@ -2199,6 +2243,37 @@
         ],
         "title": "Page[TagOut]"
       },
+      "StudentBulkCreate": {
+        "properties": {
+          "count": {
+            "type": "integer",
+            "maximum": 100.0,
+            "minimum": 1.0,
+            "title": "Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "count"
+        ],
+        "title": "StudentBulkCreate"
+      },
+      "StudentBulkCreateOut": {
+        "properties": {
+          "accounts": {
+            "items": {
+              "$ref": "#/components/schemas/StudentCreatedCreds"
+            },
+            "type": "array",
+            "title": "Accounts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "accounts"
+        ],
+        "title": "StudentBulkCreateOut"
+      },
       "StudentCreate": {
         "properties": {
           "username": {
@@ -2220,6 +2295,36 @@
           "password"
         ],
         "title": "StudentCreate"
+      },
+      "StudentCreatedCreds": {
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "format": "uuid4",
+            "title": "Uuid"
+          },
+          "username": {
+            "type": "string",
+            "title": "Username"
+          },
+          "password": {
+            "type": "string",
+            "title": "Password"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          }
+        },
+        "type": "object",
+        "required": [
+          "uuid",
+          "username",
+          "password",
+          "is_active"
+        ],
+        "title": "StudentCreatedCreds",
+        "description": "One-time plaintext password returned only at create time."
       },
       "StudentLogin": {
         "properties": {

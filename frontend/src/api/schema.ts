@@ -448,6 +448,29 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/students/bulk': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Bulk Create Students
+     * @description Create many students with auto-generated memorable credentials.
+     *
+     *     Plaintext passwords are returned once in the response for the teacher
+     *     to download or distribute; they are stored hashed only.
+     */
+    post: operations['bulk_create_students_students_bulk_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/students/{student_uuid}/password': {
     parameters: {
       query?: never
@@ -803,12 +826,39 @@ export interface components {
       /** Limit */
       limit: number
     }
+    /** StudentBulkCreate */
+    StudentBulkCreate: {
+      /** Count */
+      count: number
+    }
+    /** StudentBulkCreateOut */
+    StudentBulkCreateOut: {
+      /** Accounts */
+      accounts: components['schemas']['StudentCreatedCreds'][]
+    }
     /** StudentCreate */
     StudentCreate: {
       /** Username */
       username: string
       /** Password */
       password: string
+    }
+    /**
+     * StudentCreatedCreds
+     * @description One-time plaintext password returned only at create time.
+     */
+    StudentCreatedCreds: {
+      /**
+       * Uuid
+       * Format: uuid4
+       */
+      uuid: string
+      /** Username */
+      username: string
+      /** Password */
+      password: string
+      /** Is Active */
+      is_active: boolean
     }
     /** StudentLogin */
     StudentLogin: {
@@ -1604,6 +1654,39 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['StudentOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  bulk_create_students_students_bulk_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['StudentBulkCreate']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['StudentBulkCreateOut']
         }
       }
       /** @description Validation Error */

@@ -3,9 +3,16 @@
 from pydantic import UUID4
 from sqlalchemy.orm import Session
 
+from lexloop.auth.memorable_ids import generate_password, generate_username
 from lexloop.auth.student_auth import hash_password, verify_password
-from lexloop.model.student_model import Student, StudentCreate
+from lexloop.model.student_model import (
+    Student,
+    StudentCreate,
+    StudentCreatedCreds,
+)
 from lexloop.repository import student_repository
+
+_MAX_USERNAME_ATTEMPTS = 32
 
 
 def create_for_teacher(
@@ -17,6 +24,39 @@ def create_for_teacher(
     return student_repository.add(
         payload, hash_password(payload.password), teacher_id, session
     )
+
+
+def bulk_create_for_teacher(
+    count: int, teacher_id: UUID4, session: Session
+) -> list[StudentCreatedCreds]:
+    """Create ``count`` students with memorable usernames and phrase passwords."""
+    created: list[StudentCreatedCreds] = []
+    for _ in range(count):
+        username = _unused_username(session)
+        password = generate_password()
+        student = student_repository.add(
+            StudentCreate(username=username, password=password),
+            hash_password(password),
+            teacher_id,
+            session,
+        )
+        created.append(
+            StudentCreatedCreds(
+                uuid=student.uuid,
+                username=student.username,
+                password=password,
+                is_active=student.is_active,
+            )
+        )
+    return created
+
+
+def _unused_username(session: Session) -> str:
+    for _ in range(_MAX_USERNAME_ATTEMPTS):
+        candidate = generate_username()
+        if student_repository.get_by_username(candidate, session) is None:
+            return candidate
+    raise RuntimeError("USERNAME_GENERATION_FAILED")
 
 
 def list_for_teacher(teacher_id: UUID4, session: Session) -> list[Student]:
