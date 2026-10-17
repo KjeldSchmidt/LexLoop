@@ -5,6 +5,7 @@ import { storeToRefs } from 'pinia'
 import { ref, watch } from 'vue'
 import SearchBar from '@/components/SearchBar.vue'
 import type { components } from '@/api/schema.ts'
+import { useAuthStore } from '@/stores/auth'
 
 type Node = components['schemas']['NodeOut']
 
@@ -12,6 +13,7 @@ const store = useNavigationHistoryStore()
 const { history } = storeToRefs(store)
 const router = useRouter()
 const route = useRoute()
+const auth = useAuthStore()
 
 const props = defineProps<{
   course_id: string
@@ -46,6 +48,11 @@ function goToClasses() {
 function handleSelect(result: { selected_node: Node }) {
   router.push({ name: 'NodePage', params: { id: result.selected_node.uuid } })
 }
+
+async function onLogout() {
+  await auth.logout()
+  await router.push('/login')
+}
 </script>
 
 <template>
@@ -69,7 +76,7 @@ function handleSelect(result: { selected_node: Node }) {
 
     <div class="header-actions">
       <button class="header-btn" @click="goToClasses">Back to Classes</button>
-      <button class="header-btn">Profile</button>
+      <button class="header-btn" @click="onLogout">Log out</button>
     </div>
   </header>
 </template>

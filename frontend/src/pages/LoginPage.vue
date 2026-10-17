@@ -1,112 +1,57 @@
 <script setup lang="ts">
-import { onBeforeUnmount, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { getGoogleAuthorizeUrl, studentLogin } from '@/api'
-
-const OAUTH_SUCCESS = 'lexloop-oauth-success'
-const POPUP_WIDTH = 500
-const POPUP_HEIGHT = 650
+import { computed, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { studentLogin } from '@/api'
+import { useGoogleLogin } from '@/composables/useGoogleLogin'
+import { safeRedirectPath } from '@/router/authRedirect'
+import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
+const route = useRoute()
+const auth = useAuthStore()
+
 const username = ref('')
 const password = ref('')
-const error = ref('')
-const googleLoading = ref(false)
+const formError = ref('')
+const { loading: googleLoading, error: googleError, loginWithGoogle } = useGoogleLogin()
 
-let popup: Window | null = null
-let popupPoll: ReturnType<typeof setInterval> | null = null
-let oauthCompleted = false
+const needsAuthMessage = computed(() => route.query.reason === 'auth')
+const error = computed(() => formError.value || googleError.value)
 
-function clearPopupWatch() {
-  window.removeEventListener('message', onOAuthMessage)
-  if (popupPoll !== null) {
-    clearInterval(popupPoll)
-    popupPoll = null
-  }
-  popup = null
+async function afterLogin() {
+  await auth.refreshSession()
+  await router.push(safeRedirectPath(route.query.redirect))
 }
 
-function finishGoogleLogin() {
-  clearPopupWatch()
-  googleLoading.value = false
-}
-
-function onOAuthMessage(event: MessageEvent) {
-  if (event.origin !== window.location.origin) return
-  if (
-    typeof event.data !== 'object' ||
-    event.data === null ||
-    (event.data as { type?: string }).type !== OAUTH_SUCCESS
-  ) {
-    return
-  }
-  oauthCompleted = true
-  finishGoogleLogin()
-  void router.push('/user-start')
-}
-
-function openCenteredPopup(url: string): Window | null {
-  const left = Math.round(window.screenX + (window.outerWidth - POPUP_WIDTH) / 2)
-  const top = Math.round(window.screenY + (window.outerHeight - POPUP_HEIGHT) / 2)
-  return window.open(
-    url,
-    'lexloop-google-oauth',
-    `width=${POPUP_WIDTH},height=${POPUP_HEIGHT},left=${left},top=${top},popup=yes`,
-  )
-}
-
-async function googleLogin() {
-  error.value = ''
-  clearPopupWatch()
-  oauthCompleted = false
-  googleLoading.value = true
-
+async function onGoogleLogin() {
+  formError.value = ''
   try {
-    const authorizeUrl = await getGoogleAuthorizeUrl()
-    popup = openCenteredPopup(authorizeUrl)
-    if (!popup) {
-      error.value = 'Popup blocked — allow popups for this site and try again'
-      googleLoading.value = false
-      return
-    }
-
-    window.addEventListener('message', onOAuthMessage)
-    popupPoll = setInterval(() => {
-      if (popup && popup.closed) {
-        if (!oauthCompleted) {
-          error.value = 'Google sign-in was cancelled'
-        }
-        finishGoogleLogin()
-      }
-    }, 500)
+    await loginWithGoogle()
+    await afterLogin()
   } catch {
-    error.value = 'Could not start Google sign-in'
-    googleLoading.value = false
+    // error text comes from useGoogleLogin
   }
 }
 
 async function onStudentLogin() {
-  error.value = ''
+  formError.value = ''
   try {
     await studentLogin(username.value, password.value)
-    await router.push('/user-start')
+    await afterLogin()
   } catch {
-    error.value = 'Login failed'
+    formError.value = 'Login failed'
   }
 }
-
-onBeforeUnmount(() => {
-  finishGoogleLogin()
-})
 </script>
 
 <template>
   <div class="login">
     <h1>Sign in</h1>
+    <p v-if="needsAuthMessage" class="notice">You need to be logged in to see this page.</p>
 
     <section>
       <h2>Teacher</h2>
-      <button type="button" :disabled="googleLoading" @click="googleLogin">
+      <button type="button" :disabled="googleLoading" @click="onGoogleLogin">
         {{ googleLoading ? 'Waiting for Google…' : 'Sign in with Google' }}
       </button>
     </section>
@@ -137,6 +82,10 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+}
+.notice {
+  margin: 0;
+  color: #444;
 }
 section {
   display: flex;

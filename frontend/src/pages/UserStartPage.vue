@@ -2,11 +2,15 @@
 import { ref, onMounted } from 'vue'
 import { getCourses } from '@/api'
 import { useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
 import type { components } from '@/api/schema.ts'
+import { useAuthStore } from '@/stores/auth'
 
 type Course = components['schemas']['CourseOut']
 
 const router = useRouter()
+const auth = useAuthStore()
+const { isTeacher } = storeToRefs(auth)
 const courses = ref<Course[]>([])
 
 onMounted(async () => {
@@ -17,7 +21,6 @@ onMounted(async () => {
 })
 
 function goToClass(course_uuid: string) {
-  console.log(course_uuid)
   router.push({
     name: 'ClassOverview',
     params: { id: course_uuid },
@@ -28,7 +31,7 @@ function goToClass(course_uuid: string) {
 <template>
   <div class="user-start-container">
     <div class="content">
-      <p>
+      <p v-if="isTeacher">
         <router-link to="/teacher/students">Manage students</router-link>
       </p>
       <h2 class="prompt">Choose Course:</h2>
