@@ -1,18 +1,24 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { studentLogin } from '@/api'
+import { getGoogleAuthorizeUrl, studentLogin } from '@/api'
 
 const router = useRouter()
 const username = ref('')
 const password = ref('')
 const error = ref('')
-const apiBase = import.meta.env.VITE_API_URL as string
+const googleLoading = ref(false)
 
-function googleLogin() {
-  // fastapi-users Google authorize; cookie set on callback then user returns.
-  const authorizeUrl = new URL('auth/google/authorize', apiBase)
-  window.location.href = authorizeUrl.toString()
+async function googleLogin() {
+  // fastapi-users returns JSON { authorization_url }; redirect the browser there.
+  error.value = ''
+  googleLoading.value = true
+  try {
+    window.location.href = await getGoogleAuthorizeUrl()
+  } catch {
+    error.value = 'Could not start Google sign-in'
+    googleLoading.value = false
+  }
 }
 
 async function onStudentLogin() {
@@ -32,7 +38,9 @@ async function onStudentLogin() {
 
     <section>
       <h2>Teacher</h2>
-      <button type="button" @click="googleLogin">Sign in with Google</button>
+      <button type="button" :disabled="googleLoading" @click="googleLogin">
+        {{ googleLoading ? 'Redirecting…' : 'Sign in with Google' }}
+      </button>
     </section>
 
     <section>
@@ -48,8 +56,9 @@ async function onStudentLogin() {
         </label>
         <button type="submit">Sign in</button>
       </form>
-      <p v-if="error" class="error">{{ error }}</p>
     </section>
+
+    <p v-if="error" class="error">{{ error }}</p>
   </div>
 </template>
 

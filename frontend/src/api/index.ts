@@ -160,6 +160,14 @@ export const getCourses = async ({ offset = 0, limit = API_MAX_PAGE_SIZE }: Page
   return data
 }
 
+export const getGoogleAuthorizeUrl = async () => {
+  const { data, error } = await client.GET('/auth/google/authorize')
+  if (error || !data?.authorization_url) {
+    throw new Error('GOOGLE_AUTHORIZE_FAILED')
+  }
+  return data.authorization_url
+}
+
 export const studentLogin = async (username: string, password: string) => {
   const { data, error } = await client.POST('/students/login', {
     body: { username, password },
