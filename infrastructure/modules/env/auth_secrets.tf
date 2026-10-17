@@ -13,6 +13,8 @@ resource "aws_secretsmanager_secret_version" "auth" {
     JWT_SIGNING_SECRET         = ""
     GOOGLE_OAUTH_CLIENT_ID     = ""
     GOOGLE_OAUTH_CLIENT_SECRET = ""
+    FRONTEND_URL               = ""
+    GOOGLE_OAUTH_REDIRECT_URL  = ""
   })
 
   lifecycle {

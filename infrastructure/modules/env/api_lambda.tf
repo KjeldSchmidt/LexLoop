@@ -48,11 +48,9 @@ resource "aws_lambda_function" "api" {
 
   environment {
     variables = {
-      ENV                       = var.env
-      DB_URL                    = local.db_url_transaction
-      AUTH_SECRETS_ARN          = aws_secretsmanager_secret.auth.arn
-      FRONTEND_URL              = var.frontend_url
-      GOOGLE_OAUTH_REDIRECT_URL = var.google_oauth_redirect_url
+      ENV              = var.env
+      DB_URL           = local.db_url_transaction
+      AUTH_SECRETS_ARN = aws_secretsmanager_secret.auth.arn
     }
   }
 }

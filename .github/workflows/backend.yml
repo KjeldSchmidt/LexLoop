@@ -116,15 +116,42 @@ jobs:
         run: cd infrastructure && ./do apply-auto dev
         env:
           TF_VAR_supabase_access_token: ${{ secrets.SUPABASE_DEV_ACCESS_TOKEN }}
-          TF_VAR_frontend_url: ${{ secrets.FRONTEND_URL_DEV }}
-          TF_VAR_google_oauth_redirect_url: ${{ secrets.GOOGLE_OAUTH_REDIRECT_URL_DEV }}
 
       - name: Get Terraform outputs
         id: terraform_output
         run: |
           cd infrastructure/env/dev
           API_BASE_URL=$(terraform output -raw api_base_url)
+          CLOUDFRONT_URL=$(terraform output -raw cloudfront_url)
+          AUTH_SECRETS_ARN=$(terraform output -raw auth_secrets_arn)
           echo "api_base_url=$API_BASE_URL" >> $GITHUB_OUTPUT
+          echo "cloudfront_url=$CLOUDFRONT_URL" >> $GITHUB_OUTPUT
+          echo "auth_secrets_arn=$AUTH_SECRETS_ARN" >> $GITHUB_OUTPUT
+
+      # CloudFront URL is only known after apply; keep it in Secrets Manager so
+      # Lambda can load FRONTEND_URL + OAuth redirect without a TF cycle.
+      - name: Sync CloudFront URLs into auth secret
+        env:
+          AUTH_SECRETS_ARN: ${{ steps.terraform_output.outputs.auth_secrets_arn }}
+          CLOUDFRONT_URL: ${{ steps.terraform_output.outputs.cloudfront_url }}
+        run: |
+          CURRENT=$(aws secretsmanager get-secret-value \
+            --secret-id "$AUTH_SECRETS_ARN" \
+            --query SecretString \
+            --output text)
+          UPDATED=$(jq -n \
+            --argjson cur "$CURRENT" \
+            --arg fe "$CLOUDFRONT_URL" \
+            --arg re "$CLOUDFRONT_URL/api/auth/google/callback" \
+            '$cur + {FRONTEND_URL:$fe, GOOGLE_OAUTH_REDIRECT_URL:$re}')
+          aws secretsmanager put-secret-value \
+            --secret-id "$AUTH_SECRETS_ARN" \
+            --secret-string "$UPDATED"
+          # Force new Lambda executions to reload Secrets Manager values.
+          aws lambda update-function-configuration \
+            --function-name "lex-api-dev" \
+            --description "auth-urls $(date -u +%Y%m%d%H%M%S)" \
+            >/dev/null
 
       - name: Run database migrations
         run: cd backend && ./do db-migrate-remote dev

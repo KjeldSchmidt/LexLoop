@@ -10,10 +10,14 @@ from pydantic_settings import (
 
 load_dotenv()
 
+# Credentials + public URLs (CloudFront) kept together so deploy can refresh URLs
+# without a Terraform cycle on the Lambda env.
 _AUTH_SECRET_KEYS = (
     "JWT_SIGNING_SECRET",
     "GOOGLE_OAUTH_CLIENT_ID",
     "GOOGLE_OAUTH_CLIENT_SECRET",
+    "FRONTEND_URL",
+    "GOOGLE_OAUTH_REDIRECT_URL",
 )
 
 

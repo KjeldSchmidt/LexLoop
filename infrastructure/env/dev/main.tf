@@ -12,8 +12,6 @@ terraform {
 module "env" {
   source = "../../modules/env"
 
-  env                       = "dev"
-  supabase_access_token     = var.supabase_access_token
-  frontend_url              = var.frontend_url
-  google_oauth_redirect_url = var.google_oauth_redirect_url
+  env                   = "dev"
+  supabase_access_token = var.supabase_access_token
 }

@@ -64,7 +64,9 @@ router.include_router(
         google_oauth_client,
         auth_backend,
         state_secret=env_settings.JWT_SIGNING_SECRET,
-        redirect_url=env_settings.GOOGLE_OAUTH_REDIRECT_URL,
+        # Empty string (e.g. unset Lambda env) must be None so fastapi-users
+        # does not send redirect_uri= to Google.
+        redirect_url=env_settings.GOOGLE_OAUTH_REDIRECT_URL or None,
         associate_by_email=True,
         is_verified_by_default=True,
     ),
