@@ -31,6 +31,23 @@ class StudentCreate(BaseModel):  # type: ignore[explicit-any]
     password: str = Field(min_length=8, max_length=128)
 
 
+class StudentBulkCreate(BaseModel):  # type: ignore[explicit-any]
+    count: int = Field(ge=1, le=100)
+
+
+class StudentCreatedCreds(BaseModel):  # type: ignore[explicit-any]
+    """One-time plaintext password returned only at create time."""
+
+    uuid: UUID4
+    username: str
+    password: str
+    is_active: bool
+
+
+class StudentBulkCreateOut(BaseModel):  # type: ignore[explicit-any]
+    accounts: list[StudentCreatedCreds]
+
+
 class StudentLogin(BaseModel):  # type: ignore[explicit-any]
     username: str
     password: str

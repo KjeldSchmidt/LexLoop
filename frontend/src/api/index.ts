@@ -216,3 +216,13 @@ export const createStudent = async (username: string, password: string) => {
   }
   return data
 }
+
+export const bulkCreateStudents = async (count: number) => {
+  const { data, error } = await client.POST('/students/bulk', {
+    body: { count },
+  })
+  if (error) {
+    throw new Error('BULK_CREATE_FAILED')
+  }
+  return data
+}

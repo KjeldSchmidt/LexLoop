@@ -17,6 +17,8 @@ from lexloop.auth.user_model import User
 from lexloop.controller import get_db
 from lexloop.model.student_model import (
     Student,
+    StudentBulkCreate,
+    StudentBulkCreateOut,
     StudentCreate,
     StudentLogin,
     StudentOut,
@@ -89,6 +91,31 @@ async def create_student(
             ) from exc
         raise
     return StudentOut.from_internal_model(student)
+
+
+@router.post("/bulk", status_code=status.HTTP_201_CREATED)
+async def bulk_create_students(
+    payload: StudentBulkCreate,
+    teacher: User = Depends(require_teacher),
+    session: Session = Depends(get_db),
+) -> StudentBulkCreateOut:
+    """Create many students with auto-generated memorable credentials.
+
+    Plaintext passwords are returned once in the response for the teacher
+    to download or distribute; they are stored hashed only.
+    """
+    try:
+        accounts = student_service.bulk_create_for_teacher(
+            payload.count, teacher.id, session
+        )
+    except RuntimeError as exc:
+        if str(exc) == "USERNAME_GENERATION_FAILED":
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="USERNAME_GENERATION_FAILED",
+            ) from exc
+        raise
+    return StudentBulkCreateOut(accounts=accounts)
 
 
 @router.post("/{student_uuid}/password")
