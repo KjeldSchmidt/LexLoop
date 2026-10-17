@@ -22,10 +22,14 @@ cookie_transport = CookieTransport(
 
 
 class OAuthRedirectCookieTransport(CookieTransport):
-    """After Google callback, set the auth cookie and send the browser to the SPA."""
+    """After Google callback, set the auth cookie and return to the SPA popup handler."""
 
     async def get_login_response(self, token: str) -> Response:
-        destination = f"{env_settings.FRONTEND_URL.rstrip('/')}/user-start"
+        # Popup flow: SPA page posts a message to the opener and closes.
+        # Full-page fallback: same route redirects to /user-start when no opener.
+        destination = (
+            f"{env_settings.FRONTEND_URL.rstrip('/')}/oauth/popup-done"
+        )
         response: Response = RedirectResponse(
             url=destination, status_code=status.HTTP_302_FOUND
         )
