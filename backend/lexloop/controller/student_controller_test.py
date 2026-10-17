@@ -100,6 +100,56 @@ def test_teacher_can_bulk_create_students(
     app.dependency_overrides.pop(require_teacher, None)
 
 
+def test_teacher_can_bulk_reset_passwords_and_delete(
+    client: TestClient, db_session: Session
+) -> None:
+    _ensure_teacher_row(db_session)
+    app.dependency_overrides[require_teacher] = _teacher
+
+    create = client.post("/students/bulk", json={"count": 2})
+    assert create.status_code == 201
+    accounts = create.json()["accounts"]
+    uuids = [a["uuid"] for a in accounts]
+    old_password = accounts[0]["password"]
+
+    reset = client.post(
+        "/students/bulk-passwords", json={"student_uuids": uuids}
+    )
+    assert reset.status_code == 200
+    reset_accounts = reset.json()["accounts"]
+    assert len(reset_accounts) == 2
+    new_password = reset_accounts[0]["password"]
+    assert new_password != old_password
+    assert " " in new_password
+
+    old_login = client.post(
+        "/students/login",
+        json={
+            "username": accounts[0]["username"],
+            "password": old_password,
+        },
+    )
+    assert old_login.status_code == 400
+
+    new_login = client.post(
+        "/students/login",
+        json={
+            "username": reset_accounts[0]["username"],
+            "password": new_password,
+        },
+    )
+    assert new_login.status_code == 200
+
+    delete = client.post("/students/bulk-delete", json={"student_uuids": uuids})
+    assert delete.status_code == 204
+    listed = client.get("/students")
+    assert listed.status_code == 200
+    remaining = {s["uuid"] for s in listed.json()}
+    assert remaining.isdisjoint(set(uuids))
+
+    app.dependency_overrides.pop(require_teacher, None)
+
+
 def test_student_login_and_me(client: TestClient, db_session: Session) -> None:
     _ensure_teacher_row(db_session)
     hashed = PasswordHash.recommended().hash("password123")

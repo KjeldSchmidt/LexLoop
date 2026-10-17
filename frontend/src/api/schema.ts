@@ -471,6 +471,46 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/students/bulk-delete': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Bulk Delete Students
+     * @description Permanently delete selected students owned by the current teacher.
+     */
+    post: operations['bulk_delete_students_students_bulk_delete_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/students/bulk-passwords': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Bulk Reset Student Passwords
+     * @description Reset passwords for selected students; return one-time plaintext phrases.
+     */
+    post: operations['bulk_reset_student_passwords_students_bulk_passwords_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/students/{student_uuid}/password': {
     parameters: {
       query?: never
@@ -835,6 +875,11 @@ export interface components {
     StudentBulkCreateOut: {
       /** Accounts */
       accounts: components['schemas']['StudentCreatedCreds'][]
+    }
+    /** StudentBulkIds */
+    StudentBulkIds: {
+      /** Student Uuids */
+      student_uuids: string[]
     }
     /** StudentCreate */
     StudentCreate: {
@@ -1682,6 +1727,70 @@ export interface operations {
     responses: {
       /** @description Successful Response */
       201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['StudentBulkCreateOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  bulk_delete_students_students_bulk_delete_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['StudentBulkIds']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  bulk_reset_student_passwords_students_bulk_passwords_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['StudentBulkIds']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
         headers: {
           [name: string]: unknown
         }

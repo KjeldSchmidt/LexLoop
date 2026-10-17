@@ -103,3 +103,11 @@ def set_active(
     session.commit()
     session.refresh(row)
     return row.to_internal_model()
+
+
+def delete(student_uuid: UUID4, session: Session) -> None:
+    row = session.get(StudentRepo, student_uuid)
+    if row is None:
+        raise KeyError
+    session.delete(row)
+    session.commit()

@@ -48,6 +48,10 @@ class StudentBulkCreateOut(BaseModel):  # type: ignore[explicit-any]
     accounts: list[StudentCreatedCreds]
 
 
+class StudentBulkIds(BaseModel):  # type: ignore[explicit-any]
+    student_uuids: list[UUID4] = Field(min_length=1, max_length=100)
+
+
 class StudentLogin(BaseModel):  # type: ignore[explicit-any]
     username: str
     password: str
