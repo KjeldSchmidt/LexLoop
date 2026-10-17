@@ -15,8 +15,8 @@ async function onLogout() {
 
 <template>
   <div class="app-shell">
-    <div v-if="isAuthenticated" class="session-bar">
-      <span class="brand">LexLoop</span>
+    <header v-if="isAuthenticated" class="session-bar">
+      <router-link class="brand" to="/user-start" title="All courses">LexLoop</router-link>
       <div class="session-actions">
         <span class="session-label">
           {{ isTeacher ? 'Teacher' : `Student · ${student?.username ?? ''}` }}
@@ -25,7 +25,7 @@ async function onLogout() {
           Log out
         </button>
       </div>
-    </div>
+    </header>
     <router-view />
   </div>
 </template>
@@ -42,11 +42,11 @@ async function onLogout() {
   gap: 0.75rem;
   padding: 0.65rem var(--ll-space-page);
   border-bottom: 1px solid var(--ll-border);
-  background: rgb(255 255 255 / 82%);
+  background: rgb(255 255 255 / 90%);
   backdrop-filter: blur(10px);
   position: sticky;
   top: 0;
-  z-index: 20;
+  z-index: 30;
 }
 
 .brand {
@@ -55,6 +55,11 @@ async function onLogout() {
   font-size: 1.05rem;
   letter-spacing: -0.02em;
   color: var(--ll-ink);
+  text-decoration: none;
+}
+
+.brand:hover {
+  color: var(--ll-accent);
 }
 
 .session-actions {
