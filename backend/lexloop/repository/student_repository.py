@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from uuid import uuid4
 
 from pydantic import UUID4
@@ -11,6 +12,12 @@ from sqlalchemy.orm import Mapped, Session, mapped_column
 
 from lexloop.model.student_model import Student, StudentCreate
 from lexloop.repository.base import Base
+
+
+@dataclass(frozen=True, slots=True)
+class StudentInsert:
+    username: str
+    hashed_password: str
 
 
 class StudentRepo(Base):
@@ -62,10 +69,42 @@ def add(
     return row.to_internal_model()
 
 
+def add_many(
+    inserts: list[StudentInsert],
+    teacher_id: UUID4,
+    session: Session,
+) -> list[Student]:
+    """Insert many students in a single transaction."""
+    rows = [
+        StudentRepo(
+            uuid=uuid4(),
+            username=item.username,
+            hashed_password=item.hashed_password,
+            is_active=True,
+            created_by_teacher_id=teacher_id,
+        )
+        for item in inserts
+    ]
+    session.add_all(rows)
+    session.commit()
+    for row in rows:
+        session.refresh(row)
+    return [row.to_internal_model() for row in rows]
+
+
 def get_by_username(username: str, session: Session) -> StudentRepo | None:
     return session.scalar(
         select(StudentRepo).where(StudentRepo.username == username)
     )
+
+
+def usernames_in_use(usernames: set[str], session: Session) -> set[str]:
+    if not usernames:
+        return set()
+    rows = session.scalars(
+        select(StudentRepo.username).where(StudentRepo.username.in_(usernames))
+    ).all()
+    return set(rows)
 
 
 def get_by_uuid(student_uuid: UUID4, session: Session) -> StudentRepo | None:
@@ -93,6 +132,23 @@ def set_password(
     return row.to_internal_model()
 
 
+def set_passwords(
+    updates: list[tuple[UUID4, str]], session: Session
+) -> list[Student]:
+    """Update many passwords in a single transaction."""
+    rows: list[StudentRepo] = []
+    for student_uuid, hashed_password in updates:
+        row = session.get(StudentRepo, student_uuid)
+        if row is None:
+            raise KeyError
+        row.hashed_password = hashed_password
+        rows.append(row)
+    session.commit()
+    for row in rows:
+        session.refresh(row)
+    return [row.to_internal_model() for row in rows]
+
+
 def set_active(
     student_uuid: UUID4, is_active: bool, session: Session
 ) -> Student:
@@ -110,4 +166,16 @@ def delete(student_uuid: UUID4, session: Session) -> None:
     if row is None:
         raise KeyError
     session.delete(row)
+    session.commit()
+
+
+def delete_many(student_uuids: list[UUID4], session: Session) -> None:
+    rows = [
+        session.get(StudentRepo, student_uuid) for student_uuid in student_uuids
+    ]
+    if any(row is None for row in rows):
+        raise KeyError
+    for row in rows:
+        assert row is not None
+        session.delete(row)
     session.commit()

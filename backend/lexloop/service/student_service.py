@@ -1,5 +1,8 @@
 """Application service for students."""
 
+from concurrent.futures import ThreadPoolExecutor
+from typing import Sequence
+
 from pydantic import UUID4
 from sqlalchemy.orm import Session
 
@@ -11,8 +14,10 @@ from lexloop.model.student_model import (
     StudentCreatedCreds,
 )
 from lexloop.repository import student_repository
+from lexloop.repository.student_repository import StudentInsert
 
-_MAX_USERNAME_ATTEMPTS = 32
+_MAX_USERNAME_ATTEMPTS = 64
+_HASH_WORKERS = 8
 
 
 def create_for_teacher(
@@ -29,35 +34,84 @@ def create_for_teacher(
 def bulk_create_for_teacher(
     count: int, teacher_id: UUID4, session: Session
 ) -> list[StudentCreatedCreds]:
-    """Create ``count`` students with memorable usernames and phrase passwords."""
-    created: list[StudentCreatedCreds] = []
-    for _ in range(count):
-        username = _unused_username(session)
-        password = generate_password()
-        student = student_repository.add(
-            StudentCreate(username=username, password=password),
-            hash_password(password),
-            teacher_id,
-            session,
+    """Create ``count`` students with memorable usernames and phrase passwords.
+
+    Password hashing runs in a thread pool (Argon2 releases the GIL). All rows
+    are inserted in one DB transaction.
+    """
+    usernames = _unique_usernames(count, session)
+    passwords = [generate_password() for _ in range(count)]
+    hashed = _hash_passwords(passwords)
+    inserts = [
+        StudentInsert(username=username, hashed_password=hashed_password)
+        for username, hashed_password in zip(usernames, hashed, strict=True)
+    ]
+    students = student_repository.add_many(inserts, teacher_id, session)
+    return [
+        StudentCreatedCreds(
+            uuid=student.uuid,
+            username=student.username,
+            password=password,
+            is_active=student.is_active,
         )
-        created.append(
-            StudentCreatedCreds(
-                uuid=student.uuid,
-                username=student.username,
-                password=password,
-                is_active=student.is_active,
-            )
-        )
-    return created
+        for student, password in zip(students, passwords, strict=True)
+    ]
 
 
-def _unused_username(session: Session) -> str:
-    for attempt in range(_MAX_USERNAME_ATTEMPTS):
-        # After a few collisions, attach a two-digit suffix.
-        candidate = generate_username(with_numeric_suffix=attempt >= 8)
-        if student_repository.get_by_username(candidate, session) is None:
-            return candidate
-    raise RuntimeError("USERNAME_GENERATION_FAILED")
+def _unique_usernames(count: int, session: Session) -> list[str]:
+    """Generate ``count`` usernames that are unique in-memory and in the DB."""
+    chosen: list[str] = []
+    chosen_set: set[str] = set()
+    attempts = 0
+    max_attempts = max(_MAX_USERNAME_ATTEMPTS, count * 4)
+    while len(chosen) < count:
+        attempts += 1
+        if attempts > max_attempts:
+            raise RuntimeError("USERNAME_GENERATION_FAILED")
+        candidate = generate_username(with_numeric_suffix=attempts > count * 2)
+        if candidate in chosen_set:
+            continue
+        chosen.append(candidate)
+        chosen_set.add(candidate)
+
+    taken = student_repository.usernames_in_use(chosen_set, session)
+    if not taken:
+        return chosen
+
+    # Replace collisions without restarting the whole batch.
+    replacements: list[str] = []
+    replacement_set = set(chosen_set)
+    while len(replacements) < len(taken):
+        attempts += 1
+        if attempts > max_attempts * 2:
+            raise RuntimeError("USERNAME_GENERATION_FAILED")
+        candidate = generate_username(with_numeric_suffix=True)
+        if candidate in replacement_set or candidate in taken:
+            continue
+        replacements.append(candidate)
+        replacement_set.add(candidate)
+    still_taken = student_repository.usernames_in_use(
+        set(replacements), session
+    )
+    if still_taken:
+        raise RuntimeError("USERNAME_GENERATION_FAILED")
+
+    result: list[str] = []
+    replacement_iter = iter(replacements)
+    for username in chosen:
+        if username in taken:
+            result.append(next(replacement_iter))
+        else:
+            result.append(username)
+    return result
+
+
+def _hash_passwords(passwords: Sequence[str]) -> list[str]:
+    if len(passwords) == 1:
+        return [hash_password(passwords[0])]
+    workers = min(_HASH_WORKERS, len(passwords))
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        return list(pool.map(hash_password, passwords))
 
 
 def list_for_teacher(teacher_id: UUID4, session: Session) -> list[Student]:
@@ -113,35 +167,38 @@ def delete_for_teacher(
 def bulk_delete_for_teacher(
     student_uuids: list[UUID4], teacher_id: UUID4, session: Session
 ) -> int:
-    deleted = 0
     for student_uuid in student_uuids:
         row = student_repository.get_by_uuid(student_uuid, session)
         if row is None or row.created_by_teacher_id != teacher_id:
             raise KeyError
-        student_repository.delete(student_uuid, session)
-        deleted += 1
-    return deleted
+    student_repository.delete_many(student_uuids, session)
+    return len(student_uuids)
 
 
 def bulk_reset_passwords_for_teacher(
     student_uuids: list[UUID4], teacher_id: UUID4, session: Session
 ) -> list[StudentCreatedCreds]:
     """Reset passwords for owned students; return one-time plaintext phrases."""
-    accounts: list[StudentCreatedCreds] = []
+    owned: list[Student] = []
     for student_uuid in student_uuids:
         row = student_repository.get_by_uuid(student_uuid, session)
         if row is None or row.created_by_teacher_id != teacher_id:
             raise KeyError
-        password = generate_password()
-        student = student_repository.set_password(
-            student_uuid, hash_password(password), session
+        owned.append(row.to_internal_model())
+
+    passwords = [generate_password() for _ in owned]
+    hashed = _hash_passwords(passwords)
+    updates = [
+        (student.uuid, hashed_password)
+        for student, hashed_password in zip(owned, hashed, strict=True)
+    ]
+    students = student_repository.set_passwords(updates, session)
+    return [
+        StudentCreatedCreds(
+            uuid=student.uuid,
+            username=student.username,
+            password=password,
+            is_active=student.is_active,
         )
-        accounts.append(
-            StudentCreatedCreds(
-                uuid=student.uuid,
-                username=student.username,
-                password=password,
-                is_active=student.is_active,
-            )
-        )
-    return accounts
+        for student, password in zip(students, passwords, strict=True)
+    ]
