@@ -50,7 +50,7 @@ See [`AGENTS.md`](AGENTS.md) for conventions, the OpenAPI contract, and known ga
 
 **Local:** copy [`backend/.env.example`](backend/.env.example) into `backend/.env`. For Google teacher login, set client ID/secret and add the callback URL in the Google Cloud console (typically `http://127.0.0.1:8000/api/auth/google/callback`).
 
-**Deployed (dev/prod):** Auth lives in **AWS Secrets Manager** (`lex/auth/<env>`): JWT + Google OAuth client credentials (set once in the console/CLI) plus `FRONTEND_URL` / `GOOGLE_OAUTH_REDIRECT_URL` (CI refreshes these from CloudFront after each apply). Register the redirect URI in the Google Cloud console: `https://<cloudfront>/api/auth/google/callback`.
+**Deployed (dev/prod):** Auth lives in **AWS Secrets Manager** (`lex/auth/<env>`): JWT + Google OAuth client credentials (set once in the console/CLI) plus `FRONTEND_URL` / `GOOGLE_OAUTH_REDIRECT_URL` (CI refreshes these from the custom domain after each apply). Register redirect URIs in the Google Cloud console: `https://lex-loop.de/api/auth/google/callback` (prod) and `https://beta.lex-loop.de/api/auth/google/callback` (dev). Domain/DNS setup: [`infrastructure/README.md`](infrastructure/README.md).
 
 ## Known gaps
 

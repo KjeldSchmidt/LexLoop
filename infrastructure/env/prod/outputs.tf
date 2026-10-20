@@ -8,13 +8,23 @@ output "website_bucket_arn" {
   value       = module.env.website_bucket_arn
 }
 
+output "domain_name" {
+  description = "Custom domain for this environment"
+  value       = module.env.domain_name
+}
+
 output "cloudfront_url" {
-  description = "CloudFront distribution URL for the frontend"
+  description = "Public frontend URL (custom domain)"
   value       = module.env.cloudfront_url
 }
 
+output "cloudfront_distribution_domain" {
+  description = "CloudFront distribution domain name (*.cloudfront.net)"
+  value       = module.env.cloudfront_distribution_domain
+}
+
 output "api_base_url" {
-  description = "API base URL (via CloudFront)"
+  description = "API base URL (via custom domain)"
   value       = module.env.api_base_url
 }
 

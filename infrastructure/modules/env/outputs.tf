@@ -8,14 +8,24 @@ output "website_bucket_arn" {
   value       = aws_s3_bucket.static_site.arn
 }
 
+output "domain_name" {
+  description = "Custom domain for this environment"
+  value       = var.domain_name
+}
+
 output "cloudfront_url" {
-  description = "CloudFront distribution URL for the frontend"
-  value       = "https://${aws_cloudfront_distribution.cdn.domain_name}"
+  description = "Public frontend URL (custom domain)"
+  value       = "https://${var.domain_name}"
+}
+
+output "cloudfront_distribution_domain" {
+  description = "CloudFront distribution domain name (*.cloudfront.net)"
+  value       = aws_cloudfront_distribution.cdn.domain_name
 }
 
 output "api_base_url" {
-  description = "API base URL (via CloudFront)"
-  value       = "https://${aws_cloudfront_distribution.cdn.domain_name}/api"
+  description = "API base URL (via custom domain)"
+  value       = "https://${var.domain_name}/api"
 }
 
 output "auth_secrets_arn" {

@@ -2,6 +2,7 @@ locals {
   project_name = "lexloop"
   project_slug = "lex"
   region       = "eu-central-1"
+  root_domain  = "lex-loop.de"
 
   common_tags = {
     Project     = local.project_name

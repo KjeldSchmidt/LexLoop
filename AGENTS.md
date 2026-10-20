@@ -61,7 +61,8 @@ Pass `course_uuid` from route/UI context (e.g. `/class/:id`). Do not hardcode co
 - **Teachers:** fastapi-users `user` table; Google OAuth at `/auth/google/*`; cookie `lexloop-userauth`. Public `/auth/register` is disabled.
 - **Students:** separate `lexloop_students` (username + password only; no email/name); `/students/login`; cookie `lexloop-studentauth`.
 - Domain routes require an authenticated principal (teacher or student).
-- Secrets: local via `backend/.env`; deployed via Secrets Manager `lex/auth/<env>` (Lambda `AUTH_SECRETS_ARN`). Credentials are managed in SM; CI refreshes CloudFront `FRONTEND_URL` + OAuth redirect URI into the same secret after apply.
+- Secrets: local via `backend/.env`; deployed via Secrets Manager `lex/auth/<env>` (Lambda `AUTH_SECRETS_ARN`). Credentials are managed in SM; CI refreshes custom-domain `FRONTEND_URL` + OAuth redirect URI into the same secret after apply.
+- Domains: `lex-loop.de` (prod), `beta.lex-loop.de` (dev). Route53 hosted zone in `infrastructure/base/`; ACM for CloudFront is in `us-east-1`.
 
 ## Infrastructure
 
