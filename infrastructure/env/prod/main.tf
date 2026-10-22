@@ -16,7 +16,6 @@ terraform {
 module "env" {
   source = "../../modules/env"
 
-  env                   = "prod"
-  domain_name           = "lex-loop.de"
-  supabase_access_token = var.supabase_access_token
+  env         = "prod"
+  domain_name = "lex-loop.de"
 }

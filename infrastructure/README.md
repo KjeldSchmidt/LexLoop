@@ -1,6 +1,6 @@
 # Infrastructure
 
-Terraform for LexLoop on **AWS** (eu-central-1) with **Supabase** Postgres.
+Terraform for LexLoop on **AWS** (eu-central-1) with **shared tck-labs Postgres RDS**.
 
 ## Layout
 
@@ -8,7 +8,7 @@ Terraform for LexLoop on **AWS** (eu-central-1) with **Supabase** Postgres.
 |------|------|
 | [`base/`](base/) | Bootstrap: Terraform state bucket, GitHub OIDC IAM role, Route53 hosted zone for `lex-loop.de` |
 | [`env/dev`](env/dev/), [`env/prod`](env/prod/) | Environment wiring only — sets variables and instantiates the shared module |
-| [`modules/env/`](modules/env/) | All env resources: S3 website, CloudFront + custom domain, API Gateway + Lambda, Supabase project/DB URLs |
+| [`modules/env/`](modules/env/) | All env resources: S3 website, CloudFront + custom domain, API Gateway + Lambda, DB URL from shared RDS |
 
 No resources are defined in the `env/*` folders beyond module instantiation and env-specific variables.
 
@@ -18,7 +18,7 @@ No resources are defined in the `env/*` folders beyond module instantiation and 
 - **Domains:** `lex-loop.de` (prod), `beta.lex-loop.de` (dev). ACM certs for CloudFront are in `us-east-1` (AWS requirement); everything else stays in `eu-central-1`.
 - **API:** API Gateway HTTP API → Lambda (Python 3.13, Mangum handler `lexloop.main.aws_handler`). Artifact: `backend/lex-api-bundle.zip` (build with `./backend/do build` before apply).
 - **Auth secrets:** Secrets Manager `lex/auth/<env>` (JWT + Google OAuth + frontend URLs). Lambda gets `AUTH_SECRETS_ARN` only. Put credentials in SM; CI merges `FRONTEND_URL` / OAuth redirect after apply.
-- **Database:** Supabase Postgres. Session pooler URL for Alembic migrations; transaction pooler URL for Lambda `DB_URL`.
+- **Database:** Shared RDS from the **tck-labs-base** lab stack (Secrets Manager `tck-labs/shared/rds`). Logical DBs `lexloop_dev` / `lexloop_prod`. Same URL for migrations and Lambda (`sslmode=require`). `./backend/do db-migrate-remote` creates the logical DB if missing, then runs Alembic.
 
 ## Custom domain setup (Porkbun → Route53)
 

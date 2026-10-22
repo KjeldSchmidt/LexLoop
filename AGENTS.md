@@ -67,7 +67,7 @@ Pass `course_uuid` from route/UI context (e.g. `/class/:id`). Do not hardcode co
 ## Infrastructure
 
 - **AWS** (eu-central-1): S3 static site, CloudFront, API Gateway HTTP API, Lambda (Python 3.13).
-- **Supabase** Postgres (session pooler for migrations, transaction pooler for Lambda).
+- **Postgres:** shared tck-labs RDS (`tck-labs/shared/rds` in Secrets Manager); logical DBs `lexloop_dev` / `lexloop_prod`.
 - Bootstrap IAM is GitHub OIDC → `lexloop-cicd-deploy-role` in `infrastructure/base/`.
 ## Tests
 
