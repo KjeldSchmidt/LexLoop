@@ -160,6 +160,81 @@ export const getCourses = async ({ offset = 0, limit = API_MAX_PAGE_SIZE }: Page
   return data
 }
 
+export const getCourse = async (course_uuid: string) => {
+  const { data, error } = await client.GET('/courses/{course_uuid}', {
+    params: { path: { course_uuid } },
+  })
+  if (error || !data) {
+    throw new Error('COURSE_NOT_FOUND')
+  }
+  return data
+}
+
+export const createCourse = async (name: string, description = '') => {
+  const { data, error } = await client.POST('/courses', {
+    body: { course: { name, description } },
+  })
+  if (error || !data) {
+    throw new Error('CREATE_COURSE_FAILED')
+  }
+  return data
+}
+
+export const updateCourse = async (
+  course_uuid: string,
+  updates: { name?: string; description?: string },
+) => {
+  const { data, error } = await client.PATCH('/courses/{course_uuid}', {
+    params: { path: { course_uuid } },
+    body: { course: updates },
+  })
+  if (error || !data) {
+    throw new Error('UPDATE_COURSE_FAILED')
+  }
+  return data
+}
+
+export const deleteCourse = async (course_uuid: string) => {
+  const { error } = await client.DELETE('/courses/{course_uuid}', {
+    params: { path: { course_uuid } },
+  })
+  if (error) {
+    throw new Error('DELETE_COURSE_FAILED')
+  }
+}
+
+export const getCourseStudents = async (course_uuid: string) => {
+  const { data, error } = await client.GET('/course/{course_uuid}/students', {
+    params: { path: { course_uuid } },
+  })
+  if (error) {
+    throw new Error('COURSE_STUDENTS_FAILED')
+  }
+  return data ?? []
+}
+
+export const enrollStudents = async (course_uuid: string, student_uuids: string[]) => {
+  const { data, error } = await client.POST('/course/{course_uuid}/enrollments', {
+    params: { path: { course_uuid } },
+    body: { enrollment: { student_uuids } },
+  })
+  if (error) {
+    throw new Error('ENROLL_FAILED')
+  }
+  return data
+}
+
+export const unenrollStudents = async (course_uuid: string, student_uuids: string[]) => {
+  const { data, error } = await client.POST('/course/{course_uuid}/enrollments/remove', {
+    params: { path: { course_uuid } },
+    body: { enrollment: { student_uuids } },
+  })
+  if (error) {
+    throw new Error('UNENROLL_FAILED')
+  }
+  return data
+}
+
 export const getGoogleAuthorizeUrl = async () => {
   const { data, error } = await client.GET('/auth/google/authorize')
   if (error || !data?.authorization_url) {

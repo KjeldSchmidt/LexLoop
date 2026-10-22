@@ -6,6 +6,7 @@ import TagPage from '@/pages/TagPage.vue'
 import NodePage from '@/pages/NodePage.vue'
 import ClassOverviewPage from '@/pages/ClassOverviewPage.vue'
 import TeacherStudentsPage from '@/pages/TeacherStudentsPage.vue'
+import TeacherCourseSettingsPage from '@/pages/TeacherCourseSettingsPage.vue'
 import OAuthPopupDonePage from '@/pages/OAuthPopupDonePage.vue'
 import { useAuthStore } from '@/stores/auth'
 import { safeRedirectPath } from '@/router/authRedirect'
@@ -39,6 +40,12 @@ const router = createRouter({
     {
       path: '/teacher/students',
       component: TeacherStudentsPage,
+      meta: { requiresAuth: 'teacher' },
+    },
+    {
+      path: '/teacher/courses/:id',
+      name: 'TeacherCourseSettings',
+      component: TeacherCourseSettingsPage,
       meta: { requiresAuth: 'teacher' },
     },
     { path: '/oauth/popup-done', component: OAuthPopupDonePage },

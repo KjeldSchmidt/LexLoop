@@ -53,11 +53,103 @@ export interface paths {
     }
     /**
      * Get Courses
-     * @description List courses (paginated).
+     * @description List courses visible to the current principal (paginated).
      */
     get: operations['get_courses_courses_get']
     put?: never
+    /**
+     * Create Course
+     * @description Teacher creates a course they own.
+     */
+    post: operations['create_course_courses_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/courses/{course_uuid}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Get Course
+     * @description Fetch a single course the principal may view.
+     */
+    get: operations['get_course_courses__course_uuid__get']
+    put?: never
     post?: never
+    /**
+     * Delete Course
+     * @description Teacher deletes an owned course and its content.
+     */
+    delete: operations['delete_course_courses__course_uuid__delete']
+    options?: never
+    head?: never
+    /**
+     * Update Course
+     * @description Teacher updates name/description of an owned course.
+     */
+    patch: operations['update_course_courses__course_uuid__patch']
+    trace?: never
+  }
+  '/course/{course_uuid}/students': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * List Course Students
+     * @description List students enrolled in a course owned by the teacher.
+     */
+    get: operations['list_course_students_course__course_uuid__students_get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/course/{course_uuid}/enrollments': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Enroll Students
+     * @description Enroll teacher-owned students into a course (idempotent).
+     */
+    post: operations['enroll_students_course__course_uuid__enrollments_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/course/{course_uuid}/enrollments/remove': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Unenroll Students
+     * @description Remove students from a course enrollment list.
+     */
+    post: operations['unenroll_students_course__course_uuid__enrollments_remove_post']
     delete?: never
     options?: never
     head?: never
@@ -699,10 +791,41 @@ export interface components {
        */
       client_secret?: string | null
     }
+    /** Body_create_course_courses_post */
+    Body_create_course_courses_post: {
+      course: components['schemas']['CourseIn']
+    }
+    /** Body_enroll_students_course__course_uuid__enrollments_post */
+    Body_enroll_students_course__course_uuid__enrollments_post: {
+      enrollment: components['schemas']['CourseEnrollmentIn']
+    }
+    /** Body_unenroll_students_course__course_uuid__enrollments_remove_post */
+    Body_unenroll_students_course__course_uuid__enrollments_remove_post: {
+      enrollment: components['schemas']['CourseEnrollmentIn']
+    }
+    /** Body_update_course_courses__course_uuid__patch */
+    Body_update_course_courses__course_uuid__patch: {
+      course: components['schemas']['CourseUpdate']
+    }
     /** Body_update_tags_nodes_update__node_uuid__tags__post */
     Body_update_tags_nodes_update__node_uuid__tags__post: {
       /** Tag Uuids */
       tag_uuids: string[]
+    }
+    /** CourseEnrollmentIn */
+    CourseEnrollmentIn: {
+      /** Student Uuids */
+      student_uuids: string[]
+    }
+    /** CourseIn */
+    CourseIn: {
+      /** Name */
+      name: string
+      /**
+       * Description
+       * @default
+       */
+      description: string
     }
     /** CourseOut */
     CourseOut: {
@@ -713,6 +836,17 @@ export interface components {
       uuid: string
       /** Name */
       name: string
+      /** Description */
+      description: string
+      /** Owner Teacher Id */
+      owner_teacher_id?: string | null
+    }
+    /** CourseUpdate */
+    CourseUpdate: {
+      /** Name */
+      name?: string | null
+      /** Description */
+      description?: string | null
     }
     /** ErrorModel */
     ErrorModel: {
@@ -1085,6 +1219,239 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['Page_CourseOut_']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  create_course_courses_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['Body_create_course_courses_post']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CourseOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  get_course_courses__course_uuid__get: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        course_uuid: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CourseOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  delete_course_courses__course_uuid__delete: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        course_uuid: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  update_course_courses__course_uuid__patch: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        course_uuid: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['Body_update_course_courses__course_uuid__patch']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CourseOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  list_course_students_course__course_uuid__students_get: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        course_uuid: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['StudentOut'][]
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  enroll_students_course__course_uuid__enrollments_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        course_uuid: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['Body_enroll_students_course__course_uuid__enrollments_post']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': {
+            [key: string]: number
+          }
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  unenroll_students_course__course_uuid__enrollments_remove_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        course_uuid: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['Body_unenroll_students_course__course_uuid__enrollments_remove_post']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': {
+            [key: string]: number
+          }
         }
       }
       /** @description Validation Error */

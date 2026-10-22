@@ -67,7 +67,11 @@ def client(
         yield db_session
 
     def override_principal() -> Principal:
-        return Principal(kind=PrincipalKind.TEACHER, id=uuid.uuid4())
+        # Matches seed teacher in db_seed.sql (owns Base Course / Empty Course).
+        return Principal(
+            kind=PrincipalKind.TEACHER,
+            id=uuid.UUID("11111111-1111-4111-8111-111111111111"),
+        )
 
     app.dependency_overrides[get_db] = override_get_db
     app.dependency_overrides[require_principal] = override_principal
