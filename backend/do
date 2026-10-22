@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# TODO: USE IN SMOKE TESTS AUTOMATICALLY
-API_BASE_DEV="https://d1su4015b7ijdn.cloudfront.net/api/"
+API_BASE_DEV="https://beta.lex-loop.de/api"
 
 ## run: Run the server
 function task_run {
@@ -43,8 +42,10 @@ function task_test {
   docker compose -f local-test-postgres.yml down
 }
 
-## smoke-test: Run smoke tests against deployed API
+## smoke-test: Run smoke tests against deployed API (defaults to API_BASE_DEV)
 function task_smoke_test {
+  export API_BASE_URL="${API_BASE_URL:-$API_BASE_DEV}"
+  echo "Smoke testing $API_BASE_URL"
   uv run --with httpx --with pytest pytest smoke_tests -v
 }
 

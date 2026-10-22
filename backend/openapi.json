@@ -42,7 +42,7 @@
     "/courses": {
       "get": {
         "summary": "Get Courses",
-        "description": "List courses (paginated).",
+        "description": "List courses visible to the current principal (paginated).",
         "operationId": "get_courses_courses_get",
         "security": [
           {
@@ -85,6 +85,355 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Page_CourseOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Course",
+        "description": "Teacher creates a course they own.",
+        "operationId": "create_course_courses_post",
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_create_course_courses_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/courses/{course_uuid}": {
+      "get": {
+        "summary": "Get Course",
+        "description": "Fetch a single course the principal may view.",
+        "operationId": "get_course_courses__course_uuid__get",
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "course_uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid4",
+              "title": "Course Uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update Course",
+        "description": "Teacher updates name/description of an owned course.",
+        "operationId": "update_course_courses__course_uuid__patch",
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "course_uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid4",
+              "title": "Course Uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_update_course_courses__course_uuid__patch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Course",
+        "description": "Teacher deletes an owned course and its content.",
+        "operationId": "delete_course_courses__course_uuid__delete",
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "course_uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid4",
+              "title": "Course Uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/course/{course_uuid}/students": {
+      "get": {
+        "summary": "List Course Students",
+        "description": "List students enrolled in a course owned by the teacher.",
+        "operationId": "list_course_students_course__course_uuid__students_get",
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "course_uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid4",
+              "title": "Course Uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StudentOut"
+                  },
+                  "title": "Response List Course Students Course  Course Uuid  Students Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/course/{course_uuid}/enrollments": {
+      "post": {
+        "summary": "Enroll Students",
+        "description": "Enroll teacher-owned students into a course (idempotent).",
+        "operationId": "enroll_students_course__course_uuid__enrollments_post",
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "course_uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid4",
+              "title": "Course Uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_enroll_students_course__course_uuid__enrollments_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer"
+                  },
+                  "title": "Response Enroll Students Course  Course Uuid  Enrollments Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/course/{course_uuid}/enrollments/remove": {
+      "post": {
+        "summary": "Unenroll Students",
+        "description": "Remove students from a course enrollment list.",
+        "operationId": "unenroll_students_course__course_uuid__enrollments_remove_post",
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "course_uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid4",
+              "title": "Course Uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_unenroll_students_course__course_uuid__enrollments_remove_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer"
+                  },
+                  "title": "Response Unenroll Students Course  Course Uuid  Enrollments Remove Post"
                 }
               }
             }
@@ -1947,6 +2296,54 @@
         ],
         "title": "Body_auth_jwt_login_auth_login_post"
       },
+      "Body_create_course_courses_post": {
+        "properties": {
+          "course": {
+            "$ref": "#/components/schemas/CourseIn"
+          }
+        },
+        "type": "object",
+        "required": [
+          "course"
+        ],
+        "title": "Body_create_course_courses_post"
+      },
+      "Body_enroll_students_course__course_uuid__enrollments_post": {
+        "properties": {
+          "enrollment": {
+            "$ref": "#/components/schemas/CourseEnrollmentIn"
+          }
+        },
+        "type": "object",
+        "required": [
+          "enrollment"
+        ],
+        "title": "Body_enroll_students_course__course_uuid__enrollments_post"
+      },
+      "Body_unenroll_students_course__course_uuid__enrollments_remove_post": {
+        "properties": {
+          "enrollment": {
+            "$ref": "#/components/schemas/CourseEnrollmentIn"
+          }
+        },
+        "type": "object",
+        "required": [
+          "enrollment"
+        ],
+        "title": "Body_unenroll_students_course__course_uuid__enrollments_remove_post"
+      },
+      "Body_update_course_courses__course_uuid__patch": {
+        "properties": {
+          "course": {
+            "$ref": "#/components/schemas/CourseUpdate"
+          }
+        },
+        "type": "object",
+        "required": [
+          "course"
+        ],
+        "title": "Body_update_course_courses__course_uuid__patch"
+      },
       "Body_update_tags_nodes_update__node_uuid__tags__post": {
         "properties": {
           "tag_uuids": {
@@ -1964,6 +2361,43 @@
         ],
         "title": "Body_update_tags_nodes_update__node_uuid__tags__post"
       },
+      "CourseEnrollmentIn": {
+        "properties": {
+          "student_uuids": {
+            "items": {
+              "type": "string",
+              "format": "uuid4"
+            },
+            "type": "array",
+            "title": "Student Uuids"
+          }
+        },
+        "type": "object",
+        "required": [
+          "student_uuids"
+        ],
+        "title": "CourseEnrollmentIn"
+      },
+      "CourseIn": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "CourseIn"
+      },
       "CourseOut": {
         "properties": {
           "uuid": {
@@ -1974,14 +2408,61 @@
           "name": {
             "type": "string",
             "title": "Name"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "owner_teacher_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid4"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Owner Teacher Id"
           }
         },
         "type": "object",
         "required": [
           "uuid",
-          "name"
+          "name",
+          "description"
         ],
         "title": "CourseOut"
+      },
+      "CourseUpdate": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          }
+        },
+        "type": "object",
+        "title": "CourseUpdate"
       },
       "ErrorModel": {
         "properties": {

@@ -1,8 +1,12 @@
 -- Seed data for 9th grade English as a Foreign Language vocabulary learning
 
-INSERT INTO lexloop_courses (uuid, name) VALUES
-('59cc5186-a10d-476e-b750-c8f5b821b953', 'Base Course'),
-('0419df0c-080f-4a93-bb4e-82fc6121b073', 'Empty Course');
+-- Fixed teacher used by API tests (conftest overrides require_principal to this id).
+INSERT INTO "user" (id, email, hashed_password, is_active, is_superuser, is_verified, role) VALUES
+('11111111-1111-4111-8111-111111111111', 'seed-teacher@lexloop.test', 'not-used-in-tests', true, false, true, 'teacher');
+
+INSERT INTO lexloop_courses (uuid, name, description, owner_teacher_id) VALUES
+('59cc5186-a10d-476e-b750-c8f5b821b953', 'Base Course', 'Seed vocabulary course', '11111111-1111-4111-8111-111111111111'),
+('0419df0c-080f-4a93-bb4e-82fc6121b073', 'Empty Course', '', '11111111-1111-4111-8111-111111111111');
 
 -- Tags
 INSERT INTO lexloop_tags (uuid, title, description, course_uuid) VALUES
