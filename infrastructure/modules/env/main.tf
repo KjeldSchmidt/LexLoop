@@ -6,11 +6,6 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 6.14"
     }
-
-    supabase = {
-      source  = "supabase/supabase"
-      version = "~> 1.0"
-    }
   }
 }
 
@@ -30,8 +25,4 @@ provider "aws" {
   default_tags {
     tags = local.common_tags
   }
-}
-
-provider "supabase" {
-  access_token = var.supabase_access_token
 }

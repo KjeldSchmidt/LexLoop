@@ -36,6 +36,9 @@ function task_apply_auto {
 	if [ -z "${1:-}" ]; then echo "Error: environment not specified. Usage: $0 apply-auto <dev|prod>"; exit 1; fi
 	pushd "env/$1"
 	terraform init -reconfigure
+	# Drop legacy Supabase resources from state (DB moved to shared tck-labs RDS).
+	terraform state rm 'module.env.supabase_project._' 2>/dev/null || true
+	terraform state rm 'module.env.random_password.supabase_password' 2>/dev/null || true
 	terraform apply -auto-approve
 	popd
 }
@@ -45,6 +48,8 @@ function task_apply {
 	if [ -z "${1:-}" ]; then echo "Error: environment not specified. Usage: $0 apply <dev|prod>"; exit 1; fi
 	pushd "env/$1"
 	terraform init -reconfigure
+	terraform state rm 'module.env.supabase_project._' 2>/dev/null || true
+	terraform state rm 'module.env.random_password.supabase_password' 2>/dev/null || true
 	terraform apply
 	popd
 }

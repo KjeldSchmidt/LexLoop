@@ -8,9 +8,9 @@ Vocabulary learning: linked terms (nodes), tags, and courses.
 
 | Path | Role |
 |------|------|
-| [`backend/`](backend/) | FastAPI API on AWS Lambda (Mangum), SQLAlchemy, Alembic, Supabase Postgres |
+| [`backend/`](backend/) | FastAPI API on AWS Lambda (Mangum), SQLAlchemy, Alembic, Postgres |
 | [`frontend/`](frontend/) | Vue 3 + Vite + Pinia, typed client from OpenAPI |
-| [`infrastructure/`](infrastructure/) | Terraform: AWS (S3, CloudFront, API Gateway, Lambda) + Supabase |
+| [`infrastructure/`](infrastructure/) | Terraform: AWS (S3, CloudFront, API Gateway, Lambda) + shared tck-labs RDS |
 
 Production traffic: CloudFront serves the SPA; `/api/*` is proxied to API Gateway → Lambda. The FastAPI app uses `root_path="/api"`.
 

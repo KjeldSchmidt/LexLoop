@@ -114,8 +114,6 @@ jobs:
 
       - name: Deploy dev environment
         run: cd infrastructure && ./do apply-auto dev
-        env:
-          TF_VAR_supabase_access_token: ${{ secrets.SUPABASE_DEV_ACCESS_TOKEN }}
 
       - name: Get Terraform outputs
         id: terraform_output
@@ -155,8 +153,6 @@ jobs:
 
       - name: Run database migrations
         run: cd backend && ./do db-migrate-remote dev
-        env:
-          TF_VAR_supabase_access_token: ${{ secrets.SUPABASE_DEV_ACCESS_TOKEN }}
 
   smoke-tests:
     name: Smoke Tests
