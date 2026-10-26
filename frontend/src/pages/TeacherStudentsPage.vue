@@ -16,6 +16,7 @@ const selected = ref<Set<string>>(new Set())
 const count = ref(10)
 const error = ref('')
 const busy = ref(false)
+const loading = ref(true)
 const created = ref<CreatedCreds[]>([])
 const credentialsTitle = ref('New credentials')
 
@@ -30,11 +31,16 @@ const allSelected = computed(
 const selectedCount = computed(() => selected.value.size)
 
 async function refresh() {
-  const res = await getStudents()
-  if (res) {
-    students.value = res
-    const valid = new Set(res.map((s) => s.uuid))
-    selected.value = new Set([...selected.value].filter((id) => valid.has(id)))
+  loading.value = true
+  try {
+    const res = await getStudents()
+    if (res) {
+      students.value = res
+      const valid = new Set(res.map((s) => s.uuid))
+      selected.value = new Set([...selected.value].filter((id) => valid.has(id)))
+    }
+  } finally {
+    loading.value = false
   }
 }
 
@@ -169,8 +175,8 @@ function downloadCredentials() {
 
     <section class="ll-panel list">
       <div class="list-header">
-        <h2>All students ({{ students.length }})</h2>
-        <div v-if="students.length" class="actions">
+        <h2>{{ loading ? 'All students' : `All students (${students.length})` }}</h2>
+        <div v-if="!loading && students.length" class="actions">
           <button
             type="button"
             class="ll-btn"
@@ -190,28 +196,31 @@ function downloadCredentials() {
         </div>
       </div>
       <p v-if="error" class="ll-error">{{ error }}</p>
-      <label v-if="students.length" class="select-all">
-        <input
-          type="checkbox"
-          :checked="allSelected"
-          @change="toggleAll(($event.target as HTMLInputElement).checked)"
-        />
-        Select all
-      </label>
-      <ul v-if="students.length">
-        <li v-for="s in students" :key="s.uuid">
-          <label class="row">
-            <input
-              type="checkbox"
-              :checked="selected.has(s.uuid)"
-              @change="toggleOne(s.uuid, ($event.target as HTMLInputElement).checked)"
-            />
-            <span class="username">{{ s.username }}</span>
-            <span v-if="!s.is_active" class="badge">Inactive</span>
-          </label>
-        </li>
-      </ul>
-      <p v-else class="ll-muted empty">No students yet — create a batch above.</p>
+      <p v-if="loading" class="ll-loading" aria-live="polite">Loading students…</p>
+      <template v-else>
+        <label v-if="students.length" class="select-all">
+          <input
+            type="checkbox"
+            :checked="allSelected"
+            @change="toggleAll(($event.target as HTMLInputElement).checked)"
+          />
+          Select all
+        </label>
+        <ul v-if="students.length">
+          <li v-for="s in students" :key="s.uuid">
+            <label class="row">
+              <input
+                type="checkbox"
+                :checked="selected.has(s.uuid)"
+                @change="toggleOne(s.uuid, ($event.target as HTMLInputElement).checked)"
+              />
+              <span class="username">{{ s.username }}</span>
+              <span v-if="!s.is_active" class="badge">Inactive</span>
+            </label>
+          </li>
+        </ul>
+        <p v-else class="ll-muted empty">No students yet — create a batch above.</p>
+      </template>
     </section>
   </div>
 </template>

@@ -215,3 +215,10 @@ code {
   color: var(--ll-danger);
   font-size: 0.9rem;
 }
+
+.ll-loading {
+  margin: 0;
+  color: var(--ll-ink-muted);
+  font-size: 0.95rem;
+  font-weight: 500;
+}

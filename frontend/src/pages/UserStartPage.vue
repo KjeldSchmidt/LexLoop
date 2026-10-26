@@ -16,12 +16,18 @@ const showCreate = ref(false)
 const newName = ref('')
 const newDescription = ref('')
 const busy = ref(false)
+const loading = ref(true)
 const error = ref('')
 
 async function refresh() {
-  const coursesRes = await getCourses()
-  if (coursesRes?.items) {
-    courses.value = coursesRes.items
+  loading.value = true
+  try {
+    const coursesRes = await getCourses()
+    if (coursesRes?.items) {
+      courses.value = coursesRes.items
+    }
+  } finally {
+    loading.value = false
   }
 }
 
@@ -113,7 +119,8 @@ async function onCreate() {
       </button>
     </form>
 
-    <div v-if="courses.length" class="course-list">
+    <p v-if="loading" class="ll-loading" aria-live="polite">Loading courses…</p>
+    <div v-else-if="courses.length" class="course-list">
       <div v-for="course in courses" :key="course.uuid" class="course-row">
         <button type="button" class="course-button" @click="goToClass(course.uuid)">
           <span class="course-text">

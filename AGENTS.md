@@ -55,6 +55,7 @@ Pass `course_uuid` from route/UI context (e.g. `/class/:id`). Do not hardcode co
 - Prefer typed API wrappers in `frontend/src/api/index.ts` over ad-hoc `fetch`.
 - Prefer `v-model` over `document.getElementById` when editing forms.
 - Course selection lives on `UserStartPage`; class routes carry `course_id` / `course_uuid` into pages and modals.
+- **Loading vs empty:** while async data is in flight, show an unobtrusive loading state (e.g. `.ll-loading` / “Loading…”) — never flash empty counts or “No … yet” before the first load finishes.
 
 ## Auth
 
