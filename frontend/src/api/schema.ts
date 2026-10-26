@@ -95,7 +95,11 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    get?: never
+    /**
+     * List My Join Requests
+     * @description List courses the student has requested to join (pending approval).
+     */
+    get: operations['list_my_join_requests_courses_join_requests_get']
     put?: never
     /**
      * Request Course Join
@@ -1239,6 +1243,24 @@ export interface components {
       /** Password */
       password: string
     }
+    /**
+     * StudentPendingJoinOut
+     * @description A course the student has requested to join (not yet approved).
+     */
+    StudentPendingJoinOut: {
+      /**
+       * Course Uuid
+       * Format: uuid4
+       */
+      course_uuid: string
+      /** Course Name */
+      course_name: string
+      /**
+       * Requested At
+       * Format: date-time
+       */
+      requested_at: string
+    }
     /** TagIn */
     TagIn: {
       /** Title */
@@ -1468,6 +1490,26 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  list_my_join_requests_courses_join_requests_get: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['StudentPendingJoinOut'][]
         }
       }
     }

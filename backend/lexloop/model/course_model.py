@@ -64,6 +64,14 @@ class CourseJoinRequestItemOut(BaseModel):  # type: ignore[explicit-any]
     requested_at: datetime
 
 
+class StudentPendingJoinOut(BaseModel):  # type: ignore[explicit-any]
+    """A course the student has requested to join (not yet approved)."""
+
+    course_uuid: UUID4
+    course_name: str
+    requested_at: datetime
+
+
 class Course(BaseModel):  # type: ignore[explicit-any]
     uuid: UUID4
     name: str

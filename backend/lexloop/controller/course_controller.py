@@ -23,6 +23,7 @@ from lexloop.model.course_model import (
     CourseJoinRequestOut,
     CourseOut,
     CourseUpdate,
+    StudentPendingJoinOut,
 )
 from lexloop.model.pagination import Page, PaginationParams, pagination_params
 from lexloop.model.student_model import Student, StudentOut
@@ -72,6 +73,23 @@ async def get_course_by_code(
         course_name=course.name,
         code=course.signup_code,
     )
+
+
+@router.get("/courses/join-requests")
+async def list_my_join_requests(
+    student: Student = Depends(require_student),
+    session: Session = Depends(get_db),
+) -> list[StudentPendingJoinOut]:
+    """List courses the student has requested to join (pending approval)."""
+    items = course_service.list_pending_joins_for_student(student.uuid, session)
+    return [
+        StudentPendingJoinOut(
+            course_uuid=course.uuid,
+            course_name=course.name,
+            requested_at=requested_at,
+        )
+        for course, requested_at in items
+    ]
 
 
 @router.post("/courses/join-requests", status_code=status.HTTP_200_OK)

@@ -298,6 +298,24 @@ def list_join_requests(
     ]
 
 
+def list_join_requests_for_student(
+    student_uuid: UUID4, session: Session
+) -> list[tuple[Course, datetime]]:
+    rows = session.execute(
+        select(CourseRepo, CourseEnrollmentRequestRepo.requested_at)
+        .join(
+            CourseEnrollmentRequestRepo,
+            CourseEnrollmentRequestRepo.course_uuid == CourseRepo.uuid,
+        )
+        .where(CourseEnrollmentRequestRepo.student_uuid == student_uuid)
+        .order_by(CourseEnrollmentRequestRepo.requested_at.asc())
+    ).all()
+    return [
+        (course.to_internal_model(), requested_at)
+        for course, requested_at in rows
+    ]
+
+
 def approve_join_requests(
     course_uuid: UUID4, student_uuids: list[UUID4], session: Session
 ) -> int:
