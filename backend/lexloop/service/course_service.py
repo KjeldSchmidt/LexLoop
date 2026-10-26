@@ -174,6 +174,14 @@ def list_join_requests(
     return course_repository.list_join_requests(course_uuid, session)
 
 
+def list_pending_joins_for_student(
+    student_uuid: UUID4, session: Session
+) -> list[tuple[Course, datetime]]:
+    return course_repository.list_join_requests_for_student(
+        student_uuid, session
+    )
+
+
 def approve_join_requests(
     course_uuid: UUID4,
     student_uuids: list[UUID4],

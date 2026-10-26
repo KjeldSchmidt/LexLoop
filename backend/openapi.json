@@ -185,6 +185,27 @@
       }
     },
     "/courses/join-requests": {
+      "get": {
+        "summary": "List My Join Requests",
+        "description": "List courses the student has requested to join (pending approval).",
+        "operationId": "list_my_join_requests_courses_join_requests_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/StudentPendingJoinOut"
+                  },
+                  "type": "array",
+                  "title": "Response List My Join Requests Courses Join Requests Get"
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "summary": "Request Course Join",
         "description": "Student requests enrollment using a course signup code.",
@@ -3377,6 +3398,32 @@
           "password"
         ],
         "title": "StudentPasswordReset"
+      },
+      "StudentPendingJoinOut": {
+        "properties": {
+          "course_uuid": {
+            "type": "string",
+            "format": "uuid4",
+            "title": "Course Uuid"
+          },
+          "course_name": {
+            "type": "string",
+            "title": "Course Name"
+          },
+          "requested_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Requested At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "course_uuid",
+          "course_name",
+          "requested_at"
+        ],
+        "title": "StudentPendingJoinOut",
+        "description": "A course the student has requested to join (not yet approved)."
       },
       "TagIn": {
         "properties": {

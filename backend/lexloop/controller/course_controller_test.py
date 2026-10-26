@@ -262,6 +262,12 @@ def test_student_join_request_and_teacher_approve_all(
     )
     assert again.status_code == 200
     assert again.json()["status"] == "already_pending"
+
+    mine = client.get("/courses/join-requests")
+    assert mine.status_code == 200
+    assert len(mine.json()) == 1
+    assert mine.json()[0]["course_uuid"] == BASE_COURSE
+    assert mine.json()[0]["course_name"] == "Base Course"
     app.dependency_overrides.pop(require_student, None)
 
     app.dependency_overrides[require_teacher] = _seed_teacher
@@ -290,6 +296,7 @@ def test_student_join_request_and_teacher_approve_all(
     )
     assert noop.status_code == 200
     assert noop.json()["status"] == "already_enrolled"
+    assert client.get("/courses/join-requests").json() == []
     student_courses = client.get("/courses")
     assert student_courses.status_code == 200
     for item in student_courses.json()["items"]:

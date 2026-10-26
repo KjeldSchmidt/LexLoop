@@ -255,6 +255,14 @@ export const requestCourseJoin = async (code: string) => {
   return data
 }
 
+export const getMyJoinRequests = async () => {
+  const { data, error } = await client.GET('/courses/join-requests', {})
+  if (error) {
+    throw new Error('MY_JOIN_REQUESTS_FAILED')
+  }
+  return data ?? []
+}
+
 export const getJoinRequests = async (course_uuid: string) => {
   const { data, error } = await client.GET('/course/{course_uuid}/join-requests', {
     params: { path: { course_uuid } },

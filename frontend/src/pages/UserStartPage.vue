@@ -2,26 +2,44 @@
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { createCourse, getCourses, requestCourseJoin } from '@/api'
+import { createCourse, getCourses, getMyJoinRequests, requestCourseJoin } from '@/api'
 import type { components } from '@/api/schema.ts'
 import { useAuthStore } from '@/stores/auth'
 
 type Course = components['schemas']['CourseOut']
+type PendingJoin = components['schemas']['StudentPendingJoinOut']
 
 const router = useRouter()
 const auth = useAuthStore()
 const { isTeacher, isStudent } = storeToRefs(auth)
 const courses = ref<Course[]>([])
+const pendingJoins = ref<PendingJoin[]>([])
 const showCreate = ref(false)
 const newName = ref('')
 const newDescription = ref('')
 const busy = ref(false)
 const loading = ref(true)
+const pendingLoading = ref(false)
 const error = ref('')
 const joinCode = ref('')
 const joinBusy = ref(false)
 const joinError = ref('')
 const joinMessage = ref('')
+
+async function refreshPending() {
+  if (!isStudent.value) {
+    pendingJoins.value = []
+    return
+  }
+  pendingLoading.value = true
+  try {
+    pendingJoins.value = await getMyJoinRequests()
+  } catch {
+    pendingJoins.value = []
+  } finally {
+    pendingLoading.value = false
+  }
+}
 
 async function refresh() {
   loading.value = true
@@ -30,6 +48,7 @@ async function refresh() {
     if (coursesRes?.items) {
       courses.value = coursesRes.items
     }
+    await refreshPending()
   } finally {
     loading.value = false
   }
@@ -50,6 +69,7 @@ async function onJoinViaCode() {
     const result = await requestCourseJoin(code)
     if (result.status === 'pending' || result.status === 'already_pending') {
       joinMessage.value = `Request sent for “${result.course_name}”. Waiting for teacher approval.`
+      await refreshPending()
     } else if (result.status === 'already_enrolled') {
       joinMessage.value = `You are already enrolled in “${result.course_name}”.`
       await refresh()
@@ -171,6 +191,20 @@ async function onCreate() {
       </button>
     </form>
 
+    <section v-if="isStudent" class="pending-section">
+      <h2>Pending requests</h2>
+      <p v-if="loading || pendingLoading" class="ll-loading" aria-live="polite">
+        Loading requests…
+      </p>
+      <ul v-else-if="pendingJoins.length" class="pending-list">
+        <li v-for="req in pendingJoins" :key="req.course_uuid" class="pending-item">
+          <span class="course-name">{{ req.course_name }}</span>
+          <span class="ll-muted pending-status">Waiting for approval</span>
+        </li>
+      </ul>
+      <p v-else class="ll-muted empty-pending">No pending enrollment requests.</p>
+    </section>
+
     <p v-if="loading" class="ll-loading" aria-live="polite">Loading courses…</p>
     <div v-else-if="courses.length" class="course-list">
       <div v-for="course in courses" :key="course.uuid" class="course-row">
@@ -257,6 +291,49 @@ async function onCreate() {
 .join-ok {
   margin: 0;
   font-weight: 500;
+}
+
+.pending-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.pending-section h2 {
+  margin: 0;
+  font-family: var(--ll-font-display);
+  font-size: 1.15rem;
+}
+
+.pending-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.pending-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  padding: 0.85rem 1rem;
+  border: 1.5px dashed var(--ll-border);
+  border-radius: calc(var(--ll-radius) + 4px);
+  background: var(--ll-surface);
+}
+
+.pending-status {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.empty-pending {
+  margin: 0;
+  font-size: 0.9rem;
 }
 
 .course-list {
