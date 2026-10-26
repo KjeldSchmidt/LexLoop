@@ -1,0 +1,11 @@
+---
+description: Prefer shipping to main immediately (direct push or merge PRs)
+alwaysApply: true
+---
+
+# Ship to main
+
+- After finishing work that would normally be a PR: **merge the PR immediately** (or push directly to `main` when that is simpler).
+- Do not leave feature PRs open waiting for review unless the user asks to keep them open.
+- Prefer `gh pr merge --merge --delete-branch`, then sync local `main`.
+- CI on PRs is desirable once OIDC/trust policy allows it; until then, treat merge-to-main as the default ship path.
