@@ -40,6 +40,8 @@ Paginated list responses use `{ items, total, offset, limit }` with query params
 
 Pass `course_uuid` from route/UI context (e.g. `/class/:id`). Do not hardcode course IDs in app code.
 
+Courses have a unique 4-letter `signup_code` (A–Z). Students may request enrollment via `POST /courses/join-requests` (any course by code, not limited to the creating teacher). Teachers approve pending requests on course settings (`approve` / `approve-all`), which enrolls and clears the request. `signup_code` is returned only on teacher-owned course responses.
+
 ## Backend notes
 
 - Layers: `controller` → `service` → `repository`; DTOs in `model/`.

@@ -2,11 +2,15 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
+  approveAllJoinRequests,
+  approveJoinRequests,
   deleteCourse,
   enrollStudents,
   getCourse,
   getCourseStudents,
+  getJoinRequests,
   getStudents,
+  regenerateSignupCode,
   unenrollStudents,
   updateCourse,
 } from '@/api'
@@ -14,6 +18,7 @@ import type { components } from '@/api/schema.ts'
 
 type Course = components['schemas']['CourseOut']
 type Student = components['schemas']['StudentOut']
+type JoinRequest = components['schemas']['CourseJoinRequestItemOut']
 
 const route = useRoute()
 const router = useRouter()
@@ -31,6 +36,9 @@ const loading = ref(true)
 const busy = ref(false)
 const error = ref('')
 const savedFlash = ref(false)
+const copyFlash = ref('')
+const pendingRequests = ref<JoinRequest[]>([])
+const pendingLoading = ref(true)
 
 const filterLower = computed(() => filter.value.trim().toLowerCase())
 
@@ -59,6 +67,23 @@ const allAvailableSelected = computed(
     available.value.length > 0 && available.value.every((s) => selectedAvailable.value.has(s.uuid)),
 )
 
+const inviteLink = computed(() => {
+  const code = course.value?.signup_code
+  if (!code) return ''
+  return `${window.location.origin}/join/${code}`
+})
+
+async function loadPending() {
+  pendingLoading.value = true
+  try {
+    pendingRequests.value = await getJoinRequests(courseId)
+  } catch {
+    pendingRequests.value = []
+  } finally {
+    pendingLoading.value = false
+  }
+}
+
 async function load() {
   error.value = ''
   loading.value = true
@@ -75,6 +100,7 @@ async function load() {
     allStudents.value = studentsRes ?? []
     selectedEnrolled.value = new Set()
     selectedAvailable.value = new Set()
+    await loadPending()
   } catch {
     error.value = 'Could not load course'
   } finally {
@@ -83,6 +109,65 @@ async function load() {
 }
 
 onMounted(load)
+
+async function copyText(label: string, text: string) {
+  try {
+    await navigator.clipboard.writeText(text)
+    copyFlash.value = label
+    window.setTimeout(() => {
+      if (copyFlash.value === label) copyFlash.value = ''
+    }, 1500)
+  } catch {
+    error.value = `Could not copy ${label.toLowerCase()}`
+  }
+}
+
+async function onRegenerateCode() {
+  if (
+    !window.confirm('Generate a new signup code? The old code and invite link will stop working.')
+  ) {
+    return
+  }
+  error.value = ''
+  busy.value = true
+  try {
+    course.value = await regenerateSignupCode(courseId)
+  } catch {
+    error.value = 'Could not regenerate signup code'
+  } finally {
+    busy.value = false
+  }
+}
+
+async function enrollPendingOne(studentUuid: string) {
+  error.value = ''
+  busy.value = true
+  try {
+    await approveJoinRequests(courseId, [studentUuid])
+    enrolledIds.value = new Set([...enrolledIds.value, studentUuid])
+    pendingRequests.value = pendingRequests.value.filter((r) => r.uuid !== studentUuid)
+  } catch {
+    error.value = 'Could not enroll student'
+  } finally {
+    busy.value = false
+  }
+}
+
+async function enrollAllPending() {
+  if (pendingRequests.value.length === 0) return
+  error.value = ''
+  busy.value = true
+  try {
+    await approveAllJoinRequests(courseId)
+    const ids = pendingRequests.value.map((r) => r.uuid)
+    enrolledIds.value = new Set([...enrolledIds.value, ...ids])
+    pendingRequests.value = []
+  } catch {
+    error.value = 'Could not enroll pending students'
+  } finally {
+    busy.value = false
+  }
+}
 
 function toggleSet(set: Set<string>, uuid: string, checked: boolean) {
   const next = new Set(set)
@@ -223,6 +308,70 @@ async function unenrollAllFiltered() {
           <span v-if="savedFlash" class="ll-muted saved">Saved</span>
         </div>
       </form>
+
+      <section v-if="course?.signup_code" class="ll-panel signup">
+        <h2>Signup code</h2>
+        <p class="ll-muted">Share this code or invite link so students can request enrollment.</p>
+        <p class="signup-code" aria-label="Signup code">{{ course.signup_code }}</p>
+        <div class="row-actions wrap">
+          <button
+            type="button"
+            class="ll-btn"
+            :disabled="busy"
+            @click="copyText('Code', course.signup_code!)"
+          >
+            Copy code
+          </button>
+          <button
+            type="button"
+            class="ll-btn"
+            :disabled="busy"
+            @click="copyText('Link', inviteLink)"
+          >
+            Copy invite link
+          </button>
+          <button
+            type="button"
+            class="ll-btn ll-btn-ghost"
+            :disabled="busy"
+            @click="onRegenerateCode"
+          >
+            Regenerate code
+          </button>
+          <span v-if="copyFlash" class="ll-muted saved">{{ copyFlash }} copied</span>
+        </div>
+      </section>
+
+      <section class="ll-panel pending">
+        <div class="roster-header">
+          <h2>Pending requests</h2>
+          <button
+            type="button"
+            class="ll-btn ll-btn-primary"
+            :disabled="busy || pendingLoading || pendingRequests.length === 0"
+            @click="enrollAllPending"
+          >
+            Enroll all
+          </button>
+        </div>
+        <p v-if="pendingLoading" class="ll-loading" aria-live="polite">Loading requests…</p>
+        <ul v-else-if="pendingRequests.length" class="student-list">
+          <li v-for="req in pendingRequests" :key="req.uuid">
+            <div class="pending-row">
+              <span class="username">{{ req.username }}</span>
+              <button
+                type="button"
+                class="ll-btn ll-btn-ghost"
+                :disabled="busy"
+                @click="enrollPendingOne(req.uuid)"
+              >
+                Enroll
+              </button>
+            </div>
+          </li>
+        </ul>
+        <p v-else class="ll-muted empty-hint">No pending enrollment requests.</p>
+      </section>
 
       <section class="ll-panel roster">
         <div class="roster-header">
@@ -395,6 +544,31 @@ async function unenrollAllFiltered() {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+}
+
+.row-actions.wrap {
+  flex-wrap: wrap;
+}
+
+.signup-code {
+  margin: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+}
+
+.pending-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  padding: 0.5rem 0.65rem;
+  border-bottom: 1px solid var(--ll-border);
+}
+
+.student-list li:last-child .pending-row {
+  border-bottom: none;
 }
 
 .saved {
