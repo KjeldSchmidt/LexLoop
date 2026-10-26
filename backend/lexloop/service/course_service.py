@@ -1,10 +1,16 @@
 """Application service for courses and enrollments."""
 
+from datetime import datetime
+
 from pydantic import UUID4
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from lexloop.auth.principal import Principal, PrincipalKind
+from lexloop.auth.signup_codes import (
+    generate_signup_code,
+    normalize_signup_code,
+)
 from lexloop.model.course_model import Course, CourseIn, CourseUpdate
 from lexloop.model.student_model import Student
 from lexloop.repository import course_repository, student_repository
@@ -33,10 +39,19 @@ def get_by_uuid(course_uuid: UUID4, session: Session) -> Course:
     return row.to_internal_model()
 
 
+def get_by_signup_code(code: str, session: Session) -> Course:
+    normalized = normalize_signup_code(code)
+    row = course_repository.get_by_signup_code(normalized, session)
+    if row is None:
+        raise KeyError
+    return row.to_internal_model()
+
+
 def create_for_teacher(
     payload: CourseIn, teacher_id: UUID4, session: Session
 ) -> Course:
-    return course_repository.add(payload, teacher_id, session)
+    code = generate_signup_code(session)
+    return course_repository.add(payload, teacher_id, code, session)
 
 
 def update_for_teacher(
@@ -54,6 +69,16 @@ def update_for_teacher(
         description=payload.description,
         session=session,
     )
+
+
+def regenerate_signup_code(
+    course_uuid: UUID4, teacher_id: UUID4, session: Session
+) -> Course:
+    row = course_repository.get_by_uuid(course_uuid, session)
+    if row is None or row.owner_teacher_id != teacher_id:
+        raise KeyError
+    code = generate_signup_code(session)
+    return course_repository.set_signup_code(course_uuid, code, session)
 
 
 def delete_for_teacher(
@@ -123,3 +148,51 @@ def unenroll_students(
     return course_repository.remove_enrollments(
         course_uuid, student_uuids, session
     )
+
+
+def request_join_by_code(
+    code: str, student_uuid: UUID4, session: Session
+) -> tuple[Course, str]:
+    """Create a pending join request. Returns (course, status)."""
+    course = get_by_signup_code(code, session)
+    if course_repository.is_student_enrolled(
+        course.uuid, student_uuid, session
+    ):
+        return course, "already_enrolled"
+    if course_repository.has_join_request(course.uuid, student_uuid, session):
+        return course, "already_pending"
+    course_repository.add_join_request(course.uuid, student_uuid, session)
+    return course, "pending"
+
+
+def list_join_requests(
+    course_uuid: UUID4, teacher_id: UUID4, session: Session
+) -> list[tuple[Student, datetime]]:
+    row = course_repository.get_by_uuid(course_uuid, session)
+    if row is None or row.owner_teacher_id != teacher_id:
+        raise KeyError
+    return course_repository.list_join_requests(course_uuid, session)
+
+
+def approve_join_requests(
+    course_uuid: UUID4,
+    student_uuids: list[UUID4],
+    teacher_id: UUID4,
+    session: Session,
+) -> int:
+    """Approve pending requests (any student) — enrolls without ownership check."""
+    row = course_repository.get_by_uuid(course_uuid, session)
+    if row is None or row.owner_teacher_id != teacher_id:
+        raise KeyError
+    return course_repository.approve_join_requests(
+        course_uuid, student_uuids, session
+    )
+
+
+def approve_all_join_requests(
+    course_uuid: UUID4, teacher_id: UUID4, session: Session
+) -> int:
+    row = course_repository.get_by_uuid(course_uuid, session)
+    if row is None or row.owner_teacher_id != teacher_id:
+        raise KeyError
+    return course_repository.approve_all_join_requests(course_uuid, session)

@@ -144,6 +144,85 @@
         }
       }
     },
+    "/courses/by-code/{code}": {
+      "get": {
+        "summary": "Get Course By Code",
+        "description": "Resolve a signup code to a course name (for join preview).",
+        "operationId": "get_course_by_code_courses_by_code__code__get",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Code"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseByCodeOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/courses/join-requests": {
+      "post": {
+        "summary": "Request Course Join",
+        "description": "Student requests enrollment using a course signup code.",
+        "operationId": "request_course_join_courses_join_requests_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_request_course_join_courses_join_requests_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseJoinRequestOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/courses/{course_uuid}": {
       "get": {
         "summary": "Get Course",
@@ -281,6 +360,52 @@
         }
       }
     },
+    "/course/{course_uuid}/signup-code/regenerate": {
+      "post": {
+        "summary": "Regenerate Signup Code",
+        "description": "Generate a new signup code for an owned course.",
+        "operationId": "regenerate_signup_code_course__course_uuid__signup_code_regenerate_post",
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "course_uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid4",
+              "title": "Course Uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/course/{course_uuid}/students": {
       "get": {
         "summary": "List Course Students",
@@ -314,6 +439,166 @@
                     "$ref": "#/components/schemas/StudentOut"
                   },
                   "title": "Response List Course Students Course  Course Uuid  Students Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/course/{course_uuid}/join-requests": {
+      "get": {
+        "summary": "List Join Requests",
+        "description": "List pending enrollment requests for an owned course.",
+        "operationId": "list_join_requests_course__course_uuid__join_requests_get",
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "course_uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid4",
+              "title": "Course Uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CourseJoinRequestItemOut"
+                  },
+                  "title": "Response List Join Requests Course  Course Uuid  Join Requests Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/course/{course_uuid}/join-requests/approve": {
+      "post": {
+        "summary": "Approve Join Requests",
+        "description": "Approve pending requests (enrolls students, clears requests).",
+        "operationId": "approve_join_requests_course__course_uuid__join_requests_approve_post",
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "course_uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid4",
+              "title": "Course Uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_approve_join_requests_course__course_uuid__join_requests_approve_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer"
+                  },
+                  "title": "Response Approve Join Requests Course  Course Uuid  Join Requests Approve Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/course/{course_uuid}/join-requests/approve-all": {
+      "post": {
+        "summary": "Approve All Join Requests",
+        "description": "Approve every pending enrollment request for the course.",
+        "operationId": "approve_all_join_requests_course__course_uuid__join_requests_approve_all_post",
+        "security": [
+          {
+            "APIKeyCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "course_uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid4",
+              "title": "Course Uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer"
+                  },
+                  "title": "Response Approve All Join Requests Course  Course Uuid  Join Requests Approve All Post"
                 }
               }
             }
@@ -2237,6 +2522,18 @@
         ],
         "title": "Body_add_tag_tags_post"
       },
+      "Body_approve_join_requests_course__course_uuid__join_requests_approve_post": {
+        "properties": {
+          "enrollment": {
+            "$ref": "#/components/schemas/CourseEnrollmentIn"
+          }
+        },
+        "type": "object",
+        "required": [
+          "enrollment"
+        ],
+        "title": "Body_approve_join_requests_course__course_uuid__join_requests_approve_post"
+      },
       "Body_auth_jwt_login_auth_login_post": {
         "properties": {
           "grant_type": {
@@ -2320,6 +2617,18 @@
         ],
         "title": "Body_enroll_students_course__course_uuid__enrollments_post"
       },
+      "Body_request_course_join_courses_join_requests_post": {
+        "properties": {
+          "join_request": {
+            "$ref": "#/components/schemas/CourseJoinRequestIn"
+          }
+        },
+        "type": "object",
+        "required": [
+          "join_request"
+        ],
+        "title": "Body_request_course_join_courses_join_requests_post"
+      },
       "Body_unenroll_students_course__course_uuid__enrollments_remove_post": {
         "properties": {
           "enrollment": {
@@ -2361,6 +2670,30 @@
         ],
         "title": "Body_update_tags_nodes_update__node_uuid__tags__post"
       },
+      "CourseByCodeOut": {
+        "properties": {
+          "course_uuid": {
+            "type": "string",
+            "format": "uuid4",
+            "title": "Course Uuid"
+          },
+          "course_name": {
+            "type": "string",
+            "title": "Course Name"
+          },
+          "code": {
+            "type": "string",
+            "title": "Code"
+          }
+        },
+        "type": "object",
+        "required": [
+          "course_uuid",
+          "course_name",
+          "code"
+        ],
+        "title": "CourseByCodeOut"
+      },
       "CourseEnrollmentIn": {
         "properties": {
           "student_uuids": {
@@ -2398,6 +2731,76 @@
         ],
         "title": "CourseIn"
       },
+      "CourseJoinRequestIn": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "maxLength": 4,
+            "minLength": 4,
+            "pattern": "(?i)^[A-Z]{4}$",
+            "title": "Code"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code"
+        ],
+        "title": "CourseJoinRequestIn"
+      },
+      "CourseJoinRequestItemOut": {
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "format": "uuid4",
+            "title": "Uuid"
+          },
+          "username": {
+            "type": "string",
+            "title": "Username"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          },
+          "requested_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Requested At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "uuid",
+          "username",
+          "is_active",
+          "requested_at"
+        ],
+        "title": "CourseJoinRequestItemOut"
+      },
+      "CourseJoinRequestOut": {
+        "properties": {
+          "course_uuid": {
+            "type": "string",
+            "format": "uuid4",
+            "title": "Course Uuid"
+          },
+          "course_name": {
+            "type": "string",
+            "title": "Course Name"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "course_uuid",
+          "course_name",
+          "status"
+        ],
+        "title": "CourseJoinRequestOut"
+      },
       "CourseOut": {
         "properties": {
           "uuid": {
@@ -2424,6 +2827,17 @@
               }
             ],
             "title": "Owner Teacher Id"
+          },
+          "signup_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Signup Code"
           }
         },
         "type": "object",

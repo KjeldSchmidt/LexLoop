@@ -68,6 +68,46 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/courses/by-code/{code}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Get Course By Code
+     * @description Resolve a signup code to a course name (for join preview).
+     */
+    get: operations['get_course_by_code_courses_by_code__code__get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/courses/join-requests': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Request Course Join
+     * @description Student requests enrollment using a course signup code.
+     */
+    post: operations['request_course_join_courses_join_requests_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/courses/{course_uuid}': {
     parameters: {
       query?: never
@@ -96,6 +136,26 @@ export interface paths {
     patch: operations['update_course_courses__course_uuid__patch']
     trace?: never
   }
+  '/course/{course_uuid}/signup-code/regenerate': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Regenerate Signup Code
+     * @description Generate a new signup code for an owned course.
+     */
+    post: operations['regenerate_signup_code_course__course_uuid__signup_code_regenerate_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/course/{course_uuid}/students': {
     parameters: {
       query?: never
@@ -110,6 +170,66 @@ export interface paths {
     get: operations['list_course_students_course__course_uuid__students_get']
     put?: never
     post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/course/{course_uuid}/join-requests': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * List Join Requests
+     * @description List pending enrollment requests for an owned course.
+     */
+    get: operations['list_join_requests_course__course_uuid__join_requests_get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/course/{course_uuid}/join-requests/approve': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Approve Join Requests
+     * @description Approve pending requests (enrolls students, clears requests).
+     */
+    post: operations['approve_join_requests_course__course_uuid__join_requests_approve_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/course/{course_uuid}/join-requests/approve-all': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Approve All Join Requests
+     * @description Approve every pending enrollment request for the course.
+     */
+    post: operations['approve_all_join_requests_course__course_uuid__join_requests_approve_all_post']
     delete?: never
     options?: never
     head?: never
@@ -767,6 +887,10 @@ export interface components {
     Body_add_tag_tags_post: {
       tag: components['schemas']['TagIn']
     }
+    /** Body_approve_join_requests_course__course_uuid__join_requests_approve_post */
+    Body_approve_join_requests_course__course_uuid__join_requests_approve_post: {
+      enrollment: components['schemas']['CourseEnrollmentIn']
+    }
     /** Body_auth_jwt_login_auth_login_post */
     Body_auth_jwt_login_auth_login_post: {
       /** Grant Type */
@@ -799,6 +923,10 @@ export interface components {
     Body_enroll_students_course__course_uuid__enrollments_post: {
       enrollment: components['schemas']['CourseEnrollmentIn']
     }
+    /** Body_request_course_join_courses_join_requests_post */
+    Body_request_course_join_courses_join_requests_post: {
+      join_request: components['schemas']['CourseJoinRequestIn']
+    }
     /** Body_unenroll_students_course__course_uuid__enrollments_remove_post */
     Body_unenroll_students_course__course_uuid__enrollments_remove_post: {
       enrollment: components['schemas']['CourseEnrollmentIn']
@@ -811,6 +939,18 @@ export interface components {
     Body_update_tags_nodes_update__node_uuid__tags__post: {
       /** Tag Uuids */
       tag_uuids: string[]
+    }
+    /** CourseByCodeOut */
+    CourseByCodeOut: {
+      /**
+       * Course Uuid
+       * Format: uuid4
+       */
+      course_uuid: string
+      /** Course Name */
+      course_name: string
+      /** Code */
+      code: string
     }
     /** CourseEnrollmentIn */
     CourseEnrollmentIn: {
@@ -827,6 +967,40 @@ export interface components {
        */
       description: string
     }
+    /** CourseJoinRequestIn */
+    CourseJoinRequestIn: {
+      /** Code */
+      code: string
+    }
+    /** CourseJoinRequestItemOut */
+    CourseJoinRequestItemOut: {
+      /**
+       * Uuid
+       * Format: uuid4
+       */
+      uuid: string
+      /** Username */
+      username: string
+      /** Is Active */
+      is_active: boolean
+      /**
+       * Requested At
+       * Format: date-time
+       */
+      requested_at: string
+    }
+    /** CourseJoinRequestOut */
+    CourseJoinRequestOut: {
+      /**
+       * Course Uuid
+       * Format: uuid4
+       */
+      course_uuid: string
+      /** Course Name */
+      course_name: string
+      /** Status */
+      status: string
+    }
     /** CourseOut */
     CourseOut: {
       /**
@@ -840,6 +1014,8 @@ export interface components {
       description: string
       /** Owner Teacher Id */
       owner_teacher_id?: string | null
+      /** Signup Code */
+      signup_code?: string | null
     }
     /** CourseUpdate */
     CourseUpdate: {
@@ -1265,6 +1441,70 @@ export interface operations {
       }
     }
   }
+  get_course_by_code_courses_by_code__code__get: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        code: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CourseByCodeOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  request_course_join_courses_join_requests_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['Body_request_course_join_courses_join_requests_post']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CourseJoinRequestOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   get_course_courses__course_uuid__get: {
     parameters: {
       query?: never
@@ -1360,6 +1600,37 @@ export interface operations {
       }
     }
   }
+  regenerate_signup_code_course__course_uuid__signup_code_regenerate_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        course_uuid: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CourseOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   list_course_students_course__course_uuid__students_get: {
     parameters: {
       query?: never
@@ -1378,6 +1649,107 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['StudentOut'][]
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  list_join_requests_course__course_uuid__join_requests_get: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        course_uuid: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CourseJoinRequestItemOut'][]
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  approve_join_requests_course__course_uuid__join_requests_approve_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        course_uuid: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['Body_approve_join_requests_course__course_uuid__join_requests_approve_post']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': {
+            [key: string]: number
+          }
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  approve_all_join_requests_course__course_uuid__join_requests_approve_all_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        course_uuid: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': {
+            [key: string]: number
+          }
         }
       }
       /** @description Validation Error */

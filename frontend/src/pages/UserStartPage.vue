@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { createCourse, getCourses } from '@/api'
+import { createCourse, getCourses, requestCourseJoin } from '@/api'
 import type { components } from '@/api/schema.ts'
 import { useAuthStore } from '@/stores/auth'
 
@@ -10,7 +10,7 @@ type Course = components['schemas']['CourseOut']
 
 const router = useRouter()
 const auth = useAuthStore()
-const { isTeacher } = storeToRefs(auth)
+const { isTeacher, isStudent } = storeToRefs(auth)
 const courses = ref<Course[]>([])
 const showCreate = ref(false)
 const newName = ref('')
@@ -18,6 +18,10 @@ const newDescription = ref('')
 const busy = ref(false)
 const loading = ref(true)
 const error = ref('')
+const joinCode = ref('')
+const joinBusy = ref(false)
+const joinError = ref('')
+const joinMessage = ref('')
 
 async function refresh() {
   loading.value = true
@@ -32,6 +36,34 @@ async function refresh() {
 }
 
 onMounted(refresh)
+
+async function onJoinViaCode() {
+  joinError.value = ''
+  joinMessage.value = ''
+  const code = joinCode.value.trim().toUpperCase()
+  if (!/^[A-Z]{4}$/.test(code)) {
+    joinError.value = 'Enter a 4-letter code.'
+    return
+  }
+  joinBusy.value = true
+  try {
+    const result = await requestCourseJoin(code)
+    if (result.status === 'pending' || result.status === 'already_pending') {
+      joinMessage.value = `Request sent for “${result.course_name}”. Waiting for teacher approval.`
+    } else if (result.status === 'already_enrolled') {
+      joinMessage.value = `You are already enrolled in “${result.course_name}”.`
+      await refresh()
+    } else {
+      joinMessage.value = `Done for “${result.course_name}”.`
+      await refresh()
+    }
+    joinCode.value = ''
+  } catch {
+    joinError.value = 'Invalid code or request failed.'
+  } finally {
+    joinBusy.value = false
+  }
+}
 
 function goToClass(course_uuid: string) {
   router.push({
@@ -119,6 +151,26 @@ async function onCreate() {
       </button>
     </form>
 
+    <form v-if="isStudent" class="ll-panel join" @submit.prevent="onJoinViaCode">
+      <h2>Enroll via code</h2>
+      <label class="ll-field">
+        Signup code
+        <input
+          v-model="joinCode"
+          maxlength="4"
+          placeholder="ABCD"
+          class="code-input"
+          autocomplete="off"
+          spellcheck="false"
+        />
+      </label>
+      <p v-if="joinError" class="ll-error">{{ joinError }}</p>
+      <p v-else-if="joinMessage" class="join-ok">{{ joinMessage }}</p>
+      <button type="submit" class="ll-btn ll-btn-primary" :disabled="joinBusy || !joinCode.trim()">
+        {{ joinBusy ? 'Sending…' : 'Request enrollment' }}
+      </button>
+    </form>
+
     <p v-if="loading" class="ll-loading" aria-live="polite">Loading courses…</p>
     <div v-else-if="courses.length" class="course-list">
       <div v-for="course in courses" :key="course.uuid" class="course-row">
@@ -143,7 +195,7 @@ async function onCreate() {
       {{
         isTeacher
           ? 'No courses yet — create one to get started.'
-          : 'You are not enrolled in any courses yet. Ask your teacher to add you.'
+          : 'You are not enrolled in any courses yet. Use a signup code above, or ask your teacher.'
       }}
     </p>
   </div>
@@ -188,10 +240,23 @@ async function onCreate() {
   color: var(--ll-accent);
 }
 
-.create {
+.create,
+.join {
   display: flex;
   flex-direction: column;
   gap: 0.85rem;
+}
+
+.code-input {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  max-width: 8rem;
+}
+
+.join-ok {
+  margin: 0;
+  font-weight: 500;
 }
 
 .course-list {

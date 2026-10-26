@@ -235,6 +235,67 @@ export const unenrollStudents = async (course_uuid: string, student_uuids: strin
   return data
 }
 
+export const getCourseByCode = async (code: string) => {
+  const { data, error } = await client.GET('/courses/by-code/{code}', {
+    params: { path: { code } },
+  })
+  if (error || !data) {
+    throw new Error('INVALID_CODE')
+  }
+  return data
+}
+
+export const requestCourseJoin = async (code: string) => {
+  const { data, error } = await client.POST('/courses/join-requests', {
+    body: { join_request: { code } },
+  })
+  if (error || !data) {
+    throw new Error('JOIN_REQUEST_FAILED')
+  }
+  return data
+}
+
+export const getJoinRequests = async (course_uuid: string) => {
+  const { data, error } = await client.GET('/course/{course_uuid}/join-requests', {
+    params: { path: { course_uuid } },
+  })
+  if (error) {
+    throw new Error('JOIN_REQUESTS_FAILED')
+  }
+  return data ?? []
+}
+
+export const approveJoinRequests = async (course_uuid: string, student_uuids: string[]) => {
+  const { data, error } = await client.POST('/course/{course_uuid}/join-requests/approve', {
+    params: { path: { course_uuid } },
+    body: { enrollment: { student_uuids } },
+  })
+  if (error) {
+    throw new Error('APPROVE_JOIN_FAILED')
+  }
+  return data
+}
+
+export const approveAllJoinRequests = async (course_uuid: string) => {
+  const { data, error } = await client.POST('/course/{course_uuid}/join-requests/approve-all', {
+    params: { path: { course_uuid } },
+  })
+  if (error) {
+    throw new Error('APPROVE_ALL_JOIN_FAILED')
+  }
+  return data
+}
+
+export const regenerateSignupCode = async (course_uuid: string) => {
+  const { data, error } = await client.POST('/course/{course_uuid}/signup-code/regenerate', {
+    params: { path: { course_uuid } },
+  })
+  if (error || !data) {
+    throw new Error('REGENERATE_CODE_FAILED')
+  }
+  return data
+}
+
 export const getGoogleAuthorizeUrl = async () => {
   const { data, error } = await client.GET('/auth/google/authorize')
   if (error || !data?.authorization_url) {

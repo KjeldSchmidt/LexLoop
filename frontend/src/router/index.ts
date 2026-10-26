@@ -7,6 +7,7 @@ import NodePage from '@/pages/NodePage.vue'
 import ClassOverviewPage from '@/pages/ClassOverviewPage.vue'
 import TeacherStudentsPage from '@/pages/TeacherStudentsPage.vue'
 import TeacherCourseSettingsPage from '@/pages/TeacherCourseSettingsPage.vue'
+import JoinCoursePage from '@/pages/JoinCoursePage.vue'
 import OAuthPopupDonePage from '@/pages/OAuthPopupDonePage.vue'
 import { useAuthStore } from '@/stores/auth'
 import { safeRedirectPath } from '@/router/authRedirect'
@@ -47,6 +48,12 @@ const router = createRouter({
       name: 'TeacherCourseSettings',
       component: TeacherCourseSettingsPage,
       meta: { requiresAuth: 'teacher' },
+    },
+    {
+      path: '/join/:code',
+      name: 'JoinCourse',
+      component: JoinCoursePage,
+      meta: { requiresAuth: 'student' },
     },
     { path: '/oauth/popup-done', component: OAuthPopupDonePage },
     { path: '/login', name: 'Login', component: LoginPage },
